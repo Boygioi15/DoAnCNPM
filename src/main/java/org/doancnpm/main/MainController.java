@@ -4,8 +4,8 @@ import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableArray;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -20,7 +20,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.doancnpm.DAO.DaiLyDAO;
-import org.doancnpm.DAO.MatHangDao;
+import org.doancnpm.Filters.DaiLyFilter;
 import org.doancnpm.Models.DaiLy;
 
 import java.io.IOException;
@@ -48,7 +48,14 @@ public class MainController  implements Initializable {
     @FXML private TableView detailTableView;
 
     //model part
-    private ObservableList<DaiLy> dsDaiLy = FXCollections.observableArrayList();;
+    private final ObservableList<DaiLy> dsDaiLy = FXCollections.observableArrayList();
+    private final ObservableList<DaiLy> dsDaiLyFiltered = FXCollections.observableArrayList();
+    private final DaiLyFilter filter = new DaiLyFilter();
+
+    StringProperty maDaiLyFilter = new SimpleStringProperty("");
+    StringProperty tenDaiLyFilter = new SimpleStringProperty("");
+    StringProperty maQuanFilter = new SimpleStringProperty("");
+    StringProperty maLoaiDaiLyFilter= new SimpleStringProperty("");
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -97,9 +104,6 @@ public class MainController  implements Initializable {
         // Thêm các cột vào TableView
         mainTableView.getColumns().addAll(maDLCol,quanCol,loaiDLCol,tenDLCol,SDTCol,emailCol,diaChiCol,noHienTaiCol,ghiChuCol);
     }
-    private void initDatabaseBinding(){
-        DaiLyDAO.getInstance().AddDatabaseListener(ob -> {updateListFromDatabase();});
-    }
     private void initEvent(){
         addDirectButton.setOnAction(_ -> {
             try {
@@ -109,10 +113,34 @@ public class MainController  implements Initializable {
             }
         });
     }
+
+    private void initDatabaseBinding(){
+        DaiLyDAO.getInstance().AddDatabaseListener(_ -> updateListFromDatabase());
+    }
     private void initUIDataBinding(){
         mainTableView.setItems(dsDaiLy);
+        initFilterBinding();
     }
+    private void initFilterBinding(){
+        maDaiLyFilter.bindBidirectional(maDaiLyTextField.textProperty());
+        tenDaiLyFilter.bindBidirectional(tenDaiLyTextField.textProperty());
+        maQuanFilter.bindBidirectional(quanComboBox.valueProperty());
+        maLoaiDaiLyFilter.bindBidirectional(loaiDaiLyCombobox.valueProperty());
 
+        filter.setInput(dsDaiLy);
+        maDaiLyFilter.addListener(_ -> {
+            filter.setMaDaiLy(maDaiLyFilter.getValue());
+        });
+        tenDaiLyFilter.addListener(_ -> {
+            filter.setTenDaiLy(tenDaiLyFilter.getValue());
+        });
+        maQuanFilter.addListener(_ -> {
+            filter.setMaQuan(maQuanFilter.getValue());
+        });
+        maLoaiDaiLyFilter.addListener(_ -> {
+            filter.setMaLoaiDaiLy(maLoaiDaiLyFilter.getValue());
+        });
+    }
     public void OpenDirectAddDialog() throws IOException {
 
         FXMLLoader loader = new FXMLLoader(
@@ -133,6 +161,8 @@ public class MainController  implements Initializable {
         dsDaiLy.clear();
         try {
             dsDaiLy.addAll(DaiLyDAO.getInstance().QueryAll());
+            dsDaiLyFiltered.clear();
+            dsDaiLyFiltered.addAll(filter.Filter());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
