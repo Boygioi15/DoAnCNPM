@@ -4,6 +4,9 @@ import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableArray;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -23,6 +26,7 @@ import org.doancnpm.Models.DaiLy;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 /** Controls the main application screen */
@@ -43,14 +47,24 @@ public class MainController  implements Initializable {
     @FXML private TableView mainTableView;
     @FXML private TableView detailTableView;
 
+    //model part
+    private ObservableList<DaiLy> dsDaiLy = FXCollections.observableArrayList();;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        initTableView();
-        initAction();
-        initBinding();
 
-        refreshTableView();
+        //init UI and event
+        initTableView();
+        initEvent();
+
+        //init binding
+        initDatabaseBinding();
+        initUIDataBinding();
+
+        //init data
+        updateListFromDatabase();
     }
+
     private void initTableView(){
         // Tạo các cột cho TableView
         TableColumn<DaiLy, String> maDLCol = new TableColumn<>("Mã đại lý");
@@ -83,10 +97,10 @@ public class MainController  implements Initializable {
         // Thêm các cột vào TableView
         mainTableView.getColumns().addAll(maDLCol,quanCol,loaiDLCol,tenDLCol,SDTCol,emailCol,diaChiCol,noHienTaiCol,ghiChuCol);
     }
-    private void initBinding(){
-        DaiLyDAO.getInstance().AddDatabaseListener(ob -> {refreshTableView();});
+    private void initDatabaseBinding(){
+        DaiLyDAO.getInstance().AddDatabaseListener(ob -> {updateListFromDatabase();});
     }
-    private void initAction(){
+    private void initEvent(){
         addDirectButton.setOnAction(_ -> {
             try {
                 OpenDirectAddDialog();
@@ -95,6 +109,10 @@ public class MainController  implements Initializable {
             }
         });
     }
+    private void initUIDataBinding(){
+        mainTableView.setItems(dsDaiLy);
+    }
+
     public void OpenDirectAddDialog() throws IOException {
 
         FXMLLoader loader = new FXMLLoader(
@@ -111,10 +129,10 @@ public class MainController  implements Initializable {
         stage.showAndWait();
     }
 
-    private void refreshTableView() {
-        mainTableView.getItems().clear();
+    private void updateListFromDatabase() {
+        dsDaiLy.clear();
         try {
-            mainTableView.getItems().addAll(DaiLyDAO.getInstance().QueryAll());
+            dsDaiLy.addAll(DaiLyDAO.getInstance().QueryAll());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
