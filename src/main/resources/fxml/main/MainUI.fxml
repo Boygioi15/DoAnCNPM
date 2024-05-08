@@ -7,17 +7,12 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox
-        fx:id="daily" spacing="10.0"
-        style="visibility: true;" styleClass="surface"
-        xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-        fx:controller="org.doancnpm.main.MainController">
+<VBox fx:id="daily" spacing="10.0" style="visibility: true;" styleClass="surface" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.doancnpm.main.MainController">
     <children>
         <Label styleClass="headline" text="Danh sách đại lý" />
         <HBox alignment="CENTER_LEFT" spacing="10.0">
@@ -58,7 +53,7 @@
         <HBox alignment="CENTER_LEFT" spacing="10.0">
             <children>
                 <MFXTextField fx:id="maDaiLyTextField" borderGap="6.0" floatMode="BORDER" floatingText="Mã đại lý" prefWidth="120.0" styleClass="body-label" />
-                <MFXTextField fx:id="tenDaiLyTextFiekd" borderGap="6.0" floatMode="BORDER" floatingText="Tên đại lý" prefWidth="120.0" styleClass="body-label" />
+                <MFXTextField fx:id="tenDaiLyTextField" borderGap="6.0" floatMode="BORDER" floatingText="Tên đại lý" prefWidth="120.0" styleClass="body-label" />
                 <MFXComboBox fx:id="quanComboBox" accessibleRoleDescription="Quận" floatingText="Quận" />
                 <MFXComboBox fx:id="loaiDaiLyCombobox" floatingText="Loại đại lý" />
                 <Button fx:id="filterButton" mnemonicParsing="false" styleClass="action-button" text="Lọc">
@@ -70,7 +65,7 @@
         </HBox>
         <HBox prefHeight="580.0">
             <children>
-                <TableView fx:id="mainTableView" prefHeight="200.0" prefWidth="800.0"/>
+                <TableView fx:id="mainTableView" prefHeight="200.0" prefWidth="800.0" />
             </children>
         </HBox>
     </children>
