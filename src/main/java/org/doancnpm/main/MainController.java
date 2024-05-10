@@ -12,12 +12,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
+import javafx.stage.PopupWindow;
 import javafx.stage.Stage;
 import org.doancnpm.DAO.DaiLyDAO;
 import org.doancnpm.Filters.DaiLyFilter;
@@ -31,8 +30,9 @@ import java.util.ResourceBundle;
 
 /** Controls the main application screen */
 public class MainController  implements Initializable {
-    @FXML
-    private Button refreshButton, filterButton;
+
+    @FXML private VBox daiLyScreen;
+    @FXML private Button refreshButton, filterButton;
     @FXML private MenuItem addDirectButton;
     @FXML private MenuItem addExcelButton;
     @FXML private Button lapPhieuThuTienButton;
@@ -112,13 +112,16 @@ public class MainController  implements Initializable {
                 throw new RuntimeException(e);
             }
         });
+        refreshButton.setOnAction(_ -> {
+            resetFilter();
+        });
     }
 
     private void initDatabaseBinding(){
         DaiLyDAO.getInstance().AddDatabaseListener(_ -> updateListFromDatabase());
     }
     private void initUIDataBinding(){
-        mainTableView.setItems(dsDaiLy);
+        mainTableView.setItems(dsDaiLyFiltered);
         initFilterBinding();
     }
     private void initFilterBinding(){
@@ -130,15 +133,19 @@ public class MainController  implements Initializable {
         filter.setInput(dsDaiLy);
         maDaiLyFilter.addListener(_ -> {
             filter.setMaDaiLy(maDaiLyFilter.getValue());
+            filterList();
         });
         tenDaiLyFilter.addListener(_ -> {
             filter.setTenDaiLy(tenDaiLyFilter.getValue());
+            filterList();
         });
         maQuanFilter.addListener(_ -> {
             filter.setMaQuan(maQuanFilter.getValue());
+            filterList();
         });
         maLoaiDaiLyFilter.addListener(_ -> {
             filter.setMaLoaiDaiLy(maLoaiDaiLyFilter.getValue());
+            filterList();
         });
     }
     public void OpenDirectAddDialog() throws IOException {
@@ -149,7 +156,7 @@ public class MainController  implements Initializable {
         Parent parent = loader.load();
         DirectAddDialogController dialogController = loader.<DirectAddDialogController>getController();
         //dialogController.setAppMainObservableList(tvObservableList);
-
+        PopupControl test = new PopupControl();
         Scene scene = new Scene(parent, 300, 200);
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
@@ -161,10 +168,19 @@ public class MainController  implements Initializable {
         dsDaiLy.clear();
         try {
             dsDaiLy.addAll(DaiLyDAO.getInstance().QueryAll());
-            dsDaiLyFiltered.clear();
-            dsDaiLyFiltered.addAll(filter.Filter());
+            filterList();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+    private void filterList(){
+        dsDaiLyFiltered.clear();
+        dsDaiLyFiltered.addAll(filter.Filter());
+    }
+    private void resetFilter(){
+        quanComboBox.clear();
+        maDaiLyTextField.clear();
+        tenDaiLyTextField.clear();
+        loaiDaiLyCombobox.clear();
     }
 }

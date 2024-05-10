@@ -1,0 +1,138 @@
+package org.doancnpm.DAO;
+
+import javafx.beans.InvalidationListener;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import org.doancnpm.Models.DatabaseDriver;
+import org.doancnpm.Models.LoaiDaiLy;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+public class LoaiDaiLyDAO implements Idao<LoaiDaiLy> {
+    private static LoaiDaiLyDAO singleton = null;
+
+    public static LoaiDaiLyDAO getInstance() {
+        if (singleton == null) {
+            singleton = new LoaiDaiLyDAO();
+        }
+        return singleton;
+    }
+
+    private final BooleanProperty loaiDaiLyDtbChanged = new SimpleBooleanProperty(false);
+
+    @Override
+    public int Insert(LoaiDaiLy loaiDaiLy) throws SQLException {
+        Connection conn = DatabaseDriver.getConnect();
+        String sql = "INSERT INTO DAILY (SoNoToiDa,TenLoai,GhiChu) VALUES (?, ?, ?)";
+
+        assert conn != null;
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setInt(1, loaiDaiLy.getSoNoToiDa());
+        pstmt.setString(2, loaiDaiLy.getTenLoai());
+        pstmt.setString(3, loaiDaiLy.getGhiChu());
+
+        int rowsAffected = pstmt.executeUpdate();
+        if (rowsAffected > 0) {
+            notifyChange();
+        }
+        pstmt.close();
+        return rowsAffected;
+    }
+
+    @Override
+    public int Update(LoaiDaiLy loaiDaiLy) throws SQLException {
+        Connection conn = DatabaseDriver.getConnect();
+        String sql = "UPDATE DAILY SET SoNoToiDa = ?, TenLoai =? , GhiChu =? WHERE ID =? ";
+
+        assert conn != null;
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setInt(1, loaiDaiLy.getSoNoToiDa());
+        pstmt.setString(2, loaiDaiLy.getTenLoai());
+        pstmt.setString(3, loaiDaiLy.getGhiChu());
+        pstmt.setInt(4, loaiDaiLy.getId());
+
+        int rowsAffected = pstmt.executeUpdate();
+        if (rowsAffected > 0) {
+            notifyChange();
+        }
+        pstmt.close();
+        return rowsAffected;
+    }
+
+    @Override
+    public int Delete(LoaiDaiLy loaiDaiLy) throws SQLException {
+        Connection conn = DatabaseDriver.getConnect();
+        String sql = "DELETE FROM LOAIDAILY WHERE ID = ?";
+
+        assert conn != null;
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setInt(1, loaiDaiLy.getId());
+
+        int rowsAffected = pstmt.executeUpdate();
+        if (rowsAffected > 0) {
+            notifyChange();
+        }
+        pstmt.close();
+        return rowsAffected;
+    }
+
+    @Override
+    public LoaiDaiLy QueryID(int ID) throws SQLException {
+        Connection conn = DatabaseDriver.getConnect();
+        String sql = "SELECT * FROM LOAIDAILY WHERE ID = ?";
+
+        assert conn != null;
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setInt(1, ID);
+
+        ResultSet rs = pstmt.executeQuery();
+
+        if (rs.next()) {
+            int id = rs.getInt("ID");
+            String maLoai = rs.getString("MaLoai");
+            int soNoToiDa = rs.getInt("SoNoToiDa");
+            String tenLoai = rs.getString("TenLoai");
+            String ghiChu = rs.getString("GhiChu");
+
+            return new LoaiDaiLy(id, maLoai, soNoToiDa, tenLoai, ghiChu);
+        }
+
+        return null;
+    }
+
+    @Override
+    public ArrayList<LoaiDaiLy> QueryAll() throws SQLException {
+        ArrayList<LoaiDaiLy> loaiDaiLys = new ArrayList<>();
+        Connection conn = DatabaseDriver.getConnect();
+        String sql = "SELECT * FROM LOAIDAILY";
+
+        assert conn != null;
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        ResultSet rs = pstmt.executeQuery();
+
+        while (rs.next()) {
+            int id = rs.getInt("ID");
+            String maLoai = rs.getString("MaLoai");
+            int soNoToiDa = rs.getInt("SoNoToiDa");
+            String tenLoai = rs.getString("TenLoai");
+            String ghiChu = rs.getString("GhiChu");
+
+            loaiDaiLys.add(new LoaiDaiLy(id,maLoai, soNoToiDa, tenLoai, ghiChu));
+        }
+
+        return loaiDaiLys;
+    }
+
+    @Override
+    public void AddDatabaseListener(InvalidationListener listener) {
+        loaiDaiLyDtbChanged.addListener(listener);
+    }
+
+    private void notifyChange() {
+        loaiDaiLyDtbChanged.set(!loaiDaiLyDtbChanged.get());
+    }
+}

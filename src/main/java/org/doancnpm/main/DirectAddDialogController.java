@@ -1,5 +1,9 @@
 package org.doancnpm.main;
 
+import io.github.palexdev.materialfx.controls.MFXTextField;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -27,13 +31,45 @@ public class DirectAddDialogController implements Initializable {
     @FXML private Button thoatButton;
     @FXML private Button themButton;
 
+    //validators
+    BooleanProperty notSelectedQuan = new SimpleBooleanProperty(false);
+    BooleanProperty notSelectedLoaiDaiLy = new SimpleBooleanProperty(false);
+    BooleanProperty emptyTenDaily = new SimpleBooleanProperty(false);
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initAction();
+        initValidator();
     }
     public void initAction(){
         //thoatButton.setOnAction();
         themButton.setOnAction(ob -> add());
+    }
+
+    //validator
+    private void initValidator(){
+        notSelectedQuan.bind(Bindings.createBooleanBinding(this::checkQuanSelected,quanComboBox.valueProperty()));
+        notSelectedLoaiDaiLy.bind(Bindings.createBooleanBinding(this::checkLoaiDaiLySelected,loaiDaiLyComboBox.valueProperty()));
+        emptyTenDaily.bind(Bindings.createBooleanBinding(this::checkTenDaiLyEmpty,loaiDaiLyComboBox.valueProperty()));
+        themButton.disableProperty().bind(
+                Bindings.createBooleanBinding(this::allowAdding,
+                        notSelectedQuan,
+                        notSelectedLoaiDaiLy,
+                        emptyTenDaily
+                )
+        );
+    }
+    private boolean allowAdding(){
+        return notSelectedQuan.getValue()&&notSelectedLoaiDaiLy.getValue()&&emptyTenDaily.getValue();
+    }
+    private boolean checkQuanSelected(){
+        return quanComboBox.getValue()==null;
+    }
+    private boolean checkLoaiDaiLySelected(){
+        return loaiDaiLyComboBox.getValue()==null;
+    }
+    private boolean checkTenDaiLyEmpty(){
+        return tenDaiLyTextField.getText().isEmpty();
     }
     public void exit(){
 
@@ -69,5 +105,9 @@ public class DirectAddDialogController implements Initializable {
         alert.setTitle("Không thể thêm đại lý mới vào!");
         alert.setContentText("Lỗi" + message);
         alert.showAndWait();
+    }
+    private void initValidation(){
+        MFXTextField tf = new MFXTextField();
+        tf.updateInvalid(tf,true);
     }
 }

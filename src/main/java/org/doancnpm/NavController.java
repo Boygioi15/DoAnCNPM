@@ -53,9 +53,12 @@ public class NavController {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/fxml/main/MainUI.fxml")
             );
-            scene.setRoot((Parent) loader.load());
+            Parent objectGraph = (Parent) loader.load();
+            scene.setRoot(objectGraph);
             MainController controller =
                     loader.<MainController>getController();
+            scene.getWindow().sizeToScene();
+            scene.getWindow().centerOnScreen();
         } catch (IOException ex) {
             Logger.getLogger(NavController.class.getName()).log(Level.SEVERE, null, ex);
         }

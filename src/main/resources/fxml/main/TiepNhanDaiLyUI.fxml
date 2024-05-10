@@ -19,7 +19,7 @@
         <Label text="Tiếp nhận đại lý" />
         <AnchorPane>
             <children>
-                <HBox alignment="CENTER" prefWidth="200.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
+                <HBox alignment="CENTER" prefWidth="200.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <children>
                         <MFXTextField fx:id="nguoiTiepNhanTextField" borderGap="5.0" editable="false" floatMode="BORDER" floatingText="Người tiếp nhận" floatingTextGap="0.0" text="Hello" />
                         <MFXTextField fx:id="ngayTiepNhanTextField" borderGap="5.0" editable="false" floatMode="BORDER" floatingText="Ngày tiếp nhận" floatingTextGap="0.0" text="Hôm nay" />
@@ -30,7 +30,7 @@
         <Separator prefWidth="200.0" />
         <GridPane alignment="CENTER_LEFT" hgap="20.0" vgap="20.0">
             <columnConstraints>
-                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="20.0" />
+                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="15.0" />
                 <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
             </columnConstraints>
             <rowConstraints>
@@ -48,7 +48,6 @@
                 <Label text="Tên đại lý:" GridPane.rowIndex="2" />
                 <Label text="Địa chỉ:" GridPane.rowIndex="3" />
                 <Label text="Điện thoại:" GridPane.rowIndex="5" />
-                <SearchableComboBox fx:id="quanComboBox" prefWidth="322.0" promptText="-Chọn quận-" GridPane.columnIndex="1" />
                 <SearchableComboBox fx:id="loaiDaiLyComboBox" promptText="-Chọn loại đại lý-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                 <TextField fx:id="tenDaiLyTextField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                 <TextField fx:id="diaChiTextField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
@@ -57,12 +56,17 @@
                 <TextField fx:id="dienThoaiTextField" GridPane.columnIndex="1" GridPane.rowIndex="5" />
             <Label text="Email:" GridPane.rowIndex="4" />
             <TextField fx:id="emailTextField" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <VBox GridPane.columnIndex="1">
+               <children>
+                      <SearchableComboBox fx:id="quanComboBox" prefWidth="322.0" promptText="-Chọn quận-" />
+               </children>
+            </VBox>
             </children>
         </GridPane>
         <Separator prefWidth="200.0" />
         <AnchorPane VBox.vgrow="ALWAYS">
             <children>
-                <HBox layoutX="364.0" layoutY="-50.0" spacing="10.0" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="20.0">
+                <HBox layoutX="364.0" layoutY="-50.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
                     <children>
                         <Button fx:id="thoatButton" mnemonicParsing="false" text="Thoát" />
                         <Button fx:id="themButton" mnemonicParsing="false" text="Thêm mới" />
@@ -72,6 +76,6 @@
         </AnchorPane>
     </children>
     <padding>
-        <Insets left="10.0" right="10.0" top="10.0" />
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
     </padding>
 </VBox>
