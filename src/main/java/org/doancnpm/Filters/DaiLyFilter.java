@@ -26,6 +26,7 @@ public class DaiLyFilter implements IFilter<DaiLy> {
                 output.remove(daiLy);
                 continue;
             }
+            /*
             if (maQuan != null && !maQuan.isEmpty() && !daiLy.getMaQuan().contains(maQuan)) {
                 output.remove(daiLy);
                 continue;
@@ -34,6 +35,7 @@ public class DaiLyFilter implements IFilter<DaiLy> {
                 output.remove(daiLy);
                 continue;
             }
+            */
             if (tenDaiLy != null && !tenDaiLy.isEmpty() && !daiLy.getTenDaiLy().contains(tenDaiLy)) {
                 output.remove(daiLy);
             }

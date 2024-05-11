@@ -78,8 +78,8 @@ public class DirectAddDialogController implements Initializable {
         Date ngayTiepNhan = new Date(System.currentTimeMillis());
         DaiLy toAdd = new DaiLy();
 
-        toAdd.setMaQuan(quanComboBox.getValue());
-        toAdd.setMaLoaiDaiLy(loaiDaiLyComboBox.getValue());
+        toAdd.setMaQuan(Integer.parseInt(quanComboBox.getValue()));
+        toAdd.setMaLoaiDaiLy(Integer.parseInt(loaiDaiLyComboBox.getValue()));
 
         toAdd.setTenDaiLy(tenDaiLyTextField.getText());
         toAdd.setDiaChi(diaChiTextField.getText());

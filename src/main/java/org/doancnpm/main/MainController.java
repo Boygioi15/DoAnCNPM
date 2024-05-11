@@ -81,11 +81,11 @@ public class MainController  implements Initializable {
         TableColumn<DaiLy, String> maDLCol = new TableColumn<>("Mã đại lý");
         maDLCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getMaDaiLy()));
 
-        TableColumn<DaiLy, String> quanCol = new TableColumn<>("Quận");
+        TableColumn<DaiLy, Integer> quanCol = new TableColumn<>("Quận");
         quanCol.setCellValueFactory(data -> new SimpleObjectProperty<>(data.getValue().getMaQuan()));
 
-        TableColumn<DaiLy, String> loaiDLCol = new TableColumn<>("Loại đại lý");
-        loaiDLCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getMaLoaiDaiLy()));
+        TableColumn<DaiLy, Integer> loaiDLCol = new TableColumn<>("Loại đại lý");
+        loaiDLCol.setCellValueFactory(data -> new SimpleObjectProperty<>(data.getValue().getMaLoaiDaiLy()));
 
         TableColumn<DaiLy, String> tenDLCol = new TableColumn<>("Tên đại lý");
         tenDLCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getTenDaiLy()));

@@ -23,16 +23,21 @@ public class DaiLyDAO implements Idao<DaiLy> {
     @Override
     public int Insert(DaiLy daiLy) throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
-        String sql = "INSERT INTO DAILY (TenDaiLy, DienThoai,Email,DiaChi,NgayTiepNhan,GhiChu) VALUES (?, ?, ?,?,?,?)";
+        String sql = "INSERT INTO DAILY " +
+                "(MaQuan, MaLoaiDaiLy, TenDaiLy, DienThoai,Email,DiaChi,NgayTiepNhan,GhiChu) " +
+                "VALUES " +
+                "(?,?,?,?,?,?,?,?)";
 
         assert conn != null;
         PreparedStatement pstmt = conn.prepareStatement(sql);
-        pstmt.setString(1, daiLy.getTenDaiLy());
-        pstmt.setString(2, daiLy.getDienThoai());
-        pstmt.setString(3, daiLy.getEmail());
-        pstmt.setString(4, daiLy.getDiaChi());
-        pstmt.setDate(5, daiLy.getNgayTiepNhan());
-        pstmt.setString(6, daiLy.getGhiChu());
+        pstmt.setInt(1, daiLy.getMaQuan());
+        pstmt.setInt(2, daiLy.getMaLoaiDaiLy());
+        pstmt.setString(3, daiLy.getTenDaiLy());
+        pstmt.setString(4, daiLy.getDienThoai());
+        pstmt.setString(5, daiLy.getEmail());
+        pstmt.setString(6, daiLy.getDiaChi());
+        pstmt.setDate(7, daiLy.getNgayTiepNhan());
+        pstmt.setString(8, daiLy.getGhiChu());
 
         int rowsAffected = pstmt.executeUpdate();
         if (rowsAffected > 0) {
@@ -46,19 +51,21 @@ public class DaiLyDAO implements Idao<DaiLy> {
     public int Update(int id, DaiLy daiLy) throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
         String sql = "UPDATE DAILY " +
-                "SET TenDaiLy = ?, DienThoai = ?, Email = ?, DiaChi = ?, NgayTiepNhan = ?, NoHienTai = ?, GhiChu = ? " +
+                "SET MaQuan = ?, MaLoaiDaiLy =?, TenDaiLy = ?, DienThoai = ?, Email = ?, DiaChi = ?, NgayTiepNhan = ?, NoHienTai = ?, GhiChu = ? " +
                 "WHERE ID = ?";
 
         assert conn != null;
         PreparedStatement pstmt = conn.prepareStatement(sql);
-        pstmt.setString(1, daiLy.getTenDaiLy());
-        pstmt.setString(2, daiLy.getDienThoai());
-        pstmt.setString(3, daiLy.getEmail());
-        pstmt.setString(4, daiLy.getDiaChi());
-        pstmt.setDate(5, daiLy.getNgayTiepNhan());
-        pstmt.setInt(6, daiLy.getNoHienTai());
-        pstmt.setString(7, daiLy.getGhiChu());
-        pstmt.setInt(8, id);
+        pstmt.setInt(1, daiLy.getMaQuan());
+        pstmt.setInt(2, daiLy.getMaLoaiDaiLy());
+        pstmt.setString(3, daiLy.getTenDaiLy());
+        pstmt.setString(4, daiLy.getDienThoai());
+        pstmt.setString(5, daiLy.getEmail());
+        pstmt.setString(6, daiLy.getDiaChi());
+        pstmt.setDate(7, daiLy.getNgayTiepNhan());
+        pstmt.setInt(8, daiLy.getNoHienTai());
+        pstmt.setString(9, daiLy.getGhiChu());
+        pstmt.setInt(10, id);
         int rowsAffected = pstmt.executeUpdate();
         if (rowsAffected > 0) {
             notifyChange();
@@ -100,8 +107,8 @@ public class DaiLyDAO implements Idao<DaiLy> {
             daiLy = new DaiLy();
 
             String maDL = rs.getString("MaDaiLy");
-            String maQuan = rs.getString("MaQuan");
-            String maLoaiDL = rs.getString("MaLoaiDaiLy");
+            int maQuan = rs.getInt("MaQuan");
+            int maLoaiDL = rs.getInt("MaLoaiDaiLy");
             String tenDaiLy = rs.getString("TenDaiLy");
             String SDT = rs.getString("DienThoai");
             String email = rs.getString("email");
@@ -144,8 +151,8 @@ public class DaiLyDAO implements Idao<DaiLy> {
 
             int ID = rs.getInt("ID");
             String maDL = rs.getString("MaDaiLy");
-            String maQuan = rs.getString("MaQuan");
-            String maLoaiDL = rs.getString("MaLoaiDaiLy");
+            int maQuan = rs.getInt("MaQuan");
+            int maLoaiDL = rs.getInt("MaLoaiDaiLy");
             String tenDaiLy = rs.getString("TenDaiLy");
             String SDT = rs.getString("DienThoai");
             String email = rs.getString("email");
