@@ -43,9 +43,11 @@ public class DaiLyDAO implements Idao<DaiLy> {
     }
 
     @Override
-    public int Update(DaiLy daiLy) throws SQLException {
+    public int Update(int id, DaiLy daiLy) throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
-        String sql = "UPDATE DAILY SET TenDaiLy = ?, DienThoai = ?, Email = ?, DiaChi = ?, NgayTiepNhan = ?, NoHienTai = ?, GhiChu = ? WHERE ID = ?";
+        String sql = "UPDATE DAILY " +
+                "SET TenDaiLy = ?, DienThoai = ?, Email = ?, DiaChi = ?, NgayTiepNhan = ?, NoHienTai = ?, GhiChu = ? " +
+                "WHERE ID = ?";
 
         assert conn != null;
         PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -56,7 +58,7 @@ public class DaiLyDAO implements Idao<DaiLy> {
         pstmt.setDate(5, daiLy.getNgayTiepNhan());
         pstmt.setInt(6, daiLy.getNoHienTai());
         pstmt.setString(7, daiLy.getGhiChu());
-
+        pstmt.setInt(8, id);
         int rowsAffected = pstmt.executeUpdate();
         if (rowsAffected > 0) {
             notifyChange();
@@ -66,13 +68,13 @@ public class DaiLyDAO implements Idao<DaiLy> {
     }
 
     @Override
-    public int Delete(DaiLy daiLy) throws SQLException {
+    public int Delete(int id) throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
         String sql = "DELETE FROM DAILY WHERE ID = ?";
 
         assert conn != null;
         PreparedStatement pstmt = conn.prepareStatement(sql);
-        pstmt.setString(1, Integer.toString(daiLy.getID()));
+        pstmt.setInt(1, id);
 
         int rowsAffected = pstmt.executeUpdate();
         if (rowsAffected > 0) {
@@ -96,6 +98,7 @@ public class DaiLyDAO implements Idao<DaiLy> {
 
         if (rs.next()) {
             daiLy = new DaiLy();
+
             String maDL = rs.getString("MaDaiLy");
             String maQuan = rs.getString("MaQuan");
             String maLoaiDL = rs.getString("MaLoaiDaiLy");
@@ -138,6 +141,8 @@ public class DaiLyDAO implements Idao<DaiLy> {
 
         while (rs.next()) {
             DaiLy daiLy = new DaiLy();
+
+            int ID = rs.getInt("ID");
             String maDL = rs.getString("MaDaiLy");
             String maQuan = rs.getString("MaQuan");
             String maLoaiDL = rs.getString("MaLoaiDaiLy");
@@ -149,6 +154,7 @@ public class DaiLyDAO implements Idao<DaiLy> {
             Integer noHienTai = rs.getInt("NoHienTai");
             String ghiChu = rs.getString("GhiChu");
 
+            daiLy.setID(ID);
             daiLy.setMaDaiLy(maDL);
             daiLy.setMaQuan(maQuan);
             daiLy.setMaLoaiDaiLy(maLoaiDL);

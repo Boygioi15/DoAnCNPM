@@ -13,11 +13,13 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
-import javafx.stage.PopupWindow;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import org.doancnpm.DAO.DaiLyDAO;
 import org.doancnpm.Filters.DaiLyFilter;
 import org.doancnpm.Models.DaiLy;
@@ -25,8 +27,10 @@ import org.doancnpm.Models.DaiLy;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 /** Controls the main application screen */
 public class MainController  implements Initializable {
@@ -101,8 +105,81 @@ public class MainController  implements Initializable {
         TableColumn<DaiLy, String> ghiChuCol = new TableColumn<>("Ghi chú");
         ghiChuCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getGhiChu()));
 
+
+        //selected collumn:
+        TableColumn<DaiLy, Boolean> selectedCol = new TableColumn<>( "Selected" );
+        selectedCol.setCellValueFactory( new PropertyValueFactory<>( "selected" ));
+        selectedCol.setCellFactory( tc -> new CheckBoxTableCell<>());
+
+        //action column
+        TableColumn actionCol = new TableColumn("Action");
+        //actionCol.setCellValueFactory(new PropertyValueFactory<>("DUMMY"));
+
+        Callback<TableColumn<DaiLy, String>, TableCell<DaiLy, String>> cellFactory
+                = //
+                new Callback<TableColumn<DaiLy, String>, TableCell<DaiLy, String>>() {
+                    @Override
+                    public TableCell call(final TableColumn<DaiLy, String> param) {
+                        final TableCell<DaiLy, String> cell = new TableCell<DaiLy, String>() {
+                            final Button themBtn = new javafx.scene.control.Button("Sửa");
+                            final Button xoaBtn = new javafx.scene.control.Button("Xóa");
+
+                            @Override
+                            public void updateItem(String item, boolean empty) {
+                                super.updateItem(item, empty);
+                                if (empty) {
+                                    setGraphic(null);
+                                    setText(null);
+                                }
+                                else {
+                                    xoaBtn.setOnAction(event -> {
+                                        DaiLy dl = getTableView().getItems().get(getIndex());
+                                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                                        alert.setTitle("Xóa đại lý");
+                                        alert.setHeaderText("Đại lý" + dl.getTenDaiLy() + " đã đồng hành với bạn trong 3 tháng\nBạn qua cầu rút ván hả?");
+                                        alert.setContentText("Bạn chắc chứ?");
+
+                                        Optional<ButtonType> result = alert.showAndWait();
+                                        if (result.get() == ButtonType.OK){
+                                            try {
+                                                DaiLyDAO.getInstance().Delete(dl.getID());
+                                            } catch (SQLException e) {
+                                                throw new RuntimeException(e);
+                                            }
+                                        }
+                                    });
+
+                                    HBox hbox = new HBox();
+                                    hbox.getChildren().addAll(themBtn,xoaBtn);
+                                    hbox.setSpacing(5);
+                                    hbox.setPrefWidth(USE_COMPUTED_SIZE);
+                                    hbox.setPrefHeight(USE_COMPUTED_SIZE);
+                                    System.out.println("hi");
+                                    setGraphic(hbox);
+                                    setText(null);
+                                }
+                            }
+                        };
+                        return cell;
+                    }
+                };
+
+        actionCol.setCellFactory(cellFactory);
+
         // Thêm các cột vào TableView
-        mainTableView.getColumns().addAll(maDLCol,quanCol,loaiDLCol,tenDLCol,SDTCol,emailCol,diaChiCol,noHienTaiCol,ghiChuCol);
+        mainTableView.getColumns().addAll(selectedCol,
+                maDLCol,
+                quanCol,
+                loaiDLCol,
+                tenDLCol,
+                SDTCol,
+                emailCol,
+                diaChiCol,
+                noHienTaiCol,
+                ghiChuCol,
+                actionCol
+        );
+        mainTableView.setEditable( true );
     }
     private void initEvent(){
         addDirectButton.setOnAction(_ -> {
@@ -115,6 +192,8 @@ public class MainController  implements Initializable {
         refreshButton.setOnAction(_ -> {
             resetFilter();
         });
+        deleteSelectedButton.setOnAction(ob -> DeleteSelectedRow());
+
     }
 
     private void initDatabaseBinding(){
@@ -148,6 +227,7 @@ public class MainController  implements Initializable {
             filterList();
         });
     }
+
     public void OpenDirectAddDialog() throws IOException {
 
         FXMLLoader loader = new FXMLLoader(
@@ -164,6 +244,25 @@ public class MainController  implements Initializable {
         stage.showAndWait();
     }
 
+    public void DeleteSelectedRow()  {
+        final Set<DaiLy> del = new HashSet<>();
+        for( Object o : mainTableView.getItems()) {
+            DaiLy dl = (DaiLy) o;
+            if( dl.isSelected()) {
+                del.add( dl );
+            }
+        }
+        //System.out.println(del.size());
+        for(DaiLy dl : del){
+            int ID = dl.getID();
+            try {
+                DaiLyDAO.getInstance().Delete(ID);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        //mainTableView.getItems().removeAll( del );
+    }
     private void updateListFromDatabase() {
         dsDaiLy.clear();
         try {
@@ -183,4 +282,6 @@ public class MainController  implements Initializable {
         tenDaiLyTextField.clear();
         loaiDaiLyCombobox.clear();
     }
+
+
 }

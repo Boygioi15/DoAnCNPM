@@ -38,7 +38,7 @@ public class MatHangDao implements Idao<MatHang> {
     }
 
     @Override
-    public int Update(MatHang matHang) throws SQLException{
+    public int Update(int ID, MatHang matHang) throws SQLException{
         Connection conn = DatabaseDriver.getConnect();
         String sql = "UPDATE MATHANG SET ten_mh = ?, ghi_chu = ? WHERE ma_dvt = ?";
 
@@ -57,13 +57,13 @@ public class MatHangDao implements Idao<MatHang> {
     }
 
     @Override
-    public int Delete(MatHang matHang) throws SQLException{
+    public int Delete(int id) throws SQLException{
         Connection conn = DatabaseDriver.getConnect();
         String sql = "DELETE FROM MATHANG WHERE ID = ?";
 
         assert conn != null;
         PreparedStatement pstmt = conn.prepareStatement(sql);
-        pstmt.setInt(1, matHang.getID());
+        pstmt.setInt(1, id);
 
         int rowsAffected = pstmt.executeUpdate();
         if(rowsAffected>0){

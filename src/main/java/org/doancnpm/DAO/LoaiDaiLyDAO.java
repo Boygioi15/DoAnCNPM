@@ -44,7 +44,7 @@ public class LoaiDaiLyDAO implements Idao<LoaiDaiLy> {
     }
 
     @Override
-    public int Update(LoaiDaiLy loaiDaiLy) throws SQLException {
+    public int Update(int id, LoaiDaiLy loaiDaiLy) throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
         String sql = "UPDATE DAILY SET SoNoToiDa = ?, TenLoai =? , GhiChu =? WHERE ID =? ";
 
@@ -53,7 +53,7 @@ public class LoaiDaiLyDAO implements Idao<LoaiDaiLy> {
         pstmt.setInt(1, loaiDaiLy.getSoNoToiDa());
         pstmt.setString(2, loaiDaiLy.getTenLoai());
         pstmt.setString(3, loaiDaiLy.getGhiChu());
-        pstmt.setInt(4, loaiDaiLy.getId());
+        pstmt.setInt(4, id);
 
         int rowsAffected = pstmt.executeUpdate();
         if (rowsAffected > 0) {
@@ -64,13 +64,13 @@ public class LoaiDaiLyDAO implements Idao<LoaiDaiLy> {
     }
 
     @Override
-    public int Delete(LoaiDaiLy loaiDaiLy) throws SQLException {
+    public int Delete(int id) throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
         String sql = "DELETE FROM LOAIDAILY WHERE ID = ?";
 
         assert conn != null;
         PreparedStatement pstmt = conn.prepareStatement(sql);
-        pstmt.setInt(1, loaiDaiLy.getId());
+        pstmt.setInt(1,id);
 
         int rowsAffected = pstmt.executeUpdate();
         if (rowsAffected > 0) {

@@ -43,7 +43,7 @@ public class QuanDAO implements Idao<Quan> {
     }
 
     @Override
-    public int Update(Quan quan) throws SQLException {
+    public int Update(int id, Quan quan) throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
         String sql = "UPDATE Quan SET TenQuan=?,GhiChu=? WHERE ID =? ";
 
@@ -51,7 +51,7 @@ public class QuanDAO implements Idao<Quan> {
         PreparedStatement pstmt = conn.prepareStatement(sql);
         pstmt.setString(1, quan.getTenQuan());
         pstmt.setString(2, quan.getGhiChu());
-        pstmt.setInt(3, quan.getId());
+        pstmt.setInt(3, id);
 
         int rowsAffected = pstmt.executeUpdate();
         if (rowsAffected > 0) {
@@ -62,13 +62,13 @@ public class QuanDAO implements Idao<Quan> {
     }
 
     @Override
-    public int Delete(Quan quan) throws SQLException {
+    public int Delete(int id) throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
         String sql = "DELETE FROM QUAN WHERE ID = ?";
 
         assert conn != null;
         PreparedStatement pstmt = conn.prepareStatement(sql);
-        pstmt.setInt(1, quan.getId());
+        pstmt.setInt(1, id);
 
         int rowsAffected = pstmt.executeUpdate();
         if (rowsAffected > 0) {

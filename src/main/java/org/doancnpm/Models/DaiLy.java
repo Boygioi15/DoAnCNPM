@@ -1,8 +1,12 @@
 package org.doancnpm.Models;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+
 import java.sql.Date;
 
 public class DaiLy {
+    private BooleanProperty selected = new SimpleBooleanProperty(false);
     private Integer ID;
     private String maDaiLy;
     private String maQuan;
@@ -89,5 +93,17 @@ public class DaiLy {
     }
     public void setGhiChu(String ghiChu) {
         this.ghiChu = ghiChu;
+    }
+
+    public boolean isSelected() {
+        return selected.get();
+    }
+
+    public BooleanProperty selectedProperty() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected.set(selected);
     }
 }
