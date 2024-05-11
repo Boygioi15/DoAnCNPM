@@ -8,17 +8,12 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.doancnpm.DAO.DaiLyDAO;
 import org.doancnpm.Filters.DaiLyFilter;
@@ -121,7 +116,7 @@ public class MainController  implements Initializable {
                     @Override
                     public TableCell call(final TableColumn<DaiLy, String> param) {
                         final TableCell<DaiLy, String> cell = new TableCell<DaiLy, String>() {
-                            final Button themBtn = new javafx.scene.control.Button("Sửa");
+                            final Button suaBtn = new javafx.scene.control.Button("Sửa");
                             final Button xoaBtn = new javafx.scene.control.Button("Xóa");
 
                             @Override
@@ -143,18 +138,38 @@ public class MainController  implements Initializable {
                                         if (result.get() == ButtonType.OK){
                                             try {
                                                 DaiLyDAO.getInstance().Delete(dl.getID());
+                                                popSuccessDialog("Xóa đại lý "+ dl.getMaDaiLy() + " thành công");
                                             } catch (SQLException e) {
-                                                throw new RuntimeException(e);
+                                                popErrorDialog("Xóa đại lý "+ dl.getMaDaiLy() + " thất bại",e.toString());
                                             }
                                         }
                                     });
-
+                                    suaBtn.setOnAction(_ -> {
+                                        try {
+                                            DaiLy daily = getTableView().getItems().get(getIndex());
+                                            new DirectAddDialog(daily).showAndWait().ifPresent(daiLyInfo -> {
+                                                daiLyInfo.setID(daily.getID());
+                                                daiLyInfo.setNoHienTai(daily.getNoHienTai());
+                                                daiLyInfo.setNgayTiepNhan(daily.getNgayTiepNhan());
+                                                daiLyInfo.setMaDaiLy(daily.getMaDaiLy());
+                                                try {
+                                                    DaiLyDAO.getInstance().Update(daily.getID(),daiLyInfo);
+                                                    popSuccessDialog("Cập nhật đại lý "+daiLyInfo.getMaDaiLy()+" thành công");
+                                                } catch (SQLException e) {
+                                                    popErrorDialog("Cập nhật đại lý "+daiLyInfo.getMaDaiLy()+" thất bại",
+                                                            e.toString());
+                                                }
+                                                //mainTableView.getItems().set(selectedIndex, response);
+                                            });
+                                        } catch(IOException exc) {
+                                            exc.printStackTrace();
+                                        }
+                                    });
                                     HBox hbox = new HBox();
-                                    hbox.getChildren().addAll(themBtn,xoaBtn);
+                                    hbox.getChildren().addAll(suaBtn,xoaBtn);
                                     hbox.setSpacing(5);
                                     hbox.setPrefWidth(USE_COMPUTED_SIZE);
                                     hbox.setPrefHeight(USE_COMPUTED_SIZE);
-                                    System.out.println("hi");
                                     setGraphic(hbox);
                                     setText(null);
                                 }
@@ -192,8 +207,7 @@ public class MainController  implements Initializable {
         refreshButton.setOnAction(_ -> {
             resetFilter();
         });
-        deleteSelectedButton.setOnAction(ob -> DeleteSelectedRow());
-
+        deleteSelectedButton.setOnAction(_ -> DeleteSelectedRow());
     }
 
     private void initDatabaseBinding(){
@@ -229,7 +243,23 @@ public class MainController  implements Initializable {
     }
 
     public void OpenDirectAddDialog() throws IOException {
-
+        try {
+            new DirectAddDialog().showAndWait().ifPresent(
+                    daiLyAdded -> {
+                        try {
+                            DaiLyDAO.getInstance().Insert(daiLyAdded);
+                            popSuccessDialog("Thêm mới đại lý "+daiLyAdded.getTenDaiLy()+" thành công");
+                        }
+                        catch (SQLException e) {
+                            popErrorDialog("Thêm mới đại lý thất bại", e.toString());
+                        }
+                    }
+            );
+        }
+        catch (IOException exc) {
+            exc.printStackTrace();
+        }
+        /*
         FXMLLoader loader = new FXMLLoader(
                 getClass().getResource("/fxml/main/TiepNhanDaiLyUI.fxml")
         );
@@ -242,6 +272,8 @@ public class MainController  implements Initializable {
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setScene(scene);
         stage.showAndWait();
+
+         */
     }
 
     public void DeleteSelectedRow()  {
@@ -283,5 +315,17 @@ public class MainController  implements Initializable {
         loaiDaiLyCombobox.clear();
     }
 
-
+    private void popSuccessDialog(String message){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Thông báo!!!");
+        alert.setHeaderText(message);
+        alert.showAndWait();
+    }
+    private void popErrorDialog(String message, String errorMessage){
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Thông báo!!!");
+        alert.setHeaderText(message);
+        alert.setContentText("Lỗi: " + errorMessage);
+        alert.showAndWait();
+    }
 }

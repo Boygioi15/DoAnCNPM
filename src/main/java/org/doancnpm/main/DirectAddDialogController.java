@@ -7,7 +7,6 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import org.controlsfx.control.SearchableComboBox;
 import org.doancnpm.DAO.DaiLyDAO;
@@ -28,8 +27,6 @@ public class DirectAddDialogController implements Initializable {
     @FXML private TextField emailTextField;
     @FXML private TextField ghiChuTextField;
 
-    @FXML private Button thoatButton;
-    @FXML private Button themButton;
 
     //validators
     BooleanProperty notSelectedQuan = new SimpleBooleanProperty(false);
@@ -43,14 +40,27 @@ public class DirectAddDialogController implements Initializable {
     }
     public void initAction(){
         //thoatButton.setOnAction();
-        themButton.setOnAction(ob -> add());
+        //themButton.setOnAction(ob -> add());
     }
+    public void setInitialValue(DaiLy daiLy){
+        if(daiLy==null){
+            return;
+        }
+        quanComboBox.setValue(Integer.toString(daiLy.getMaQuan()));
+        loaiDaiLyComboBox.setValue(Integer.toString(daiLy.getMaLoaiDaiLy()));
 
+        tenDaiLyTextField.setText(daiLy.getTenDaiLy());
+        diaChiTextField.setText(daiLy.getDiaChi());
+        dienThoaiTextField.setText(daiLy.getDienThoai());
+        emailTextField.setText(daiLy.getEmail());
+        ghiChuTextField.setText(daiLy.getGhiChu());
+    }
     //validator
     private void initValidator(){
         notSelectedQuan.bind(Bindings.createBooleanBinding(this::checkQuanSelected,quanComboBox.valueProperty()));
         notSelectedLoaiDaiLy.bind(Bindings.createBooleanBinding(this::checkLoaiDaiLySelected,loaiDaiLyComboBox.valueProperty()));
         emptyTenDaily.bind(Bindings.createBooleanBinding(this::checkTenDaiLyEmpty,loaiDaiLyComboBox.valueProperty()));
+        /*
         themButton.disableProperty().bind(
                 Bindings.createBooleanBinding(this::allowAdding,
                         notSelectedQuan,
@@ -58,6 +68,7 @@ public class DirectAddDialogController implements Initializable {
                         emptyTenDaily
                 )
         );
+        */
     }
     private boolean allowAdding(){
         return notSelectedQuan.getValue()&&notSelectedLoaiDaiLy.getValue()&&emptyTenDaily.getValue();
@@ -74,6 +85,26 @@ public class DirectAddDialogController implements Initializable {
     public void exit(){
 
     }
+    public DaiLy getDaiLy(){
+        Date ngayTiepNhan = new Date(System.currentTimeMillis());
+        DaiLy daiLy = new DaiLy();
+        try{
+            daiLy.setMaQuan(Integer.parseInt(quanComboBox.getValue()));
+            daiLy.setMaLoaiDaiLy(Integer.parseInt(loaiDaiLyComboBox.getValue()));
+
+            daiLy.setTenDaiLy(tenDaiLyTextField.getText());
+            daiLy.setDiaChi(diaChiTextField.getText());
+            daiLy.setEmail(emailTextField.getText());
+            daiLy.setDienThoai(dienThoaiTextField.getText());
+            daiLy.setNgayTiepNhan( ngayTiepNhan);
+            daiLy.setGhiChu( ghiChuTextField.getText());
+        }
+        catch(NumberFormatException e){
+            System.out.println("Quan not set!");
+            return null;
+        }
+        return daiLy;
+    }
     public void add(){
         Date ngayTiepNhan = new Date(System.currentTimeMillis());
         DaiLy toAdd = new DaiLy();
@@ -89,14 +120,14 @@ public class DirectAddDialogController implements Initializable {
         toAdd.setGhiChu( ghiChuTextField.getText());
         try{
             DaiLyDAO.getInstance().Insert(toAdd);
-            popSucessDialog();
+            popSucessDialog("");
         }
         catch(SQLException e){
             popErrorDialog(e.getMessage());
         }
     }
-    private void popSucessDialog(){
-        Alert alert = new Alert(Alert.AlertType.ERROR);
+    private void popSucessDialog(String message){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Thêm mới đại lý thành công!");
         alert.showAndWait();
     }

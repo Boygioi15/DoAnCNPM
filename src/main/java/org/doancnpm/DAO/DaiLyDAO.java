@@ -144,7 +144,7 @@ public class DaiLyDAO implements Idao<DaiLy> {
         assert conn != null;
         PreparedStatement pstmt = conn.prepareStatement(sql);
         ResultSet rs = pstmt.executeQuery();
-        ArrayList<DaiLy> daiLyList = new ArrayList<DaiLy>();
+        ArrayList<DaiLy> daiLyList = new ArrayList<>();
 
         while (rs.next()) {
             DaiLy daiLy = new DaiLy();
