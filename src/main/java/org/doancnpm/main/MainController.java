@@ -10,7 +10,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
-import javafx.scene.layout.Region;
 import javafx.util.StringConverter;
 import org.apache.poi.ss.usermodel.Cell;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -81,11 +80,28 @@ public class MainController  implements Initializable {
         TableColumn<DaiLy, String> maDLCol = new TableColumn<>("Mã đại lý");
         maDLCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getMaDaiLy()));
 
-        TableColumn<DaiLy, Integer> quanCol = new TableColumn<>("Quận");
-        quanCol.setCellValueFactory(data -> new SimpleObjectProperty<>(data.getValue().getMaQuan()));
+        TableColumn<DaiLy, String> quanCol = new TableColumn<>("Quận");
+        quanCol.setCellValueFactory(data -> {
+            Quan quan = null;
+            try {
+                quan = QuanDAO.getInstance().QueryID(data.getValue().getMaQuan());
+            } catch (SQLException _) {
 
-        TableColumn<DaiLy, Integer> loaiDLCol = new TableColumn<>("Loại đại lý");
-        loaiDLCol.setCellValueFactory(data -> new SimpleObjectProperty<>(data.getValue().getMaLoaiDaiLy()));
+            }
+
+            return new SimpleObjectProperty<>(quan.getTenQuan());
+        });
+
+        TableColumn<DaiLy, String> loaiDLCol = new TableColumn<>("Loại đại lý");
+        loaiDLCol.setCellValueFactory(data -> {
+            LoaiDaiLy loaiDaiLy = null;
+            try {
+                loaiDaiLy = LoaiDaiLyDAO.getInstance().QueryID(data.getValue().getMaLoaiDaiLy());
+            } catch (SQLException _) {
+
+            }
+            return new SimpleObjectProperty<>(loaiDaiLy.getTenLoai());
+        });
 
         TableColumn<DaiLy, String> tenDLCol = new TableColumn<>("Tên đại lý");
         tenDLCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getTenDaiLy()));
@@ -382,6 +398,7 @@ public class MainController  implements Initializable {
         initFilterBinding();
         initFilterComboboxData();
     }
+
     private void initFilterBinding(){
         filter.setInput(dsDaiLy);
         maDaiLyTextField.textProperty().addListener(_ -> {
