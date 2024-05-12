@@ -13,11 +13,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class QuanDAO implements Idao<Quan> {
-    private static Quan singleton = null;
+    private static QuanDAO singleton = null;
 
-    public static Quan getInstance() {
+    public static QuanDAO getInstance() {
         if (singleton == null) {
-            singleton = new Quan();
+            singleton = new QuanDAO();
         }
         return singleton;
     }

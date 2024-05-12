@@ -4,13 +4,19 @@ import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
+import javafx.util.StringConverter;
 import org.controlsfx.control.SearchableComboBox;
-import org.doancnpm.DAO.DaiLyDAO;
+import org.doancnpm.DAO.LoaiDaiLyDAO;
+import org.doancnpm.DAO.QuanDAO;
 import org.doancnpm.Models.DaiLy;
+import org.doancnpm.Models.LoaiDaiLy;
+import org.doancnpm.Models.Quan;
 
 import java.net.URL;
 import java.sql.Date;
@@ -19,8 +25,8 @@ import java.util.ResourceBundle;
 
 public class DirectAddDialogController implements Initializable {
 
-    @FXML private SearchableComboBox<String> quanComboBox;
-    @FXML private SearchableComboBox<String> loaiDaiLyComboBox;
+    @FXML private SearchableComboBox<Quan> quanComboBox;
+    @FXML private SearchableComboBox<LoaiDaiLy> loaiDaiLyComboBox;
     @FXML private TextField tenDaiLyTextField;
     @FXML private TextField diaChiTextField;
     @FXML private TextField dienThoaiTextField;
@@ -37,6 +43,7 @@ public class DirectAddDialogController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initAction();
         initValidator();
+        displayDataInCb();
     }
     public void initAction(){
         //thoatButton.setOnAction();
@@ -46,8 +53,18 @@ public class DirectAddDialogController implements Initializable {
         if(daiLy==null){
             return;
         }
-        quanComboBox.setValue(Integer.toString(daiLy.getMaQuan()));
-        loaiDaiLyComboBox.setValue(Integer.toString(daiLy.getMaLoaiDaiLy()));
+        try {
+            Quan queriedQuan = QuanDAO.getInstance().QueryID(daiLy.getMaQuan());
+            quanComboBox.setValue(queriedQuan);
+        } catch (SQLException e) {
+            System.out.println("Error in setting quan value for combobox");
+        }
+        try {
+            LoaiDaiLy queriedLoaiDaiLy = LoaiDaiLyDAO.getInstance().QueryID(daiLy.getMaLoaiDaiLy());
+            loaiDaiLyComboBox.setValue(queriedLoaiDaiLy);
+        } catch (SQLException e) {
+            System.out.println("Error in setting quan value for combobox");
+        }
 
         tenDaiLyTextField.setText(daiLy.getTenDaiLy());
         diaChiTextField.setText(daiLy.getDiaChi());
@@ -70,6 +87,48 @@ public class DirectAddDialogController implements Initializable {
         );
         */
     }
+    private void displayDataInCb() {
+        try {
+            ObservableList<Quan> quans = FXCollections.observableArrayList(QuanDAO.getInstance().QueryAll());
+            ObservableList<LoaiDaiLy> loaiDaiLys = FXCollections.observableArrayList(LoaiDaiLyDAO.getInstance().QueryAll());
+
+            // Sử dụng StringConverter để hiển thị dữ liệu trong ComboBox
+            StringConverter<Quan> quanStringConverter = new StringConverter<Quan>() {
+                @Override
+                public String toString(Quan quan) {
+                    return quan == null ? null : quan.getTenQuan();
+                }
+
+                @Override
+                public Quan fromString(String string) {
+                    return null; // Bạn có thể cần triển khai nếu cần
+                }
+            };
+
+            StringConverter<LoaiDaiLy> loaiDaiLyStringConverter = new StringConverter<LoaiDaiLy>() {
+                @Override
+                public String toString(LoaiDaiLy loaiDaiLy) {
+                    return loaiDaiLy == null ? null : loaiDaiLy.getTenLoai();
+                }
+
+                @Override
+                public LoaiDaiLy fromString(String string) {
+                    return null; // Bạn có thể cần triển khai nếu cần
+                }
+            };
+
+            // Đặt StringConverter cho ComboBox
+            quanComboBox.setConverter(quanStringConverter);
+            loaiDaiLyComboBox.setConverter(loaiDaiLyStringConverter);
+
+            // Đặt DataSource cho ComboBox
+            quanComboBox.setItems(quans);
+            loaiDaiLyComboBox.setItems(loaiDaiLys);
+        } catch (Exception e) {
+            // Xử lý ngoại lệ nếu cần
+        }
+    }
+
     private boolean allowAdding(){
         return notSelectedQuan.getValue()&&notSelectedLoaiDaiLy.getValue()&&emptyTenDaily.getValue();
     }
@@ -89,8 +148,8 @@ public class DirectAddDialogController implements Initializable {
         Date ngayTiepNhan = new Date(System.currentTimeMillis());
         DaiLy daiLy = new DaiLy();
         try{
-            daiLy.setMaQuan(Integer.parseInt(quanComboBox.getValue()));
-            daiLy.setMaLoaiDaiLy(Integer.parseInt(loaiDaiLyComboBox.getValue()));
+            daiLy.setMaQuan(quanComboBox.getValue().getId());
+            daiLy.setMaLoaiDaiLy(loaiDaiLyComboBox.getValue().getId());
 
             daiLy.setTenDaiLy(tenDaiLyTextField.getText());
             daiLy.setDiaChi(diaChiTextField.getText());
@@ -104,27 +163,6 @@ public class DirectAddDialogController implements Initializable {
             return null;
         }
         return daiLy;
-    }
-    public void add(){
-        Date ngayTiepNhan = new Date(System.currentTimeMillis());
-        DaiLy toAdd = new DaiLy();
-
-        toAdd.setMaQuan(Integer.parseInt(quanComboBox.getValue()));
-        toAdd.setMaLoaiDaiLy(Integer.parseInt(loaiDaiLyComboBox.getValue()));
-
-        toAdd.setTenDaiLy(tenDaiLyTextField.getText());
-        toAdd.setDiaChi(diaChiTextField.getText());
-        toAdd.setEmail(emailTextField.getText());
-        toAdd.setDienThoai(dienThoaiTextField.getText());
-        toAdd.setNgayTiepNhan( ngayTiepNhan);
-        toAdd.setGhiChu( ghiChuTextField.getText());
-        try{
-            DaiLyDAO.getInstance().Insert(toAdd);
-            popSucessDialog("");
-        }
-        catch(SQLException e){
-            popErrorDialog(e.getMessage());
-        }
     }
     private void popSucessDialog(String message){
         Alert alert = new Alert(Alert.AlertType.INFORMATION);

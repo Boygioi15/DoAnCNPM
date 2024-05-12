@@ -131,8 +131,7 @@ public class MainController  implements Initializable {
                                         DaiLy dl = getTableView().getItems().get(getIndex());
                                         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                                         alert.setTitle("Xóa đại lý");
-                                        alert.setHeaderText("Đại lý" + dl.getTenDaiLy() + " đã đồng hành với bạn trong 3 tháng\nBạn qua cầu rút ván hả?");
-                                        alert.setContentText("Bạn chắc chứ?");
+                                        alert.setHeaderText(dl.getTenDaiLy() + " đã đồng hành với bạn trong 3 tháng\nBạn qua cầu rút ván hả?");
 
                                         Optional<ButtonType> result = alert.showAndWait();
                                         if (result.get() == ButtonType.OK){
