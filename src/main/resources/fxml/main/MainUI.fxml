@@ -54,8 +54,8 @@
                 </Button>
                 <MFXTextField fx:id="maDaiLyTextField" borderGap="6.0" floatMode="BORDER" floatingText="Mã đại lý" prefWidth="120.0" styleClass="body-label" />
                 <MFXTextField fx:id="tenDaiLyTextField" borderGap="6.0" floatMode="BORDER" floatingText="Tên đại lý" prefWidth="120.0" styleClass="body-label" />
-                <MFXComboBox fx:id="quanComboBox" accessibleRoleDescription="Quận" floatingText="Quận" />
-                <MFXComboBox fx:id="loaiDaiLyCombobox" floatingText="Loại đại lý" />
+                <MFXComboBox fx:id="quanComboBox" accessibleRoleDescription="Quận" allowEdit="true" floatingText="Quận" />
+                <MFXComboBox fx:id="loaiDaiLyCombobox" allowEdit="true" floatingText="Loại đại lý" />
                 <Button fx:id="filterButton" mnemonicParsing="false" styleClass="action-button" text="Lọc">
                     <font>
                         <Font size="18.0" />
@@ -65,7 +65,7 @@
         </HBox>
         <HBox prefHeight="580.0">
             <children>
-                <TableView fx:id="mainTableView" prefHeight="200.0" prefWidth="800.0" />
+                <TableView fx:id="mainTableView" minWidth="800.0" />
             </children>
         </HBox>
     </children>

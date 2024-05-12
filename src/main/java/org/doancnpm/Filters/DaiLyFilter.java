@@ -9,8 +9,8 @@ public class DaiLyFilter implements IFilter<DaiLy> {
     ObservableList<DaiLy> output;
 
     private String maDaiLy;
-    private String maQuan;
-    private String maLoaiDaiLy;
+    private Integer maQuan;
+    private Integer maLoaiDaiLy;
     private String tenDaiLy;
 
     @Override
@@ -26,16 +26,16 @@ public class DaiLyFilter implements IFilter<DaiLy> {
                 output.remove(daiLy);
                 continue;
             }
-            /*
-            if (maQuan != null && !maQuan.isEmpty() && !daiLy.getMaQuan().contains(maQuan)) {
+
+            if (maQuan != null && !daiLy.getMaQuan().equals(maQuan)) {
                 output.remove(daiLy);
                 continue;
             }
-            if (maLoaiDaiLy != null && !maLoaiDaiLy.isEmpty() && !daiLy.getMaLoaiDaiLy().contains(maLoaiDaiLy)) {
+            if (maLoaiDaiLy != null && !daiLy.getMaLoaiDaiLy().equals(maLoaiDaiLy)) {
                 output.remove(daiLy);
                 continue;
             }
-            */
+
             if (tenDaiLy != null && !tenDaiLy.isEmpty() && !daiLy.getTenDaiLy().contains(tenDaiLy)) {
                 output.remove(daiLy);
             }
@@ -49,10 +49,10 @@ public class DaiLyFilter implements IFilter<DaiLy> {
     public void setMaDaiLy(String maDaiLy) {
         this.maDaiLy = maDaiLy;
     }
-    public void setMaQuan(String maQuan) {
+    public void setMaQuan(Integer maQuan) {
         this.maQuan = maQuan;
     }
-    public void setMaLoaiDaiLy(String maLoaiDaiLy) {
+    public void setMaLoaiDaiLy(Integer maLoaiDaiLy) {
         this.maLoaiDaiLy = maLoaiDaiLy;
     }
     public void setTenDaiLy(String tenDaiLy) {
@@ -65,10 +65,10 @@ public class DaiLyFilter implements IFilter<DaiLy> {
     public String getMaDaiLy() {
         return maDaiLy;
     }
-    public String getMaQuan() {
+    public Integer getMaQuan() {
         return maQuan;
     }
-    public String getMaLoaiDaiLy() {
+    public Integer getMaLoaiDaiLy() {
         return maLoaiDaiLy;
     }
     public String getTenDaiLy() {

@@ -9,8 +9,8 @@ public class DaiLy {
     private BooleanProperty selected = new SimpleBooleanProperty(false);
     private Integer ID;
     private String maDaiLy;
-    private int maQuan;
-    private int maLoaiDaiLy;
+    private Integer maQuan;
+    private Integer maLoaiDaiLy;
 
     private String tenDaiLy = "Đại lý mới";
     private String dienThoai = "";
@@ -29,10 +29,10 @@ public class DaiLy {
     public String getMaDaiLy() {
         return maDaiLy;
     }
-    public int getMaQuan() {
+    public Integer getMaQuan() {
         return maQuan;
     }
-    public int getMaLoaiDaiLy() {
+    public Integer getMaLoaiDaiLy() {
         return maLoaiDaiLy;
     }
     public String getTenDaiLy() {
@@ -64,10 +64,10 @@ public class DaiLy {
     public void setMaDaiLy(String maDaiLy) {
         this.maDaiLy = maDaiLy;
     }
-    public void setMaQuan(int maQuan) {
+    public void setMaQuan(Integer maQuan) {
         this.maQuan = maQuan;
     }
-    public void setMaLoaiDaiLy(int maLoaiDaiLy) {
+    public void setMaLoaiDaiLy(Integer maLoaiDaiLy) {
         this.maLoaiDaiLy = maLoaiDaiLy;
     }
     public void setNoHienTai(Integer noHienTai) {

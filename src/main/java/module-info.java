@@ -7,6 +7,7 @@ module org.example.demofx {
     requires java.logging;
     requires java.sql;
     requires MaterialFX;
+    requires org.apache.poi.ooxml;
 
     opens org.doancnpm to javafx.fxml;
     opens org.doancnpm.login to javafx.fxml;

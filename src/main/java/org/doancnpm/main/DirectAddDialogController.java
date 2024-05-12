@@ -17,6 +17,7 @@ import org.doancnpm.DAO.QuanDAO;
 import org.doancnpm.Models.DaiLy;
 import org.doancnpm.Models.LoaiDaiLy;
 import org.doancnpm.Models.Quan;
+import org.doancnpm.Ultilities.PopDialog;
 
 import java.net.URL;
 import java.sql.Date;
@@ -63,7 +64,7 @@ public class DirectAddDialogController implements Initializable {
             LoaiDaiLy queriedLoaiDaiLy = LoaiDaiLyDAO.getInstance().QueryID(daiLy.getMaLoaiDaiLy());
             loaiDaiLyComboBox.setValue(queriedLoaiDaiLy);
         } catch (SQLException e) {
-            System.out.println("Error in setting quan value for combobox");
+            System.out.println("Error in setting loai dai ly value for combobox");
         }
 
         tenDaiLyTextField.setText(daiLy.getTenDaiLy());
@@ -77,15 +78,6 @@ public class DirectAddDialogController implements Initializable {
         notSelectedQuan.bind(Bindings.createBooleanBinding(this::checkQuanSelected,quanComboBox.valueProperty()));
         notSelectedLoaiDaiLy.bind(Bindings.createBooleanBinding(this::checkLoaiDaiLySelected,loaiDaiLyComboBox.valueProperty()));
         emptyTenDaily.bind(Bindings.createBooleanBinding(this::checkTenDaiLyEmpty,loaiDaiLyComboBox.valueProperty()));
-        /*
-        themButton.disableProperty().bind(
-                Bindings.createBooleanBinding(this::allowAdding,
-                        notSelectedQuan,
-                        notSelectedLoaiDaiLy,
-                        emptyTenDaily
-                )
-        );
-        */
     }
     private void displayDataInCb() {
         try {
@@ -96,12 +88,12 @@ public class DirectAddDialogController implements Initializable {
             StringConverter<Quan> quanStringConverter = new StringConverter<Quan>() {
                 @Override
                 public String toString(Quan quan) {
-                    return quan == null ? null : quan.getTenQuan();
+                    return quan == null ? null : quan.getTenQuan(); //lên hình
                 }
 
                 @Override
                 public Quan fromString(String string) {
-                    return null; // Bạn có thể cần triển khai nếu cần
+                    return null; //Từ hình xuống data
                 }
             };
 
@@ -124,8 +116,9 @@ public class DirectAddDialogController implements Initializable {
             // Đặt DataSource cho ComboBox
             quanComboBox.setItems(quans);
             loaiDaiLyComboBox.setItems(loaiDaiLys);
-        } catch (Exception e) {
-            // Xử lý ngoại lệ nếu cần
+        }
+        catch (SQLException e) {
+            PopDialog.popErrorDialog("Lấy dữ liệu các quận/ loại đại lý thất bại",e.toString());
         }
     }
 
@@ -163,17 +156,6 @@ public class DirectAddDialogController implements Initializable {
             return null;
         }
         return daiLy;
-    }
-    private void popSucessDialog(String message){
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Thêm mới đại lý thành công!");
-        alert.showAndWait();
-    }
-    private void popErrorDialog(String message){
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Không thể thêm đại lý mới vào!");
-        alert.setContentText("Lỗi" + message);
-        alert.showAndWait();
     }
     private void initValidation(){
         MFXTextField tf = new MFXTextField();
