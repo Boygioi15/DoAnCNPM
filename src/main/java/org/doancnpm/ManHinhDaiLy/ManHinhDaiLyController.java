@@ -262,7 +262,6 @@ public class ManHinhDaiLyController implements Initializable {
         if (selectedFile != null) {
             // Gọi hàm importFromExcel và truyền đường dẫn tệp Excel đã chọn
             importFromExcel(selectedFile.getAbsolutePath());
-            PopDialog.popSuccessDialog("Thêm danh sách đại lý từ file excel thành công");
         }
     }
     public void importFromExcel(String filePath)  {
@@ -286,43 +285,43 @@ public class ManHinhDaiLyController implements Initializable {
         }
         XSSFSheet sheet = workbook.getSheetAt(0); // Assuming data is in the first sheet
 
-        DaiLyDAO daiLyDAO = new DaiLyDAO(); // Khởi tạo DAO để thực hiện thêm dữ liệu
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Date ngayTiepNhan = new Date(System.currentTimeMillis());
 
-        for (Row row : sheet) {
-            Cell tenDaiLyCell = row.getCell(0);
-            Cell dienThoaiCell = row.getCell(1);
-            Cell emailCell = row.getCell(2);
-            Cell diaChiCell = row.getCell(3);
-            Cell ngayTiepNhanCell = row.getCell(4);
-            Cell ghiChuCell = row.getCell(5);
+        for (int i = 1; i <= sheet.getLastRowNum()-1; i++) {
+            Row row = sheet.getRow(i);
+            if (row != null) { // Kiểm tra xem dòng có tồn tại hay không
+                Cell quanCell = row.getCell(0);
+                Cell loaiDaiLyCell = row.getCell(1);
+                Cell tenDaiLyCell = row.getCell(2);
+                Cell dienThoaiCell = row.getCell(3);
+                Cell emailCell = row.getCell(4);
+                Cell diaChiCell = row.getCell(5);
+                Cell ghiChuCell = row.getCell(6);
 
-            DaiLy daiLy = new DaiLy();
-            daiLy.setTenDaiLy(tenDaiLyCell.getStringCellValue());
-            daiLy.setDienThoai(dienThoaiCell.getStringCellValue());
-            daiLy.setEmail(emailCell.getStringCellValue());
-            daiLy.setDiaChi(diaChiCell.getStringCellValue());
-            try {
-                daiLy.setNgayTiepNhan(new java.sql.Date(dateFormat.parse(ngayTiepNhanCell.getStringCellValue()).getTime()));
-            } catch (ParseException e) {
-                PopDialog.popErrorDialog("Định dạng ngày không hợp lệ",e.toString());
-                return;
-            }
-            daiLy.setGhiChu(ghiChuCell.getStringCellValue());
-
-            try {
-                daiLyDAO.Insert(daiLy); // Thêm đối tượng vào cơ sở dữ liệu
-            }
-            catch (SQLException e) {
-                PopDialog.popErrorDialog("Thêm danh sách đại lý từ file excel thất bại",e.toString());
-                return;
+                DaiLy daiLy = new DaiLy();
+                daiLy.setMaQuan((int) quanCell.getNumericCellValue());
+                daiLy.setMaLoaiDaiLy((int) loaiDaiLyCell.getNumericCellValue());
+                daiLy.setTenDaiLy(tenDaiLyCell.getStringCellValue());
+                daiLy.setDienThoai(dienThoaiCell.getStringCellValue());
+                daiLy.setEmail(emailCell.getStringCellValue());
+                daiLy.setDiaChi(diaChiCell.getStringCellValue());
+                daiLy.setGhiChu(ghiChuCell.getStringCellValue());
+                daiLy.setNgayTiepNhan(ngayTiepNhan);
+                try {
+                    DaiLyDAO.getInstance().Insert(daiLy); // Thêm đối tượng vào cơ sở dữ liệu
+                }
+                catch (SQLException e) {
+                    PopDialog.popErrorDialog("Có lỗi trong quá trình thêm mới đại lý", e.toString());
+                    return;
+                }
             }
         }
 
         try {
             workbook.close();
             fis.close();
+            PopDialog.popSuccessDialog("Thêm danh sách đại lý từ file excel thành công");
         }
         catch (IOException e) {
             PopDialog.popErrorDialog("Có lỗi trong quá trình thực hiện", e.toString());

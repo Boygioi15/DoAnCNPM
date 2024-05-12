@@ -17,7 +17,7 @@ public class DaiLyDAO implements Idao<DaiLy> {
         }
         return singleton;
     }
-
+    private DaiLyDAO(){};
     private final BooleanProperty dailyDtbChanged = new SimpleBooleanProperty(false);
 
     @Override
