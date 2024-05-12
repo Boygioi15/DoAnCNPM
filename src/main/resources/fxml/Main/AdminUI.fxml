@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="mainScreen" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.doancnpm.Main.AdminController">
+   <top>
+      <BorderPane BorderPane.alignment="CENTER">
+         <left>
+            <HBox fx:id="branding" alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
+               <padding>
+                  <Insets left="10.0" />
+               </padding>
+               <children>
+                  <Label text="Xin chào, " />
+                  <Label fx:id="userNameLabel" text="boygioi" />
+               </children>
+            </HBox>
+         </left>
+         <right>
+            <HBox alignment="CENTER_RIGHT" spacing="10.0" BorderPane.alignment="CENTER">
+               <children>
+                  <MenuButton mnemonicParsing="false" styleClass="action-button" text="Thêm mới">
+                    <items>
+                      <MenuItem mnemonicParsing="false" text="Action 1" />
+                      <MenuItem mnemonicParsing="false" text="Action 2" />
+                    </items>
+                  </MenuButton>
+                  <MenuButton mnemonicParsing="false" styleClass="action-button" text="Tài khoản">
+                    <items>
+                      <MenuItem mnemonicParsing="false" text="Action 1" />
+                      <MenuItem mnemonicParsing="false" text="Action 2" />
+                    </items>
+                  </MenuButton>
+                  <Button fx:id="logoutButton" mnemonicParsing="false" styleClass="action-button" text="Đăng xuất">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                  </Button>
+               </children>
+               <padding>
+                  <Insets right="10.0" />
+               </padding>
+            </HBox>
+         </right>
+         <BorderPane.margin>
+            <Insets bottom="30.0" />
+         </BorderPane.margin>
+      </BorderPane>
+   </top>
+   <left>
+      <VBox prefWidth="320.0" spacing="5.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button alignment="TOP_LEFT" mnemonicParsing="false" prefWidth="320.0" styleClass="menu-title" text="Bảng điều khiển" />
+            <TitledPane alignment="TOP_LEFT" styleClass="menu-title" text="Đại lý">
+               <content>
+                  <VBox prefWidth="320.0" spacing="5.0">
+                     <children>
+                        <Button fx:id="openDaiLyButton" alignment="TOP_LEFT" mnemonicParsing="false" prefWidth="320.0" styleClass="menu-body" text="Danh sách đại lý" />
+                        <Button fx:id="openPhieuThuButton" alignment="TOP_LEFT" mnemonicParsing="false" prefWidth="320.0" styleClass="menu-body" text="Danh sách phiếu thu" />
+                     </children>
+                  </VBox>
+               </content>
+            </TitledPane>
+            <TitledPane contentDisplay="RIGHT" styleClass="menu-title" text="Kho hàng">
+               <content>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Button alignment="TOP_LEFT" mnemonicParsing="false" prefWidth="320.0" styleClass="menu-body" text="Danh sách tồn kho" />
+                        <Button alignment="TOP_LEFT" mnemonicParsing="false" prefWidth="320.0" styleClass="menu-body" text="Lịch sử nhập/ xuất kho" />
+                     </children>
+                  </VBox>
+               </content>
+            </TitledPane>
+            <Button alignment="TOP_LEFT" mnemonicParsing="false" prefWidth="320.0" styleClass="menu-title" text="Nhân viên" />
+            <TitledPane contentDisplay="RIGHT" styleClass="menu-title" text="Báo cáo">
+               <content>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Button alignment="TOP_LEFT" mnemonicParsing="false" prefWidth="320.0" styleClass="menu-body" text="Báo cáo doanh số" />
+                        <Button alignment="TOP_LEFT" mnemonicParsing="false" prefWidth="320.0" styleClass="menu-body" text="Báo cáo công nợ đại lý" />
+                     </children>
+                  </VBox>
+               </content>
+            </TitledPane>
+            <Button alignment="TOP_LEFT" mnemonicParsing="false" prefWidth="320.0" styleClass="menu-title" text="Thay đổi quy định" />
+         </children>
+      </VBox>
+   </left>
+   <center>
+      <AnchorPane fx:id="centerScreen" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="20.0" left="20.0" right="20.0" />
+         </BorderPane.margin>
+      </AnchorPane>
+   </center>
+</BorderPane>

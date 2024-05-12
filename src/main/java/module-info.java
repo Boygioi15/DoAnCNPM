@@ -10,10 +10,15 @@ module org.example.demofx {
     requires org.apache.poi.ooxml;
 
     opens org.doancnpm to javafx.fxml;
-    opens org.doancnpm.login to javafx.fxml;
-    opens org.doancnpm.main to javafx.fxml;
+    opens org.doancnpm.Login to javafx.fxml;
+    opens org.doancnpm.ManHinhDaiLy to javafx.fxml;
+    opens org.doancnpm.ManHinhPhieuThu to javafx.fxml;
     opens org.doancnpm.Models to javafx.base;
+    opens org.doancnpm.Main to javafx.fxml;
+
     exports org.doancnpm;
-    exports org.doancnpm.main;
+    exports org.doancnpm.ManHinhDaiLy;
+    exports org.doancnpm.ManHinhPhieuThu;
     exports org.doancnpm.Models;
+    exports org.doancnpm.Main;
 }

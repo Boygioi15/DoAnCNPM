@@ -1,4 +1,4 @@
-package org.doancnpm.main;
+package org.doancnpm.ManHinhDaiLy;
 
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.beans.binding.Bindings;
@@ -8,7 +8,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import javafx.util.StringConverter;
 import org.controlsfx.control.SearchableComboBox;
@@ -17,17 +16,20 @@ import org.doancnpm.DAO.QuanDAO;
 import org.doancnpm.Models.DaiLy;
 import org.doancnpm.Models.LoaiDaiLy;
 import org.doancnpm.Models.Quan;
+import org.doancnpm.Ultilities.DayFormat;
 import org.doancnpm.Ultilities.PopDialog;
 
 import java.net.URL;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
 
 public class DirectAddDialogController implements Initializable {
 
     @FXML private SearchableComboBox<Quan> quanComboBox;
     @FXML private SearchableComboBox<LoaiDaiLy> loaiDaiLyComboBox;
+    @FXML private TextField ngayTiepNhanTextField;
     @FXML private TextField tenDaiLyTextField;
     @FXML private TextField diaChiTextField;
     @FXML private TextField dienThoaiTextField;
@@ -45,10 +47,15 @@ public class DirectAddDialogController implements Initializable {
         initAction();
         initValidator();
         displayDataInCb();
+        initDate();
     }
     public void initAction(){
         //thoatButton.setOnAction();
         //themButton.setOnAction(ob -> add());
+    }
+    private void initDate() {
+        Date ngayTiepNhan = new Date(System.currentTimeMillis());
+        ngayTiepNhanTextField.setText(DayFormat.GetDayStringFormatted(ngayTiepNhan));
     }
     public void setInitialValue(DaiLy daiLy){
         if(daiLy==null){
@@ -72,6 +79,7 @@ public class DirectAddDialogController implements Initializable {
         dienThoaiTextField.setText(daiLy.getDienThoai());
         emailTextField.setText(daiLy.getEmail());
         ghiChuTextField.setText(daiLy.getGhiChu());
+        ngayTiepNhanTextField.setText(DayFormat.GetDayStringFormatted(daiLy.getNgayTiepNhan()));
     }
     //validator
     private void initValidator(){

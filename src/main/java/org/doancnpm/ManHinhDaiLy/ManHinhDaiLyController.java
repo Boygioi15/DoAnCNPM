@@ -1,4 +1,4 @@
-package org.doancnpm.main;
+package org.doancnpm.ManHinhDaiLy;
 
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
@@ -8,6 +8,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.util.StringConverter;
@@ -27,6 +29,7 @@ import org.doancnpm.Filters.DaiLyFilter;
 import org.doancnpm.Models.DaiLy;
 import org.doancnpm.Models.LoaiDaiLy;
 import org.doancnpm.Models.Quan;
+import org.doancnpm.Ultilities.DayFormat;
 import org.doancnpm.Ultilities.PopDialog;
 
 import java.io.*;
@@ -34,12 +37,13 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.sql.Date;
 import java.util.*;
 
 /** Controls the main application screen */
-public class MainController  implements Initializable {
+public class ManHinhDaiLyController implements Initializable {
 
-    @FXML private VBox daiLyScreen;
+    @FXML private Node manHinhDaiLy;
     @FXML private Button refreshButton, filterButton;
     @FXML private MenuItem addDirectButton;
     @FXML private MenuItem addExcelButton;
@@ -74,7 +78,9 @@ public class MainController  implements Initializable {
         //init data
         updateListFromDatabase();
     }
-
+    public void setVisibility(boolean visibility){
+        manHinhDaiLy.setVisible(visibility);
+    }
     private void initTableView(){
         // Tạo các cột cho TableView
         TableColumn<DaiLy, String> maDLCol = new TableColumn<>("Mã đại lý");
@@ -122,10 +128,10 @@ public class MainController  implements Initializable {
         ghiChuCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getGhiChu()));
 
 
-        TableColumn<DaiLy, Date> ngayCol = new TableColumn<>("Ngày tiếp nhận");
+        TableColumn<DaiLy, String> ngayCol = new TableColumn<>("Ngày tiếp nhận");
         ngayCol.setCellValueFactory(data -> {
             Date ngay = data.getValue().getNgayTiepNhan();
-            return new SimpleObjectProperty<>(ngay);
+            return new SimpleObjectProperty<>(DayFormat.GetDayStringFormatted(ngay));
         });
 
         //selected collumn:
@@ -330,9 +336,8 @@ public class MainController  implements Initializable {
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel Files", "*.xlsx"));
 
         // Tạo tên file với định dạng "Export_ngay_thang_nam.xlsx"
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-        String currentDate = dateFormat.format(new Date());
-        String fileName = "DsDaiLy_" + currentDate + ".xlsx";
+        Date ngayHienTai = new Date(System.currentTimeMillis());
+        String fileName = "DsDaiLy_" + DayFormat.GetDayStringFormatted(ngayHienTai) + ".xlsx";
 
         // Thiết lập tên file mặc định cho hộp thoại lưu
         File initialDirectory = new File(System.getProperty("user.home"));
@@ -497,16 +502,22 @@ public class MainController  implements Initializable {
                 del.add( dl );
             }
         }
-        //System.out.println(del.size());
-        for(DaiLy dl : del){
-            int ID = dl.getID();
-            try {
-                DaiLyDAO.getInstance().Delete(ID);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Xóa đại lý");
+        alert.setHeaderText("Bạn có chắc chắn muốn xóa " +del.size()+" đại lý?");
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK){
+            //System.out.println(del.size());
+            for(DaiLy dl : del){
+                int ID = dl.getID();
+                try {
+                    DaiLyDAO.getInstance().Delete(ID);
+                } catch (SQLException e) {
+                    PopDialog.popErrorDialog("Xóa đại lý " + dl.getMaDaiLy() + " thất bại",e.toString());
+                    return;
+                }
             }
         }
-        //mainTableView.getItems().removeAll( del );
     }
 
     private void updateListFromDatabase() {

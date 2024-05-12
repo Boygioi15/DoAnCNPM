@@ -1,4 +1,4 @@
-package org.doancnpm.main;
+package org.doancnpm.ManHinhDaiLy;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ButtonBar;
@@ -30,7 +30,7 @@ public class DirectAddDialog extends Dialog<DaiLy>  {
     public DirectAddDialog(DaiLy initialValue) throws IOException {
         super();
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/main/TiepNhanDaiLyUI.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/ManHinhDaiLy/TiepNhanDaiLyUI.fxml"));
 
         ButtonType saveButtonType = new ButtonType("Thêm mới", ButtonBar.ButtonData.OK_DONE);
         ButtonType cancelButtonType = new ButtonType("Thoát", ButtonBar.ButtonData.CANCEL_CLOSE);

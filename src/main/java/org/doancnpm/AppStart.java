@@ -16,6 +16,7 @@ public class AppStart extends Application {
         NavController loginManager = new NavController(scene);
         loginManager.showLoginScreen();
 
+        stage.setTitle("Quản lý đại lý");
         stage.setScene(scene);
         stage.show();
     }

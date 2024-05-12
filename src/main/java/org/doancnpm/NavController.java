@@ -3,8 +3,9 @@ package org.doancnpm;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import org.doancnpm.login.LoginController;
-import org.doancnpm.main.MainController;
+import org.doancnpm.Login.LoginController;
+import org.doancnpm.Main.AdminController;
+import org.doancnpm.Models.NhanVien;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -22,8 +23,8 @@ public class NavController {
      * Callback method invoked to notify that a user has been authenticated.
      * Will show the main application screen.
      */
-    public void authenticated(String sessionID) {
-        showMainView(sessionID);
+    public void authenticated(NhanVien nhanVienLoggedIn) {
+        showMainView(nhanVienLoggedIn);
     }
 
     /**
@@ -37,7 +38,7 @@ public class NavController {
     public void showLoginScreen() {
         try {
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/fxml/login/LoginUI.fxml")
+                    getClass().getResource("/fxml/Login/LoginUI.fxml")
             );
             scene.setRoot((Parent) loader.load());
             LoginController controller =
@@ -48,15 +49,20 @@ public class NavController {
         }
     }
 
-    private void showMainView(String sessionID) {
+    private void showMainView(NhanVien nhanVienLoggedIn) {
         try {
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/fxml/main/MainUI.fxml")
+                    getClass().getResource("/fxml/Main/AdminUI.fxml")
             );
             Parent objectGraph = (Parent) loader.load();
+            AdminController controller = loader.getController();
+            if (controller != null) {
+                controller.setNhanvienLoggedIn(nhanVienLoggedIn);
+            } else {
+                Logger.getLogger(NavController.class.getName()).log(Level.SEVERE, "MainController is null.");
+            }
+
             scene.setRoot(objectGraph);
-            MainController controller =
-                    loader.<MainController>getController();
             scene.getWindow().sizeToScene();
             scene.getWindow().centerOnScreen();
         } catch (IOException ex) {
