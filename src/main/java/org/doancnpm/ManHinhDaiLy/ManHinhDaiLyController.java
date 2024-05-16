@@ -9,14 +9,12 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.util.StringConverter;
 import org.apache.poi.ss.usermodel.Cell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
 import org.apache.poi.ss.usermodel.Row;
@@ -35,8 +33,6 @@ import org.doancnpm.Ultilities.PopDialog;
 import java.io.*;
 import java.net.URL;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.sql.Date;
 import java.util.*;
 
@@ -181,7 +177,6 @@ public class ManHinhDaiLyController implements Initializable {
                                         try {
                                             DaiLy daily = getTableView().getItems().get(getIndex());
                                             new DirectAddDialog(daily).showAndWait().ifPresent(daiLyInfo -> {
-                                                //set "database" info
                                                 daiLyInfo.setID(daily.getID());
                                                 daiLyInfo.setNoHienTai(daily.getNoHienTai());
                                                 daiLyInfo.setNgayTiepNhan(daily.getNgayTiepNhan());
@@ -193,7 +188,6 @@ public class ManHinhDaiLyController implements Initializable {
                                                     PopDialog.popErrorDialog("Cập nhật đại lý "+daiLyInfo.getMaDaiLy()+" thất bại",
                                                             e.toString());
                                                 }
-                                                //mainTableView.getItems().set(selectedIndex, response);
                                             });
                                         } catch(IOException exc) {
                                             exc.printStackTrace();
@@ -368,7 +362,6 @@ public class ManHinhDaiLyController implements Initializable {
             cell.setCellValue(title);
         }
 
-        // Duyệt qua danh sách dsDaiLyFiltered và ghi dữ liệu vào tệp Excel
         int rownum = 1; // Bắt đầu từ hàng thứ 2 sau tiêu đề
         for (DaiLy daiLy : dsDaiLyFiltered) {
             Row row = sheet.createRow(rownum++);
@@ -396,6 +389,7 @@ public class ManHinhDaiLyController implements Initializable {
 
     private void initDatabaseBinding(){
         DaiLyDAO.getInstance().AddDatabaseListener(_ -> updateListFromDatabase());
+
     }
     private void initUIDataBinding(){
         mainTableView.setItems(dsDaiLyFiltered);

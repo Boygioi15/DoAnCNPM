@@ -4,9 +4,10 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -25,7 +26,7 @@
          <children>
             <MenuButton mnemonicParsing="false" styleClass="action-button" text="Thêm mới">
                <items>
-                  <MenuItem mnemonicParsing="false" text="Thêm trực tiếp" />
+                  <MenuItem mnemonicParsing="false" text="Thêm trực tiếp" fx:id="addDirectButton" />
                   <MenuItem mnemonicParsing="false" text="Thêm từ file Excel" />
                </items>
                <font>
@@ -60,13 +61,9 @@
             </Button>
          </children>
       </HBox>
-      <HBox prefHeight="580.0">
+      <HBox prefHeight="581.0">
          <children>
-            <ListView>
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
-            </ListView>
+            <TableView fx:id="mainTableView" minWidth="800.0" />
          </children>
       </HBox>
    </children>

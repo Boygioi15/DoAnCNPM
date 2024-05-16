@@ -4,6 +4,7 @@ import java.sql.Date;
 
 public class NhanVien {
     private Integer ID;
+    private String maNhanVien;
     private String hoTen;
     private String gioiTinh;
     private Date ngaySinh;
@@ -14,6 +15,14 @@ public class NhanVien {
     private String ghiChu;
 
     public NhanVien() {
+    }
+
+    public String getMaNhanVien() {
+        return maNhanVien;
+    }
+
+    public void setMaNhanVien(String maNhanVien) {
+        this.maNhanVien = maNhanVien;
     }
 
     public Integer getID() {

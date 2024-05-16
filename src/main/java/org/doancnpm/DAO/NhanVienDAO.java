@@ -105,7 +105,8 @@ public class NhanVienDAO implements Idao<NhanVien> {
 
         if (rs.next()) {
             nhanVien = new NhanVien();
-
+            int id = rs.getInt("ID");
+            String maNhanVien = rs.getString("MaNhanVien");
             String hoTen = rs.getString("HoTen");
             String gioiTinh = rs.getString("GioiTinh");
             Date ngaySinh = rs.getDate("NgaySinh");
@@ -115,6 +116,8 @@ public class NhanVienDAO implements Idao<NhanVien> {
             double luong = rs.getDouble("Luong");
             String ghiChu = rs.getString("GhiChu");
 
+            nhanVien.setID(id);
+            nhanVien.setMaNhanVien(maNhanVien);
             nhanVien.setID(ID);
             nhanVien.setHoTen(hoTen);
             nhanVien.setGioiTinh(gioiTinh);
@@ -144,7 +147,7 @@ public class NhanVienDAO implements Idao<NhanVien> {
 
         while (rs.next()) {
             NhanVien nhanVien = new NhanVien();
-
+            String maNhanVien = rs.getString("MaNhanVien");
             int ID = rs.getInt("ID");
             String hoTen = rs.getString("HoTen");
             String gioiTinh = rs.getString("GioiTinh");
@@ -156,6 +159,7 @@ public class NhanVienDAO implements Idao<NhanVien> {
             String ghiChu = rs.getString("GhiChu");
 
             nhanVien.setID(ID);
+            nhanVien.setMaNhanVien(maNhanVien);
             nhanVien.setHoTen(hoTen);
             nhanVien.setGioiTinh(gioiTinh);
             nhanVien.setNgaySinh(ngaySinh);

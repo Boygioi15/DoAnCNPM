@@ -11,6 +11,7 @@ import org.doancnpm.DAO.TaiKhoanDAO;
 import org.doancnpm.Models.NhanVien;
 import org.doancnpm.Models.TaiKhoan;
 import org.doancnpm.NavController;
+import org.doancnpm.Ultilities.CurrentNVInfor;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ public class LoginController implements Initializable {
                 if (taiKhoan.getUserName().equals(userName) && taiKhoan.getPassword().equals(pass)) {
                     // Authorized
                     int maNhanVien = taiKhoan.getMaNhanVien();
+                    CurrentNVInfor.getInstance().setLoggedInNhanVien(nhanVienDAO.QueryID(maNhanVien));
                     return nhanVienDAO.QueryID(maNhanVien);
                 }
             }
