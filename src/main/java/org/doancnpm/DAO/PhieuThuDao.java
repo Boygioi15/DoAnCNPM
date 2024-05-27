@@ -32,8 +32,8 @@ public class PhieuThuDao implements Idao<PhieuThu> {
 
         assert conn != null;
         PreparedStatement pstmt = conn.prepareStatement(sql);
-        pstmt.setString(1, phieuThu.getMaDaiLi());
-        pstmt.setString(2, phieuThu.getMaNhanVien());
+        pstmt.setInt(1, phieuThu.getMaDaiLi());
+        pstmt.setInt(2, phieuThu.getMaNhanVien());
         pstmt.setDate(3, phieuThu.getNgayLap());
         pstmt.setInt(4, phieuThu.getSoTienThu());
         pstmt.setString(5, phieuThu.getGhiChu());
@@ -54,8 +54,8 @@ public class PhieuThuDao implements Idao<PhieuThu> {
 
         assert conn != null;
         PreparedStatement pstmt = conn.prepareStatement(sql);
-        pstmt.setString(1, phieuThu.getMaDaiLi());
-        pstmt.setString(2, phieuThu.getMaNhanVien());
+        pstmt.setInt(1, phieuThu.getMaDaiLi());
+        pstmt.setInt(2, phieuThu.getMaNhanVien());
         pstmt.setDate(3, phieuThu.getNgayLap());
         pstmt.setInt(4, phieuThu.getSoTienThu());
         pstmt.setString(5, phieuThu.getGhiChu());
@@ -99,13 +99,13 @@ public class PhieuThuDao implements Idao<PhieuThu> {
         PhieuThu phieuThu = null;
         if (rs.next()) {
             int id = rs.getInt("ID");
-            String maDaili = rs.getString("MaDaiLi");
-            String maNhanVien = rs.getString("MaNhanVien");
+            int maDaili = rs.getInt("MaDaiLy");
+            int maNhanVien = rs.getInt("MaNhanVien");
             Date ngayLap  =rs.getDate("NgayLapPhieu");
             String maPhieuThu = rs.getString("MaPhieuThu");
             int soTienThu = rs.getInt("SoTienThu");
             String ghiChu = rs.getString("GhiChu");
-             phieuThu = new PhieuThu(id,maPhieuThu, maDaili,maNhanVien,ngayLap,soTienThu,ghiChu);
+            phieuThu = new PhieuThu(id,maPhieuThu, maDaili,maNhanVien,ngayLap,soTienThu,ghiChu);
         }
         rs.close();
         pstmt.close();
@@ -124,8 +124,8 @@ public class PhieuThuDao implements Idao<PhieuThu> {
         ArrayList<PhieuThu> listPhieuThu = new ArrayList<>();
         while (rs.next()) {
             int id = rs.getInt("ID");
-            String maDaili = rs.getString("MaDaiLi");
-            String maNhanVien = rs.getString("MaNhanVien");
+            int maDaili = rs.getInt("MaDaiLy");
+            int maNhanVien = rs.getInt("MaNhanVien");
             Date ngayLap  =rs.getDate("NgayLapPhieu");
             String maPhieuThu = rs.getString("MaPhieuThu");
             int soTienThu = rs.getInt("SoTienThu");

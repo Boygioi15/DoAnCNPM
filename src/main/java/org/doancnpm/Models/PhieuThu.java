@@ -1,12 +1,16 @@
 package org.doancnpm.Models;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+
 import java.sql.Date;
 
 public class PhieuThu {
-    private int ID;
+    private BooleanProperty selected = new SimpleBooleanProperty(false);
+    private Integer ID;
     private String MaPhieuThu;
-    private String MaDaiLi;
-    private String MaNhanVien;
+    private Integer MaDaiLi;
+    private Integer MaNhanVien;
     private Date NgayLap;
     private int SoTienThu;
     private String GhiChu;
@@ -15,7 +19,7 @@ public class PhieuThu {
 
     }
 
-    public PhieuThu(int ID, String maPhieuThu, String maDaiLi, String maNhanVien, Date ngayLap,int SoTienThu,String GhiChu) {
+    public PhieuThu(Integer ID, String maPhieuThu, Integer maDaiLi, Integer maNhanVien, Date ngayLap,int SoTienThu,String GhiChu) {
         this.ID = ID;
         this.MaPhieuThu = maPhieuThu;
         this.MaDaiLi = maDaiLi;
@@ -41,7 +45,7 @@ public class PhieuThu {
         GhiChu = ghiChu;
     }
 
-    public int getID() {
+    public Integer getID() {
         return ID;
     }
 
@@ -57,19 +61,19 @@ public class PhieuThu {
         NgayLap = ngayLap;
     }
 
-    public String getMaNhanVien() {
+    public Integer getMaNhanVien() {
         return MaNhanVien;
     }
 
-    public void setMaNhanVien(String maNhanVien) {
+    public void setMaNhanVien(Integer maNhanVien) {
         MaNhanVien = maNhanVien;
     }
 
-    public String getMaDaiLi() {
+    public Integer getMaDaiLi() {
         return MaDaiLi;
     }
 
-    public void setMaDaiLi(String maDaiLi) {
+    public void setMaDaiLi(Integer maDaiLi) {
         MaDaiLi = maDaiLi;
     }
 
@@ -79,5 +83,12 @@ public class PhieuThu {
 
     public void setMaPhieuThu(String maPhieuThu) {
         MaPhieuThu = maPhieuThu;
+    }
+    public BooleanProperty selectedProperty() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected.set(selected);
     }
 }

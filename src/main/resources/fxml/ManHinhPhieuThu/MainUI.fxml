@@ -6,7 +6,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -26,7 +25,7 @@
          <children>
             <MenuButton mnemonicParsing="false" styleClass="action-button" text="Thêm mới">
                <items>
-                  <MenuItem mnemonicParsing="false" text="Thêm trực tiếp" fx:id="addDirectButton" />
+                  <MenuItem fx:id="addDirectButton" mnemonicParsing="false" text="Thêm trực tiếp" />
                   <MenuItem mnemonicParsing="false" text="Thêm từ file Excel" />
                </items>
                <font>
@@ -35,8 +34,8 @@
             </MenuButton>
             <MenuButton mnemonicParsing="false" styleClass="action-button" text="Thao tác">
                <items>
-                  <MenuItem mnemonicParsing="false" text="Action 1" />
-                  <MenuItem mnemonicParsing="false" text="Action 2" />
+                  <MenuItem mnemonicParsing="false" text="Xóa các dòng đã chọn" />
+                  <MenuItem fx:id="addExcelButton" mnemonicParsing="false" text="Xuất file excel" />
                </items>
                <font>
                   <Font size="18.0" />
@@ -46,14 +45,14 @@
       </HBox>
       <HBox alignment="CENTER_LEFT" spacing="10.0">
          <children>
-            <Button mnemonicParsing="false" styleClass="action-button" text="Refresh">
+            <Button fx:id="refreshButton" mnemonicParsing="false" styleClass="action-button" text="Refresh">
                <font>
                   <Font size="18.0" />
                </font>
             </Button>
-            <MFXTextField borderGap="6.0" floatMode="BORDER" floatingText="Mã phiếu thu" prefWidth="120.0" styleClass="body-label" />
-            <MFXTextField borderGap="6.0" floatMode="BORDER" floatingText="Mã đại lý" prefWidth="120.0" styleClass="body-label" />
-            <MFXTextField borderGap="6.0" floatMode="BORDER" floatingText="Mã nhân viên lập phiếu" prefWidth="120.0" styleClass="body-label" />
+            <MFXTextField fx:id="maPhieuThuTextField" borderGap="6.0" floatMode="BORDER" floatingText="Mã phiếu thu" prefWidth="120.0" styleClass="body-label" />
+            <MFXTextField fx:id="maDaiLyTextField" borderGap="6.0" floatMode="BORDER" floatingText="Mã đại lý" prefWidth="120.0" styleClass="body-label" />
+            <MFXTextField fx:id="maNhanVienTextField" borderGap="6.0" floatMode="BORDER" floatingText="Mã nhân viên lập phiếu" prefWidth="120.0" styleClass="body-label" />
             <Button mnemonicParsing="false" styleClass="action-button" text="Lọc">
                <font>
                   <Font size="18.0" />

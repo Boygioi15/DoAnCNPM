@@ -33,8 +33,8 @@ public class LapPhieuThuDialogController implements Initializable {
             return;
         }
         ngayLapPhieuTextField.setText(DayFormat.GetDayStringFormatted(phieuThu.getNgayLap()));
-        maDaiLyTextField.setText(phieuThu.getMaDaiLi());
-        maNhanVienTextField.setText(phieuThu.getMaNhanVien());
+        maDaiLyTextField.setText(phieuThu.getMaDaiLi().toString());
+        maNhanVienTextField.setText(phieuThu.getMaNhanVien().toString());
         ghiChuTextField.setText(phieuThu.getGhiChu());
         tongTienTextField.setText(Integer.toString(phieuThu.getSoTienThu()));
     }
@@ -42,8 +42,8 @@ public class LapPhieuThuDialogController implements Initializable {
         Date ngayTiepNhan = new Date(System.currentTimeMillis());
         PhieuThu phieuThu = new PhieuThu();
         try{
-            phieuThu.setMaNhanVien(Integer.toString(CurrentNVInfor.getInstance().getLoggedInNhanVien().getID()));
-            phieuThu.setMaDaiLi(maDaiLyTextField.getText());
+            phieuThu.setMaNhanVien((CurrentNVInfor.getInstance().getLoggedInNhanVien().getID()));
+            phieuThu.setMaDaiLi(Integer.parseInt(maDaiLyTextField.getText()));
             phieuThu.setGhiChu(ghiChuTextField.getText());
             phieuThu.setSoTienThu(Integer.parseInt(tongTienTextField.getText()));
             phieuThu.setNgayLap(ngayTiepNhan);
