@@ -45,12 +45,16 @@ public class AdminController implements Initializable {
     }
 
     private void initScreens() throws IOException {
-        FXMLLoader mhDaiLyLoader = new FXMLLoader(getClass().getResource("/fxml/ManHinhDaiLy/MainUI.fxml"));
+        FXMLLoader mhDaiLyLoader = new FXMLLoader(getClass().getResource("/fxml/Main/ManHinhDaiLy/MainUI.fxml"));
         Parent mhDaiLyGraph = (Parent) mhDaiLyLoader.load();
         manHinhDaiLyController = mhDaiLyLoader.getController();
         centerScreen.getChildren().add(mhDaiLyGraph);
+        AnchorPane.setLeftAnchor(mhDaiLyGraph,0.0);
+        AnchorPane.setTopAnchor(mhDaiLyGraph,0.0);
+        AnchorPane.setBottomAnchor(mhDaiLyGraph,0.0);
+        AnchorPane.setRightAnchor(mhDaiLyGraph,0.0);
 
-        FXMLLoader mhPhieuThuLoader = new FXMLLoader(getClass().getResource("/fxml/ManHinhPhieuThu/MainUI.fxml"));
+        FXMLLoader mhPhieuThuLoader = new FXMLLoader(getClass().getResource("/fxml/Main/ManHinhPhieuThu/MainUI.fxml"));
         Parent mhPhieuThuGraph = (Parent) mhPhieuThuLoader.load();
         manHinhPhieuThuController = mhPhieuThuLoader.getController();
         centerScreen.getChildren().add(mhPhieuThuGraph);

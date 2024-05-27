@@ -8,6 +8,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.util.StringConverter;
 import org.controlsfx.control.SearchableComboBox;
@@ -34,7 +35,7 @@ public class DirectAddDialogController implements Initializable {
     @FXML private TextField diaChiTextField;
     @FXML private TextField dienThoaiTextField;
     @FXML private TextField emailTextField;
-    @FXML private TextField ghiChuTextField;
+    @FXML private TextArea ghiChuTextArea;
 
 
     //validators
@@ -78,7 +79,7 @@ public class DirectAddDialogController implements Initializable {
         diaChiTextField.setText(daiLy.getDiaChi());
         dienThoaiTextField.setText(daiLy.getDienThoai());
         emailTextField.setText(daiLy.getEmail());
-        ghiChuTextField.setText(daiLy.getGhiChu());
+        ghiChuTextArea.setText(daiLy.getGhiChu());
         ngayTiepNhanTextField.setText(DayFormat.GetDayStringFormatted(daiLy.getNgayTiepNhan()));
     }
     //validator
@@ -157,7 +158,7 @@ public class DirectAddDialogController implements Initializable {
             daiLy.setEmail(emailTextField.getText());
             daiLy.setDienThoai(dienThoaiTextField.getText());
             daiLy.setNgayTiepNhan( ngayTiepNhan);
-            daiLy.setGhiChu( ghiChuTextField.getText());
+            daiLy.setGhiChu( ghiChuTextArea.getText());
         }
         catch(NumberFormatException e){
             System.out.println("Quan not set!");

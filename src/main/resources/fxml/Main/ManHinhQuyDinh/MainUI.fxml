@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<Accordion minHeight="-Infinity" minWidth="-Infinity" prefHeight="410.0" prefWidth="583.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+  <panes>
+    <TitledPane animated="false" text="Quận">
+         <content>
+            <ScrollPane>
+               <content>
+                  <VBox prefWidth="400.0" spacing="5.0">
+                     <children>
+                        <TableView fx:id="mainTableView" prefHeight="200.0" prefWidth="200.0">
+                           <columns>
+                              <TableColumn prefWidth="47.2000116109848" text="STT" />
+                              <TableColumn minWidth="-1.0" prefWidth="330.39997787475585" text="Quận" />
+                           </columns>
+                        </TableView>
+                        <HBox alignment="TOP_RIGHT" spacing="10.0">
+                           <children>
+                              <Button mnemonicParsing="false" text="Thêm mới" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                           <children>
+                              <Label text="Số lượng đại lý tối đa mỗi quận:" />
+                              <TextField HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0" />
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </ScrollPane>
+         </content>
+    </TitledPane>
+    <TitledPane animated="false" text="Loại đại lý">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0">
+               <children>
+                  <ScrollPane layoutX="14.0" layoutY="9.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <content>
+                        <VBox prefWidth="400.0" spacing="5.0">
+                           <children>
+                              <TableView fx:id="mainTableView1" prefHeight="200.0">
+                                 <columns>
+                                    <TableColumn prefWidth="47.2000116109848" text="STT" />
+                                    <TableColumn minWidth="-1.0" prefWidth="148.79998397827148" text="Loại đại lý" />
+                                    <TableColumn minWidth="-1.0" prefWidth="181.59999389648436" text="Nợ tối đa" />
+                                 </columns>
+                              </TableView>
+                              <HBox alignment="TOP_RIGHT" spacing="10.0">
+                                 <children>
+                                    <Button mnemonicParsing="false" text="Thêm mới" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" spacing="10.0" />
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+               </children></AnchorPane>
+      </content>
+    </TitledPane>
+      <TitledPane animated="false" text="Tài khoản">
+         <content>
+            <AnchorPane minHeight="0.0" minWidth="0.0">
+               <children>
+                  <ScrollPane layoutX="14.0" layoutY="9.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <content>
+                        <VBox prefHeight="256.0" prefWidth="400.0" spacing="5.0">
+                           <children>
+                              <TableView fx:id="mainTableView12" prefHeight="200.0" prefWidth="400.0">
+                                 <columns>
+                                    <TableColumn prefWidth="71.19996964931488" text="Username" />
+                                    <TableColumn minWidth="-1.0" prefWidth="84.80005645751953" text="Password" />
+                                    <TableColumn minWidth="-1.0" prefWidth="107.19999694824219" text="Nhân viên" />
+                                    <TableColumn maxWidth="263.20005798339844" minWidth="-1.0" prefWidth="114.4000244140625" text="Thao tác" />
+                                 </columns>
+                              </TableView>
+                              <HBox alignment="TOP_RIGHT" spacing="10.0">
+                                 <children>
+                                    <Button mnemonicParsing="false" text="Thêm mới" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" spacing="10.0" />
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+               </children>
+            </AnchorPane>
+         </content>
+      </TitledPane>
+    <TitledPane animated="false" text="Quy định khác">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <ScrollPane prefHeight="200.0" prefWidth="200.0" vvalue="0.96" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <content>
+                        <VBox prefWidth="400.0" spacing="5.0">
+                           <children>
+                              <Label text="Danh sách đơn vị tính" />
+                              <TableView fx:id="mainTableView11" prefHeight="200.0">
+                                 <columns>
+                                    <TableColumn prefWidth="67.19997537136078" text="STT" />
+                                    <TableColumn minWidth="-1.0" prefWidth="311.2000427246094" text="Đơn vị tính" />
+                                 </columns>
+                              </TableView>
+                              <HBox alignment="TOP_RIGHT" spacing="10.0">
+                                 <children>
+                                    <Button mnemonicParsing="false" text="Thêm mới" />
+                                 </children>
+                              </HBox>
+                              <GridPane hgap="20.0">
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                                 <children>
+                                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                       <children>
+                                          <Label text="Tỷ lệ đơn giá xuất/ nhập:" />
+                                       </children>
+                                    </HBox>
+                                    <Label text="Cho phép vượt nợ:" GridPane.rowIndex="1" />
+                                    <TextField GridPane.columnIndex="1" />
+                                    <CheckBox mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                 </children>
+                              </GridPane>
+                              <HBox alignment="CENTER_LEFT" spacing="10.0" />
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+               </children></AnchorPane>
+      </content>
+    </TitledPane>
+  </panes>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</Accordion>
