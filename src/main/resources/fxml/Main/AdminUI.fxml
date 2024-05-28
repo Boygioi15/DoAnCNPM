@@ -37,7 +37,7 @@
                   </MenuButton>
                   <MenuButton mnemonicParsing="false" styleClass="action-button" text="Người dùng">
                     <items>
-                      <MenuItem mnemonicParsing="false" text="Tài khoản" />
+                      <MenuItem fx:id="inforButton" mnemonicParsing="false" text="Tài khoản" />
                       <MenuItem mnemonicParsing="false" text="Đăng xuất" />
                     </items>
                      <graphic>
