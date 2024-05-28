@@ -20,13 +20,13 @@
          </children></AnchorPane>
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
          <children>
-            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" style="visibility: true;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <VBox fx:id="mainLoginPane" alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" style="visibility: true;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <Label alignment="CENTER" maxWidth="1000.0" text="Đăng nhập" />
                   <TextField fx:id="user" maxWidth="1000.0" prefWidth="500.0" promptText="Tên đăng nhập/ Email" />
                   <PasswordField fx:id="password" promptText="Mật khẩu" />
                   <Button fx:id="loginButton" alignment="CENTER" maxWidth="1000.0" mnemonicParsing="false" text="Đăng nhập" VBox.vgrow="ALWAYS" />
-                  <VBox>
+                  <VBox fx:id="errorBox">
                      <children>
                         <Text fx:id="saiTKText" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Tên đăng nhập không tồn tại!">
                            <VBox.margin>
@@ -45,14 +45,14 @@
                   </VBox>
                   <AnchorPane>
                      <children>
-                        <Label text="Quên mật khẩu?" AnchorPane.rightAnchor="0.0">
+                        <Label fx:id="forgotPasswordLabel" text="Quên mật khẩu?" AnchorPane.rightAnchor="0.0">
                            <font>
                               <Font size="10.0" />
                            </font>
                         </Label>
                         <HBox alignment="CENTER_RIGHT">
                            <children>
-                              <CheckBox mnemonicParsing="false" text="Ghi nhớ" />
+                              <CheckBox fx:id="rememberMeCheckBox" mnemonicParsing="false" text="Ghi nhớ" />
                            </children>
                         </HBox>
                      </children>
@@ -62,9 +62,8 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </padding>
             </VBox>
-            <AnchorPane prefHeight="200.0" prefWidth="200.0" style="visibility: false;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <AnchorPane fx:id="emailInputPane" prefHeight="200.0" prefWidth="200.0" style="visibility: false;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <Button mnemonicParsing="false" text="&lt;" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
                   <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <HBox alignment="CENTER">
@@ -72,8 +71,8 @@
                               <Label alignment="CENTER" maxWidth="1000.0" text="Nhập email để khôi phục" />
                            </children>
                         </HBox>
-                        <TextField maxWidth="1000.0" promptText="Email" />
-                        <Button alignment="CENTER" maxWidth="1000.0" mnemonicParsing="false" text="Gửi OTP" VBox.vgrow="ALWAYS" />
+                        <TextField fx:id="emailText" maxWidth="1000.0" promptText="Email" />
+                        <Button fx:id="sendOtpButton" alignment="CENTER" maxWidth="1000.0" mnemonicParsing="false" text="Gửi OTP" VBox.vgrow="ALWAYS" />
                         <VBox>
                            <children>
                               <Text fx:id="saiEmailText" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Email không tồn tại!">
@@ -88,11 +87,11 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
                   </VBox>
+                  <Button fx:id="backToMainLoginButton" alignment="CENTER" maxWidth="1000.0" mnemonicParsing="false" text="&lt;" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
                </children>
             </AnchorPane>
-            <AnchorPane prefHeight="200.0" prefWidth="200.0" style="visibility: false;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <AnchorPane fx:id="verifyOtpPane" prefHeight="200.0" prefWidth="200.0" style="visibility: false;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <Button mnemonicParsing="false" text="&lt;" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
                   <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <HBox alignment="CENTER">
@@ -100,8 +99,8 @@
                               <Label alignment="CENTER" maxWidth="1000.0" text="Nhập mã OTP" />
                            </children>
                         </HBox>
-                        <TextField promptText="Mã OTP bao gồm 6 kí tự" />
-                        <Button alignment="CENTER" maxWidth="1000.0" mnemonicParsing="false" text="Xác nhận" VBox.vgrow="ALWAYS" />
+                        <TextField fx:id="otpText" promptText="Mã OTP bao gồm 6 kí tự" />
+                        <Button fx:id="verifyOtpButton" alignment="CENTER" maxWidth="1000.0" mnemonicParsing="false" text="Xác nhận" VBox.vgrow="ALWAYS" />
                         <VBox>
                            <children>
                               <Text fx:id="saiOTPText" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Mã OTP phải là mã có 6 chữ số">
@@ -121,7 +120,7 @@
                         </VBox>
                         <HBox alignment="CENTER_RIGHT">
                            <children>
-                              <Label text="Gửi lại mã OTP?">
+                              <Label fx:id="reSendOtpLabel" text="Gửi lại mã OTP?">
                                  <font>
                                     <Font size="10.0" />
                                  </font>
@@ -136,11 +135,11 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
                   </VBox>
+                  <Button fx:id="backToEmailInputButton" alignment="CENTER" maxWidth="1000.0" mnemonicParsing="false" text="&lt;" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
                </children>
             </AnchorPane>
-            <AnchorPane style="visibility: false;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <AnchorPane fx:id="resetPasswordPane" style="visibility: false;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <Button mnemonicParsing="false" text="&lt;" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
                   <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <HBox alignment="CENTER">
@@ -148,7 +147,7 @@
                               <Label alignment="CENTER" maxWidth="1000.0" text="Đặt lại mật khẩu mới" />
                            </children>
                         </HBox>
-                        <TextField promptText="Mật khẩu mới" />
+                        <TextField fx:id="enterPasswordText" promptText="Mật khẩu mới" />
                         <VBox>
                            <children>
                               <Text fx:id="saiDDMKText1" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Mật khẩu phải có ít nhất 8 kí tự">
@@ -166,7 +165,7 @@
                               <Insets bottom="-5.0" top="-5.0" />
                            </VBox.margin>
                         </VBox>
-                        <TextField promptText="Xác nhận mật khẩu" />
+                        <TextField fx:id="reEnterPasswordText" promptText="Xác nhận mật khẩu" />
                         <VBox>
                            <children>
                               <Text fx:id="saiDDMKText11" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Mật khẩu xác nhận không khớp!">
@@ -179,13 +178,14 @@
                               <Insets bottom="-5.0" top="-5.0" />
                            </VBox.margin>
                         </VBox>
-                        <Button alignment="CENTER" maxWidth="1000.0" mnemonicParsing="false" text="Xác nhận" VBox.vgrow="ALWAYS" />
+                        <Button fx:id="backButton" alignment="CENTER" maxWidth="1000.0" mnemonicParsing="false" text="Xác nhận" VBox.vgrow="ALWAYS" />
                         <HBox alignment="CENTER_RIGHT" />
                      </children>
                      <padding>
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
                   </VBox>
+                  <Button fx:id="backToOtpPaneButton" alignment="CENTER" maxWidth="1000.0" mnemonicParsing="false" text="&lt;" />
                </children>
             </AnchorPane>
          </children></AnchorPane>
