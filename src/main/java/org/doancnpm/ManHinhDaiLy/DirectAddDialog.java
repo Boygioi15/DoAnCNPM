@@ -30,7 +30,7 @@ public class DirectAddDialog extends Dialog<DaiLy>  {
     public DirectAddDialog(DaiLy initialValue) throws IOException {
         super();
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/ManHinhDaiLy/TiepNhanDaiLyUI.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/Main/ManHinhDaiLy/TiepNhanDaiLyUI.fxml"));
 
         ButtonType saveButtonType = new ButtonType("Thêm mới", ButtonBar.ButtonData.OK_DONE);
         ButtonType cancelButtonType = new ButtonType("Thoát", ButtonBar.ButtonData.CANCEL_CLOSE);

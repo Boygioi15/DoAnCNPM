@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.SplitPane?>
@@ -10,6 +11,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
 <SplitPane dividerPositions="0.6" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.doancnpm.Login.LoginController">
   <items>
@@ -18,39 +20,174 @@
          </children></AnchorPane>
     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
          <children>
-            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" style="visibility: true;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <Label alignment="CENTER" maxWidth="1000.0" text="Đăng nhập" />
                   <TextField fx:id="user" maxWidth="1000.0" prefWidth="500.0" promptText="Tên đăng nhập/ Email" />
                   <PasswordField fx:id="password" promptText="Mật khẩu" />
-                  <HBox alignment="CENTER_RIGHT">
+                  <Button fx:id="loginButton" alignment="CENTER" maxWidth="1000.0" mnemonicParsing="false" text="Đăng nhập" VBox.vgrow="ALWAYS" />
+                  <VBox>
                      <children>
-                        <Label text="Quên mật khẩu?">
-                           <HBox.margin>
-                              <Insets bottom="-5.0" top="-5.0" />
-                           </HBox.margin>
+                        <Text fx:id="saiTKText" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Tên đăng nhập không tồn tại!">
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </Text>
+                        <Text fx:id="saiMKText" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Mật khẩu không chính xác!">
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </Text>
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="-5.0" top="-5.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <AnchorPane>
+                     <children>
+                        <Label text="Quên mật khẩu?" AnchorPane.rightAnchor="0.0">
                            <font>
                               <Font size="10.0" />
                            </font>
                         </Label>
+                        <HBox alignment="CENTER_RIGHT">
+                           <children>
+                              <CheckBox mnemonicParsing="false" text="Ghi nhớ" />
+                           </children>
+                        </HBox>
                      </children>
-                  </HBox>
-                  <Button fx:id="loginButton" alignment="CENTER" maxWidth="1000.0" mnemonicParsing="false" text="Đăng nhập" VBox.vgrow="ALWAYS" />
+                  </AnchorPane>
                </children>
                <padding>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </padding>
             </VBox>
-            <VBox alignment="CENTER" layoutX="10.0" layoutY="10.0" prefHeight="200.0" prefWidth="100.0" spacing="10.0" style="visibility: false;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" style="visibility: false;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <Label alignment="CENTER" maxWidth="1000.0" text="Nhập email để khôi phục" />
-                  <TextField maxWidth="1000.0" promptText="Tên đăng nhập" />
-                  <Button alignment="CENTER" maxWidth="1000.0" mnemonicParsing="false" text="Gửi" VBox.vgrow="ALWAYS" />
+                  <Button mnemonicParsing="false" text="&lt;" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <HBox alignment="CENTER">
+                           <children>
+                              <Label alignment="CENTER" maxWidth="1000.0" text="Nhập email để khôi phục" />
+                           </children>
+                        </HBox>
+                        <TextField maxWidth="1000.0" promptText="Email" />
+                        <Button alignment="CENTER" maxWidth="1000.0" mnemonicParsing="false" text="Gửi OTP" VBox.vgrow="ALWAYS" />
+                        <VBox>
+                           <children>
+                              <Text fx:id="saiEmailText" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Email không tồn tại!">
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                              </Text>
+                           </children>
+                        </VBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </VBox>
                </children>
-               <padding>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </padding>
-            </VBox>
+            </AnchorPane>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" style="visibility: false;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <Button mnemonicParsing="false" text="&lt;" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <HBox alignment="CENTER">
+                           <children>
+                              <Label alignment="CENTER" maxWidth="1000.0" text="Nhập mã OTP" />
+                           </children>
+                        </HBox>
+                        <TextField promptText="Mã OTP bao gồm 6 kí tự" />
+                        <Button alignment="CENTER" maxWidth="1000.0" mnemonicParsing="false" text="Xác nhận" VBox.vgrow="ALWAYS" />
+                        <VBox>
+                           <children>
+                              <Text fx:id="saiOTPText" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Mã OTP phải là mã có 6 chữ số">
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                              </Text>
+                              <Text fx:id="saiMKText1" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Mã OTP không chính xác!">
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                              </Text>
+                           </children>
+                           <VBox.margin>
+                              <Insets bottom="-5.0" top="-5.0" />
+                           </VBox.margin>
+                        </VBox>
+                        <HBox alignment="CENTER_RIGHT">
+                           <children>
+                              <Label text="Gửi lại mã OTP?">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets bottom="-5.0" top="-5.0" />
+                                 </HBox.margin>
+                              </Label>
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </VBox>
+               </children>
+            </AnchorPane>
+            <AnchorPane style="visibility: false;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <Button mnemonicParsing="false" text="&lt;" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <HBox alignment="CENTER">
+                           <children>
+                              <Label alignment="CENTER" maxWidth="1000.0" text="Đặt lại mật khẩu mới" />
+                           </children>
+                        </HBox>
+                        <TextField promptText="Mật khẩu mới" />
+                        <VBox>
+                           <children>
+                              <Text fx:id="saiDDMKText1" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Mật khẩu phải có ít nhất 8 kí tự">
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                              </Text>
+                              <Text fx:id="saiDDMKText2" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Mật khẩu phải bao gồm cả chữ và số">
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                              </Text>
+                           </children>
+                           <VBox.margin>
+                              <Insets bottom="-5.0" top="-5.0" />
+                           </VBox.margin>
+                        </VBox>
+                        <TextField promptText="Xác nhận mật khẩu" />
+                        <VBox>
+                           <children>
+                              <Text fx:id="saiDDMKText11" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" text="Mật khẩu xác nhận không khớp!">
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                              </Text>
+                           </children>
+                           <VBox.margin>
+                              <Insets bottom="-5.0" top="-5.0" />
+                           </VBox.margin>
+                        </VBox>
+                        <Button alignment="CENTER" maxWidth="1000.0" mnemonicParsing="false" text="Xác nhận" VBox.vgrow="ALWAYS" />
+                        <HBox alignment="CENTER_RIGHT" />
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </VBox>
+               </children>
+            </AnchorPane>
          </children></AnchorPane>
   </items>
 </SplitPane>

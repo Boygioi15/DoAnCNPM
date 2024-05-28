@@ -50,7 +50,7 @@ public class DaiLy {
     public Date getNgayTiepNhan() {
         return ngayTiepNhan;
     }
-    public int getNoHienTai() {
+    public Integer getNoHienTai() {
         return noHienTai;
     }
     public String getGhiChu() {

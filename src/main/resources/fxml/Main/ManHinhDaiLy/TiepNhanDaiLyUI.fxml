@@ -4,6 +4,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -50,7 +51,6 @@
                 <SearchableComboBox fx:id="loaiDaiLyComboBox" promptText="-Chọn loại đại lý-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                 <TextField fx:id="tenDaiLyTextField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                 <TextField fx:id="diaChiTextField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                <TextField fx:id="ghiChuTextField" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                 <Label text="Ghi chú:" GridPane.rowIndex="6" />
                 <TextField fx:id="dienThoaiTextField" GridPane.columnIndex="1" GridPane.rowIndex="5" />
             <Label text="Email:" GridPane.rowIndex="4" />
@@ -60,6 +60,7 @@
                       <SearchableComboBox fx:id="quanComboBox" prefWidth="322.0" promptText="-Chọn quận-" />
                </children>
             </VBox>
+            <TextArea fx:id="ghiChuTextArea" prefHeight="100.0" prefRowCount="5" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
             </children>
         </GridPane>
         <AnchorPane VBox.vgrow="ALWAYS">
