@@ -15,10 +15,12 @@ module org.example.demofx {
     opens org.doancnpm.ManHinhPhieuThu to javafx.fxml;
     opens org.doancnpm.Models to javafx.base;
     opens org.doancnpm.Main to javafx.fxml;
+    opens org.doancnpm.ManHinhDieuKhien to javafx.fxml;
 
     exports org.doancnpm;
     exports org.doancnpm.ManHinhDaiLy;
     exports org.doancnpm.ManHinhPhieuThu;
     exports org.doancnpm.Models;
     exports org.doancnpm.Main;
+
 }

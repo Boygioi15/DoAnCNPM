@@ -5,4 +5,5 @@ public enum ManHinh {
     PHIEU_THU,
     TON_KHO,
     NHAP_XUAT,
+    DIEU_KHIEN,
 }
