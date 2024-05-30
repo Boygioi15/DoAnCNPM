@@ -7,12 +7,18 @@ import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.doancnpm.SQLUltilities.CalculateSQL;
 
 import java.net.URL;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -29,12 +35,15 @@ public class ManHinhDieuKhienController implements Initializable {
     @FXML
     private PieChart tonkhoPieChart;
     @FXML
-    private Text nvText,dlText,tongGiaTriKhoHangText;
+    private StackPane pieChartContainer; // Thêm StackPane để chứa PieChart và Circle
+    @FXML
+    private Text nvText, dlText, tongGiaTriKhoHangText, slMatHangText, soLuongHangTonKhoText;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initLineChart();
         initPieChart();
+        initDataShow();
     }
 
     private void initLineChart() {
@@ -72,7 +81,6 @@ public class ManHinhDieuKhienController implements Initializable {
         return series;
     }
 
-
     private XYChart.Series<String, Number> createDebtsDataSeries(Map<String, Double> totalDebts) {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
@@ -92,7 +100,6 @@ public class ManHinhDieuKhienController implements Initializable {
         }
         return series;
     }
-
 
     private void initPieChart() {
         CalculateSQL calculateSQL = CalculateSQL.getInstance();
@@ -122,8 +129,27 @@ public class ManHinhDieuKhienController implements Initializable {
         tonkhoPieChart.setData(pieChartData);
         tonkhoPieChart.setTitle("Kho hàng");
         tonkhoPieChart.setLabelsVisible(false);
+
+        // Thêm hình tròn vào giữa PieChart để tạo DonutChart
+        Circle innerCircle = new Circle();
+        innerCircle.setFill(Color.WHITE); // Màu trắng cho hình tròn bên trong
+        innerCircle.setRadius(50); // Đặt kích thước phù hợp cho hình tròn
+
+        // Thêm PieChart và hình tròn vào StackPane
+        pieChartContainer.getChildren().addAll(innerCircle);
     }
 
+    public void initDataShow() {
+        nvText.setText(String.valueOf(CalculateSQL.getInstance().calSoNhanVien()));
+        dlText.setText(String.valueOf(CalculateSQL.getInstance().calSoDaiLy()));
 
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
+        symbols.setGroupingSeparator('.');
+        DecimalFormat df = new DecimalFormat("#,##0", symbols);
+        df.setMaximumFractionDigits(8);
+        tongGiaTriKhoHangText.setText(String.valueOf(df.format(CalculateSQL.getInstance().calTongGiaTriKhoHang())));
 
+        slMatHangText.setText(String.valueOf(CalculateSQL.getInstance().calSoLuongMatHang()));
+        soLuongHangTonKhoText.setText(String.valueOf(CalculateSQL.getInstance().calSoLuongHangTonKho()));
+    }
 }

@@ -176,4 +176,126 @@ public class CalculateSQL {
         }
         return tongSoMatHang;
     }
+    public int calSoNhanVien() {
+        Connection conn = DatabaseDriver.getConnect();
+        int soNhanVien = 0;
+        if (conn != null) {
+            try {
+                String sql = "SELECT COUNT(*) AS SoNhanVien FROM NHANVIEN";
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql);
+
+                if (rs.next()) {
+                    soNhanVien = rs.getInt("SoNhanVien");
+                }
+
+                rs.close();
+                stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Không thể kết nối đến cơ sở dữ liệu.");
+        }
+        return soNhanVien;
+    }
+
+    public int calSoDaiLy() {
+        Connection conn = DatabaseDriver.getConnect();
+        int soDaiLy = 0;
+        if (conn != null) {
+            try {
+                String sql = "SELECT COUNT(*) AS SoDaiLy FROM DAILY";
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql);
+
+                if (rs.next()) {
+                    soDaiLy = rs.getInt("SoDaiLy");
+                }
+
+                rs.close();
+                stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Không thể kết nối đến cơ sở dữ liệu.");
+        }
+        return soDaiLy;
+    }
+
+    public double calTongGiaTriKhoHang() {
+        Connection conn = DatabaseDriver.getConnect();
+        double tongGiaTriKhoHang = 0;
+        if (conn != null) {
+            try {
+                String sql = "SELECT SUM(SoLuong * DonGiaNhap) AS TongGiaTriKhoHang FROM MATHANG";
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql);
+
+                if (rs.next()) {
+                    tongGiaTriKhoHang = rs.getDouble("TongGiaTriKhoHang");
+                }
+
+                rs.close();
+                stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Không thể kết nối đến cơ sở dữ liệu.");
+        }
+        return tongGiaTriKhoHang;
+    }
+    public int calSoLuongMatHang() {
+        Connection conn = DatabaseDriver.getConnect();
+        int soLuongMatHang = 0;
+        if (conn != null) {
+            try {
+                String sql = "SELECT COUNT(*) AS SoLuongMatHang FROM MATHANG";
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql);
+
+                if (rs.next()) {
+                    soLuongMatHang = rs.getInt("SoLuongMatHang");
+                }
+
+                rs.close();
+                stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Không thể kết nối đến cơ sở dữ liệu.");
+        }
+        return soLuongMatHang;
+    }
+
+    // Phương thức tính tổng số lượng hàng tồn kho
+    public int calSoLuongHangTonKho() {
+        Connection conn = DatabaseDriver.getConnect();
+        int soLuongHangTonKho = 0;
+        if (conn != null) {
+            try {
+                String sql = "SELECT SUM(SoLuong) AS SoLuongHangTonKho FROM MATHANG";
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql);
+
+                if (rs.next()) {
+                    soLuongHangTonKho = rs.getInt("SoLuongHangTonKho");
+                }
+
+                rs.close();
+                stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Không thể kết nối đến cơ sở dữ liệu.");
+        }
+        return soLuongHangTonKho;
+    }
+
+
+
 }
