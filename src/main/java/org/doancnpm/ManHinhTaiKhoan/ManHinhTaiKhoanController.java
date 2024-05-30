@@ -7,6 +7,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -18,6 +20,7 @@ import org.doancnpm.Ultilities.PopDialog;
 
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class ManHinhTaiKhoanController implements Initializable {
@@ -30,6 +33,8 @@ public class ManHinhTaiKhoanController implements Initializable {
     public MFXPasswordField currentPasswordTextField;
     public VBox errorBox;
     public Text nameText;
+    public ImageView backgroundImg;
+    public ImageView profileImg;
 
     @FXML
     private VBox manHinhTaiKhoan;

@@ -3,8 +3,10 @@
 <?import io.github.palexdev.materialfx.controls.MFXPasswordField?>
 <?import io.github.palexdev.materialfx.controls.MFXTextField?>
 <?import javafx.geometry.Insets?>
+<?import javafx.geometry.Rectangle2D?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -17,12 +19,21 @@
 
 <VBox fx:id="manHinhTaiKhoan" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="672.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.doancnpm.ManHinhTaiKhoan.ManHinhTaiKhoanController">
     <children>
-        <AnchorPane maxHeight="200.0" minHeight="200.0" prefHeight="200.0">
+        <AnchorPane maxHeight="223.0" minHeight="200.0" prefHeight="223.0" prefWidth="652.0">
             <children>
-                <ImageView fitHeight="150.0" fitWidth="651.0" layoutX="-25.0" layoutY="-4.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                <ImageView fx:id="backgroundImg" fitHeight="184.0" fitWidth="634.0" layoutX="-25.0" layoutY="-4.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="39.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="18.0" AnchorPane.topAnchor="0.0">
+               <image>
+                  <Image url="@../../../image/background.png" />
+               </image>
+               <viewport>
+                  <Rectangle2D />
+               </viewport></ImageView>
                 <HBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="20.0">
                     <children>
-                        <ImageView fitHeight="72.0" fitWidth="72.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fx:id="profileImg" fitHeight="72.0" fitWidth="72.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../image/profileimg.png" />
+                     </image></ImageView>
                         <Text fx:id="nameText" strokeType="OUTSIDE" strokeWidth="0.0" text="Tên người dùng" />
                     </children>
                 </HBox>
