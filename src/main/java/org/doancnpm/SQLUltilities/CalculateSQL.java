@@ -110,25 +110,26 @@ public class CalculateSQL {
         for (int yearTest = currentYear; yearTest >= year; yearTest--) {
             // Xác định tháng bắt đầu dựa trên năm
             int startMonthOfYear = (yearTest == currentYear) ? currentMonth : 12;
-            int endMonth = (year == currentYear || yearTest !=currentYear) ? 2 : 1;
+            int endMonth = (year == currentYear || yearTest != currentYear) ? 2 : 1;
 
             // Bắt đầu tính toán tổng nợ từ tháng bắt đầu của năm đó
             for (int month = startMonthOfYear; month >= endMonth; month--) {
                 if (month == 1 && yearTest != year) {
                     totalDebtAll += calculateTotalReceiptsForMonth(1, yearTest) - calculateTotalValueExportsForMonth(1, yearTest);
-                    totalDebts.put((yearTest-1) + "-" + 12, totalDebtAll);
+                    totalDebts.put((yearTest - 1) + "-" + 12, totalDebtAll);
                     // Xuất dòng lệnh kiểm tra
-                    System.out.println("Năm: " + (yearTest-1) + ", Tháng: " + 12 + ", Tổng nợ: " + totalDebtAll+"Loại 1");
+                    System.out.println("Năm: " + (yearTest - 1) + ", Tháng: " + 12 + ", Tổng nợ: " + totalDebtAll + "Loại 1");
                 } else {
                     totalDebtAll += calculateTotalReceiptsForMonth(month, yearTest) - calculateTotalValueExportsForMonth(month, yearTest);
-                    totalDebts.put(yearTest + "-" + (month-1), totalDebtAll);
+                    totalDebts.put(yearTest + "-" + (month - 1), totalDebtAll);
                     // Xuất dòng lệnh kiểm tra
-                    System.out.println("Năm: " + yearTest + ", Tháng: " + (month-1) + ", Tổng nợ: " + totalDebtAll+"Loại 2");
+                    System.out.println("Năm: " + yearTest + ", Tháng: " + (month - 1) + ", Tổng nợ: " + totalDebtAll + "Loại 2");
                 }
             }
         }
         return totalDebts;
     }
+
     public int calSoMatHangTonKho() {
         Connection conn = DatabaseDriver.getConnect();
         int soMatHangTonKho = 0;
@@ -176,6 +177,7 @@ public class CalculateSQL {
         }
         return tongSoMatHang;
     }
+
     public int calSoNhanVien() {
         Connection conn = DatabaseDriver.getConnect();
         int soNhanVien = 0;
@@ -247,6 +249,7 @@ public class CalculateSQL {
         }
         return tongGiaTriKhoHang;
     }
+
     public int calSoLuongMatHang() {
         Connection conn = DatabaseDriver.getConnect();
         int soLuongMatHang = 0;
@@ -296,6 +299,66 @@ public class CalculateSQL {
         return soLuongHangTonKho;
     }
 
+    public Map<Integer, Integer> calSoPhieuXuatVoiDaiLyTheoThang(int month, int year) {
+        Map<Integer, Integer> result = new HashMap<>();
+        Connection conn = DatabaseDriver.getConnect();
+        if (conn != null) {
+            try {
+                String sql = "SELECT MaDaiLy, COUNT(*) AS SoPhieuXuat " +
+                        "FROM PHIEUXUATHANG " +
+                        "WHERE MONTH(NgayLapPhieu) = ? AND YEAR(NgayLapPhieu) = ? " +
+                        "GROUP BY MaDaiLy";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.setInt(1, month);
+                stmt.setInt(2, year);
+                ResultSet rs = stmt.executeQuery();
+                while (rs.next()) {
+                    int maDaiLy = rs.getInt("MaDaiLy");
+                    int soPhieuXuat = rs.getInt("SoPhieuXuat");
+                    result.put(maDaiLy, soPhieuXuat);
+                }
 
+                rs.close();
+                stmt.close();
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Không thể kết nối đến cơ sở dữ liệu.");
+        }
+        return result;
+    }
+
+    public Map<Integer, Double> calTongGiaTriPhieuXuatVoiDaiLyTheoThang(int month, int year) {
+        Map<Integer, Double> result = new HashMap<>();
+        Connection conn = DatabaseDriver.getConnect();
+        if (conn != null) {
+            try {
+                String sql = "SELECT MaDaiLy, SUM(TongTien) AS TongGiaTri " +
+                        "FROM PHIEUXUATHANG " +
+                        "WHERE MONTH(NgayLapPhieu) = ? AND YEAR(NgayLapPhieu) = ? " +
+                        "GROUP BY MaDaiLy";
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.setInt(1, month);
+                stmt.setInt(2, year);
+                ResultSet rs = stmt.executeQuery();
+                while (rs.next()) {
+                    int maDaiLy = rs.getInt("MaDaiLy");
+                    double tongGiaTri = rs.getDouble("TongGiaTri");
+                    result.put(maDaiLy, tongGiaTri);
+                }
+
+                rs.close();
+                stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Không thể kết nối đến cơ sở dữ liệu.");
+        }
+
+        return result;
+    }
 
 }

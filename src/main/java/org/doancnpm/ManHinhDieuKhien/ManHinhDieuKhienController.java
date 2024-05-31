@@ -53,12 +53,12 @@ public class ManHinhDieuKhienController implements Initializable {
         int currentYear = localDate.getYear();
 
         // Tạo dữ liệu cho tổng doanh số
-        XYChart.Series<String, Number> totalSalesSeries = createSalesDataSeries(2024);
+        XYChart.Series<String, Number> totalSalesSeries = createSalesDataSeries(currentYear);
         totalSalesSeries.setName("Tổng doanh số");
         mixlineChart.getData().add(totalSalesSeries);
 
         // Tạo dữ liệu cho tổng nợ của các đại lý
-        Map<String, Double> totalDebts = calculateSQL.calculateTotalDebtUntilMonth(2024);
+        Map<String, Double> totalDebts = calculateSQL.calculateTotalDebtUntilMonth(currentYear);
         XYChart.Series<String, Number> totalDebtsSeries = createDebtsDataSeries(totalDebts);
         totalDebtsSeries.setName("Tổng nợ của các đại lý");
         mixlineChart.getData().add(totalDebtsSeries);
