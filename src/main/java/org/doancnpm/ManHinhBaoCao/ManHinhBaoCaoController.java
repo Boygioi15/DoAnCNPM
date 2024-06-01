@@ -4,6 +4,7 @@ import io.github.palexdev.materialfx.controls.MFXComboBox;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
@@ -27,6 +28,11 @@ public class ManHinhBaoCaoController implements Initializable {
     private Accordion accorditionDoanhSo;
     @FXML
     private Accordion accorditionCongNo;
+    @FXML
+    Node manHinhBaoCao;
+    public void setVisibility(boolean visibility) {
+        manHinhBaoCao.setVisible(visibility);
+    }
 
     BaoCaoDoanhSoController baoCaoDoanhSoController = new BaoCaoDoanhSoController();
     BaoCaoCongNoController baoCaoCongNoController =new BaoCaoCongNoController();

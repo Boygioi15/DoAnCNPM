@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
@@ -24,11 +25,6 @@ import java.util.ResourceBundle;
 
 public class ManHinhDieuKhienController implements Initializable {
 
-    private Stage stage;
-
-    public void setPrimaryStage(Stage primaryStage) {
-        this.stage = primaryStage;
-    }
 
     @FXML
     private LineChart<String, Number> mixlineChart;
@@ -38,7 +34,11 @@ public class ManHinhDieuKhienController implements Initializable {
     private StackPane pieChartContainer; // Thêm StackPane để chứa PieChart và Circle
     @FXML
     private Text nvText, dlText, tongGiaTriKhoHangText, slMatHangText, soLuongHangTonKhoText;
-
+    @FXML
+    Node manHinhDieuKhien;
+    public void setVisibility(boolean visibility) {
+        manHinhDieuKhien.setVisible(visibility);
+    }
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initLineChart();

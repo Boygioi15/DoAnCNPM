@@ -61,7 +61,7 @@
    <left>
       <VBox prefWidth="250.0" spacing="5.0" BorderPane.alignment="CENTER">
          <children>
-            <Button alignment="TOP_LEFT" mnemonicParsing="false" prefWidth="320.0" styleClass="menu-title" text="Bảng điều khiển" />
+            <Button fx:id="openBangDieuKhienButton" alignment="TOP_LEFT" mnemonicParsing="false" prefWidth="320.0" styleClass="menu-title" text="Bảng điều khiển" />
             <TitledPane alignment="TOP_LEFT" styleClass="menu-title" text="Đại lý">
                <content>
                   <VBox prefWidth="320.0" spacing="5.0">
@@ -83,16 +83,7 @@
                </content>
             </TitledPane>
             <Button alignment="TOP_LEFT" mnemonicParsing="false" prefWidth="320.0" styleClass="menu-title" text="Nhân viên" />
-            <TitledPane contentDisplay="RIGHT" styleClass="menu-title" text="Báo cáo">
-               <content>
-                  <VBox spacing="5.0">
-                     <children>
-                        <Button alignment="TOP_LEFT" mnemonicParsing="false" prefWidth="320.0" styleClass="menu-body" text="Báo cáo doanh số" />
-                        <Button alignment="TOP_LEFT" mnemonicParsing="false" prefWidth="320.0" styleClass="menu-body" text="Báo cáo công nợ đại lý" />
-                     </children>
-                  </VBox>
-               </content>
-            </TitledPane>
+            <Button fx:id="openBaoCaoButton" alignment="TOP_LEFT" mnemonicParsing="false" prefWidth="320.0" styleClass="menu-title" text="Báo cáo" />
             <Button alignment="TOP_LEFT" mnemonicParsing="false" prefWidth="320.0" styleClass="menu-title" text="Thay đổi quy định" />
          </children>
       </VBox>
