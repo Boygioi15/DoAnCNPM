@@ -1,11 +1,12 @@
 package org.doancnpm.SQLUltilities;
 
+import org.doancnpm.DAO.DaiLyDAO;
+import org.doancnpm.Models.DaiLy;
 import org.doancnpm.Models.DatabaseDriver;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class CalculateSQL {
     private static CalculateSQL singleton = null;
@@ -361,4 +362,171 @@ public class CalculateSQL {
         return result;
     }
 
+    public double calculateReceiptsForMonthWithDaiLy(int month, int year, int ID) {
+        Connection conn = DatabaseDriver.getConnect();
+        double totalReceipts = 0;
+        if (conn != null) {
+            try {
+                String sql = "SELECT SUM(SoTienThu) AS TotalReceipts FROM PHIEUTHUTIEN WHERE MaDaiLy = ? AND MONTH(NgayLapPhieu) = ? AND YEAR(NgayLapPhieu) = ?";
+                PreparedStatement pstmt = conn.prepareStatement(sql);
+                pstmt.setInt(1, ID);
+                pstmt.setInt(2, month);
+                pstmt.setInt(3, year);
+                ResultSet rs = pstmt.executeQuery();
+
+                if (rs.next()) {
+                    totalReceipts = rs.getDouble("TotalReceipts");
+                }
+
+                rs.close();
+                pstmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Không thể kết nối đến cơ sở dữ liệu.");
+        }
+        return totalReceipts;
+    }
+
+    public double calculateValueExportsForMonthWithDaiLy(int month, int year, int ID) {
+        Connection conn = DatabaseDriver.getConnect();
+        double totalValueExports = 0;
+        if (conn != null) {
+            try {
+                String sql = "SELECT SUM(TongTien) AS TotalValueExports FROM PHIEUXUATHANG WHERE MaDaiLy = ? AND MONTH(NgayLapPhieu) = ? AND YEAR(NgayLapPhieu) = ?";
+                PreparedStatement pstmt = conn.prepareStatement(sql);
+                pstmt.setInt(1, ID);
+                pstmt.setInt(2, month);
+                pstmt.setInt(3, year);
+                ResultSet rs = pstmt.executeQuery();
+
+                if (rs.next()) {
+                    totalValueExports = rs.getDouble("TotalValueExports");
+                }
+
+                rs.close();
+                pstmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Không thể kết nối đến cơ sở dữ liệu.");
+        }
+        return totalValueExports;
+    }
+
+    public Map<Integer, Map<String, Map<Double, Double>>> calculateDebtUntilMonthWithDaiLy(int year) throws SQLException {
+        Map<Integer, Map<String, Map<Double, Double>>> totalDebts = new HashMap<>();
+        ArrayList<DaiLy> daiLyArrayList = DaiLyDAO.getInstance().QueryAll();
+
+        int currentMonth = LocalDate.now().getMonthValue();
+        int currentYear = LocalDate.now().getYear();
+
+        for (DaiLy daiLy : daiLyArrayList) {
+            int daiLyID = daiLy.getID();
+            Map<String, Map<Double, Double>> debtForDaiLy = new HashMap<>();
+            double noCuoi = daiLy.getNoHienTai();
+            double noDau = noCuoi;
+
+            for (int yearTest = currentYear; yearTest >= year; yearTest--) {
+                int startMonthOfYear = (yearTest == currentYear) ? currentMonth : 12;
+                int endMonth = (yearTest == year) ? 1 : 1; // always 1 since we need to process January of each year
+
+                for (int month = startMonthOfYear; month >= endMonth; month--) {
+                    Map<Double, Double> debt = new HashMap<>();
+                    // Handling the case when month is January and we need to switch to the previous year
+                    if (month == 1 && yearTest != year) {
+                        noDau += calculateReceiptsForMonthWithDaiLy(month, yearTest, daiLyID) - calculateValueExportsForMonthWithDaiLy(month, yearTest, daiLyID);
+                        debt.put(noDau, noCuoi);
+                        debtForDaiLy.put((yearTest - 1) + "-12", debt); // for the December of the previous year
+                    } else {
+                        noDau += calculateReceiptsForMonthWithDaiLy(month, yearTest, daiLyID) - calculateValueExportsForMonthWithDaiLy(month, yearTest, daiLyID);
+                        debt.put(noDau, noCuoi);
+                        debtForDaiLy.put(yearTest + "-" + month, debt);
+                    }
+                    noCuoi = noDau;
+                }
+            }
+            totalDebts.put(daiLyID, debtForDaiLy);
+        }
+        return totalDebts;
+    }
+
+    public Set<Integer> filterDaiLyIDs(int month, int year) throws SQLException {
+        Set<Integer> daiLyIDs = new HashSet<>();
+        Connection conn = DatabaseDriver.getConnect();
+        if (conn != null) {
+            try {
+                // Lọc các đại lý có phiếu xuất trong tháng và năm chỉ định
+                String sqlXuat = "SELECT DISTINCT MaDaiLy FROM PHIEUXUATHANG WHERE MONTH(NgayLapPhieu) = ? AND YEAR(NgayLapPhieu) = ?";
+                PreparedStatement pstmtXuat = conn.prepareStatement(sqlXuat);
+                pstmtXuat.setInt(1, month);
+                pstmtXuat.setInt(2, year);
+                ResultSet rsXuat = pstmtXuat.executeQuery();
+                while (rsXuat.next()) {
+                    daiLyIDs.add(rsXuat.getInt("MaDaiLy"));
+                }
+                rsXuat.close();
+                pstmtXuat.close();
+
+                // Lọc các đại lý có phiếu thu trong tháng và năm chỉ định
+                String sqlThu = "SELECT DISTINCT MaDaiLy FROM PHIEUTHUTIEN WHERE MONTH(NgayLapPhieu) = ? AND YEAR(NgayLapPhieu) = ?";
+                PreparedStatement pstmtThu = conn.prepareStatement(sqlThu);
+                pstmtThu.setInt(1, month);
+                pstmtThu.setInt(2, year);
+                ResultSet rsThu = pstmtThu.executeQuery();
+                while (rsThu.next()) {
+                    daiLyIDs.add(rsThu.getInt("MaDaiLy"));
+                }
+                rsThu.close();
+                pstmtThu.close();
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Không thể kết nối đến cơ sở dữ liệu.");
+        }
+        return daiLyIDs;
+    }
+
+    public Set<Integer> findActiveMonths(int year) {
+        Set<Integer> activeMonths = new HashSet<>();
+        Connection conn = DatabaseDriver.getConnect();
+        if (conn != null) {
+            try {
+                // Lấy danh sách các tháng có phiếu xuất
+                String sqlXuat = "SELECT DISTINCT MONTH(NgayLapPhieu) AS Thang FROM PHIEUXUATHANG WHERE YEAR(NgayLapPhieu) = ?";
+                PreparedStatement pstmtXuat = conn.prepareStatement(sqlXuat);
+                pstmtXuat.setInt(1, year);
+                ResultSet rsXuat = pstmtXuat.executeQuery();
+                while (rsXuat.next()) {
+                    activeMonths.add(rsXuat.getInt("Thang"));
+                }
+                rsXuat.close();
+                pstmtXuat.close();
+
+                // Lấy danh sách các tháng có phiếu thu
+                String sqlThu = "SELECT DISTINCT MONTH(NgayLapPhieu) AS Thang FROM PHIEUTHUTIEN WHERE YEAR(NgayLapPhieu) = ?";
+                PreparedStatement pstmtThu = conn.prepareStatement(sqlThu);
+                pstmtThu.setInt(1, year);
+                ResultSet rsThu = pstmtThu.executeQuery();
+                while (rsThu.next()) {
+                    activeMonths.add(rsThu.getInt("Thang"));
+                }
+                rsThu.close();
+                pstmtThu.close();
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Không thể kết nối đến cơ sở dữ liệu.");
+        }
+
+        return activeMonths;
+    }
 }
+
+

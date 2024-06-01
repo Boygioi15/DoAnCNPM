@@ -9,6 +9,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
+import org.doancnpm.Models.BaoCaoCongNo;
 import org.doancnpm.SQLUltilities.CalculateSQL;
 
 import java.net.URL;
@@ -23,10 +24,12 @@ public class ManHinhBaoCaoController implements Initializable {
     @FXML
     private MFXComboBox<Integer> CbYear;
     @FXML
-    private ScrollPane ScrollDoanhSo;
-    @FXML
     private Accordion accorditionDoanhSo;
+    @FXML
+    private Accordion accorditionCongNo;
+
     BaoCaoDoanhSoController baoCaoDoanhSoController = new BaoCaoDoanhSoController();
+    BaoCaoCongNoController baoCaoCongNoController =new BaoCaoCongNoController();
     BieuDoController bieuDoController = new BieuDoController();
 
     public int currentYear = LocalDate.now().getYear();
@@ -39,7 +42,7 @@ public class ManHinhBaoCaoController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initLineChart(currentYear);
         initComboBox();
-        initAccordionDoanhSo(currentYear);
+        initAccordion(currentYear);
     }
 
     private void initComboBox() {
@@ -54,16 +57,17 @@ public class ManHinhBaoCaoController implements Initializable {
             if (newValue != null) {
                 int selectedYear = newValue;
                 initLineChart(selectedYear);
-                initAccordionDoanhSo(selectedYear);
+                initAccordion(selectedYear);
             }
         });
 
     }
 
-    private void initAccordionDoanhSo(int year) {
+    private void initAccordion(int year) {
         accorditionDoanhSo.getPanes().clear();
         accorditionDoanhSo.getPanes().addAll(baoCaoDoanhSoController.createTitledPanesForMonths(year));
-        ScrollDoanhSo.setContent(accorditionDoanhSo);
+        accorditionCongNo.getPanes().clear();
+        accorditionCongNo.getPanes().addAll(baoCaoCongNoController.createTitledPanesForMonths(year));
     }
 
 
