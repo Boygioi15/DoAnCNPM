@@ -8,6 +8,8 @@ module org.example.demofx {
     requires java.sql;
     requires MaterialFX;
     requires org.apache.poi.ooxml;
+    requires java.prefs;
+    requires java.mail;
 
     opens org.doancnpm to javafx.fxml;
     opens org.doancnpm.Login to javafx.fxml;
@@ -18,6 +20,7 @@ module org.example.demofx {
     opens org.doancnpm.ManHinhPhieuXuat to javafx.fxml;
     opens org.doancnpm.ManHinhNhanVien to javafx.fxml;
     opens org.doancnpm.ManHinhQuyDinh to javafx.fxml;
+    opens org.doancnpm.ManHinhTaiKhoan to javafx.fxml;
     opens org.doancnpm.Ultilities.ChiTietPhieu to javafx.fxml;
     opens org.doancnpm.Models to javafx.base;
     opens org.doancnpm.Main to javafx.fxml;
@@ -30,6 +33,7 @@ module org.example.demofx {
     exports org.doancnpm.ManHinhNhanVien;
     exports org.doancnpm.ManHinhKhoHang;
     exports org.doancnpm.ManHinhQuyDinh;
+    exports org.doancnpm.ManHinhTaiKhoan;
     exports org.doancnpm.Ultilities.ChiTietPhieu;
     exports org.doancnpm.Models;
     exports org.doancnpm.Main;

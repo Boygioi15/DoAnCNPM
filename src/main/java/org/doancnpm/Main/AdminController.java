@@ -44,6 +44,7 @@ public class AdminController implements Initializable {
     private ManHinhPhieuXuatController manHinhPhieuXuatController;
     private ManHinhNhanVienController manHinhNhanVienController;
     private ManHinhQuyDinhController manHinhQuyDinhController;
+    private ManHinhTaiKhoanController manHinhTaiKhoanController;
 
     private NhanVien nhanVienLoggedIn = null;
 
@@ -69,6 +70,7 @@ public class AdminController implements Initializable {
         manHinhPhieuXuatController = loadAndDoStuff("/fxml/Main/ManHinhPhieuXuat/MainUI.fxml").getController();
         manHinhNhanVienController = loadAndDoStuff("/fxml/Main/ManHinhNhanVien/MainUI.fxml").getController();
         manHinhQuyDinhController = loadAndDoStuff("/fxml/Main/ManHinhQuyDinh/MainUI.fxml").getController();
+        manHinhTaiKhoanController = loadAndDoStuff("/fxml/Main/ManHinhTaiKhoan/MainUI.fxml").getController();
     }
 
     private FXMLLoader loadAndDoStuff(String path) throws IOException {
@@ -111,6 +113,7 @@ public class AdminController implements Initializable {
         manHinhPhieuNhapController.setVisibility(false);
         manHinhPhieuXuatController.setVisibility(false);
         manHinhQuyDinhController.setVisibility(false);
+        manHinhTaiKhoanController.setVisibility(false);
         switch (manHinhCode){
             case DAI_LY -> manHinhDaiLyController.setVisibility(true);
             case PHIEU_THU -> manHinhPhieuThuController.setVisibility(true);
@@ -119,6 +122,7 @@ public class AdminController implements Initializable {
             case XUAT -> manHinhPhieuXuatController.setVisibility(true);
             case NHAN_VIEN -> manHinhNhanVienController.setVisibility(true);
             case QUY_DINH -> manHinhQuyDinhController.setVisibility(true);
+            case INFOR -> manHinhTaiKhoanController.setVisibility(true);
         }
         currentManHinh = manHinhCode;
     }
