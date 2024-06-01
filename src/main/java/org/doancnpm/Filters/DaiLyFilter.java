@@ -3,6 +3,7 @@ package org.doancnpm.Filters;
 import javafx.collections.ObservableList;
 import javafx.collections.FXCollections;
 import org.doancnpm.Models.DaiLy;
+import org.doancnpm.Models.MatHang;
 
 public class DaiLyFilter implements IFilter<DaiLy> {
     ObservableList<DaiLy> input;

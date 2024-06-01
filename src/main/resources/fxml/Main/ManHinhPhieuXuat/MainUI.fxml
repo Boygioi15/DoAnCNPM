@@ -6,7 +6,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -17,7 +16,7 @@
 <?import javafx.scene.text.Text?>
 <?import org.controlsfx.control.MasterDetailPane?>
 
-<VBox fx:id="khoHang1" spacing="10.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<VBox fx:id="manHinhPhieuXuat" spacing="10.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.doancnpm.ManHinhPhieuXuat.ManHinhPhieuXuatController">
    <children>
       <Label styleClass="headline" text="Danh sách phiếu xuất">
          <font>
@@ -59,29 +58,19 @@
             <MFXTextField fx:id="maPXTextField" borderGap="6.0" floatMode="BORDER" floatingText="Mã phiếu" prefWidth="120.0" styleClass="body-label" />
             <MFXTextField fx:id="nvTextField" borderGap="6.0" floatMode="BORDER" floatingText="Nhân viên" prefWidth="120.0" styleClass="body-label" />
             <MFXTextField fx:id="dlTextField" borderGap="6.0" floatMode="BORDER" floatingText="Đại lý" prefWidth="120.0" styleClass="body-label" />
-            <MFXTextField fx:id="ttMinTextField" borderGap="6.0" floatMode="BORDER" floatingText="Tổng tiền min" prefWidth="120.0" styleClass="body-label" />
-            <MFXTextField fx:id="ttMaxTextField" borderGap="6.0" floatMode="BORDER" floatingText="Tổng tiền max" prefWidth="120.0" styleClass="body-label" />
          </children>
       </HBox>
-      <MasterDetailPane fx:id="masterDetailPane" dividerSizeHint="1.0" stylesheets="@../../../css/masterDetailPane.css" />
-      <HBox fx:id="masterPane" spacing="1.0">
+      <MasterDetailPane fx:id="masterDetailPane" dividerSizeHint="1.0" stylesheets="@../../../css/masterDetailPane.css" VBox.vgrow="ALWAYS" />
+      <HBox fx:id="masterPane" spacing="1.0" VBox.vgrow="ALWAYS">
          <children>
-            <TableView fx:id="mainTableView" HBox.hgrow="ALWAYS">
-               <columns>
-                  <TableColumn prefWidth="104.79995381832123" text="Selected" />
-                  <TableColumn prefWidth="104.79995381832123" text="Mã phiếu nhập" />
-                  <TableColumn prefWidth="126.40003967285156" text="Đại lý" />
-                  <TableColumn prefWidth="126.40003967285156" text="Nhân viên lập phiếu" />
-                  <TableColumn prefWidth="126.40003967285156" text="Tổng tiền" />
-                  <TableColumn prefWidth="126.40003967285156" text="Thao tác" />
-               </columns></TableView>
+            <TableView fx:id="mainTableView" HBox.hgrow="ALWAYS" />
             <Button fx:id="toggleDetailButton" maxHeight="1000.0" mnemonicParsing="false" text="&gt;" />
          </children>
       </HBox>
       <VBox fx:id="detailPane" spacing="5.0">
          <children>
             <Label text="Thông tin chi tiết" />
-            <GridPane hgap="15.0" vgap="10.0">
+            <GridPane hgap="15.0" vgap="10.0" VBox.vgrow="ALWAYS">
                <columnConstraints>
                   <ColumnConstraints halignment="LEFT" hgrow="NEVER" />
                   <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" minWidth="10.0" />
@@ -92,7 +81,7 @@
                   <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
                   <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
                   <RowConstraints maxHeight="17.599999999999994" minHeight="0.0" prefHeight="17.599999999999994" valignment="TOP" vgrow="SOMETIMES" />
-                  <RowConstraints maxHeight="400.0" minHeight="345.5999755859375" prefHeight="359.20001220703125" valignment="TOP" vgrow="SOMETIMES" />
+                  <RowConstraints maxHeight="400.0" minHeight="345.5999755859375" prefHeight="359.20001220703125" valignment="TOP" />
                   <RowConstraints maxHeight="16.0" minHeight="0.0" valignment="TOP" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
@@ -108,16 +97,7 @@
                         <Text fx:id="tenNVText" strokeType="OUTSIDE" strokeWidth="0.0" text="Tên" />
                      </children>
                   </HBox>
-                  <TableView fx:id="detailTableView" GridPane.columnSpan="2" GridPane.rowIndex="5">
-                     <columns>
-                        <TableColumn editable="false" prefWidth="75.0" text="STT" />
-                        <TableColumn editable="false" prefWidth="75.0" text="Mặt hàng" />
-                        <TableColumn editable="false" prefWidth="75.0" text="Đơn vị tính" />
-                        <TableColumn editable="false" prefWidth="75.0" text="Số lượng" />
-                        <TableColumn editable="false" prefWidth="75.0" text="Đơn giá" />
-                        <TableColumn editable="false" prefWidth="75.0" text="Thành tiền" />
-                     </columns>
-                  </TableView>
+                  <TableView fx:id="detailTableView" GridPane.columnSpan="2" GridPane.rowIndex="5" />
                   <HBox alignment="CENTER_RIGHT" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
                      <children>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Tổng tiền:" />

@@ -23,10 +23,9 @@ import org.doancnpm.Ultilities.PopDialog;
 import java.net.URL;
 import java.sql.Date;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
 
-public class DirectAddDialogController implements Initializable {
+public class TiepNhanDaiLyDialogController implements Initializable {
 
     @FXML private SearchableComboBox<Quan> quanComboBox;
     @FXML private SearchableComboBox<LoaiDaiLy> loaiDaiLyComboBox;
@@ -149,21 +148,15 @@ public class DirectAddDialogController implements Initializable {
     public DaiLy getDaiLy(){
         Date ngayTiepNhan = new Date(System.currentTimeMillis());
         DaiLy daiLy = new DaiLy();
-        try{
-            daiLy.setMaQuan(quanComboBox.getValue().getId());
-            daiLy.setMaLoaiDaiLy(loaiDaiLyComboBox.getValue().getId());
+        daiLy.setMaQuan(quanComboBox.getValue().getId());
+        daiLy.setMaLoaiDaiLy(loaiDaiLyComboBox.getValue().getId());
 
-            daiLy.setTenDaiLy(tenDaiLyTextField.getText());
-            daiLy.setDiaChi(diaChiTextField.getText());
-            daiLy.setEmail(emailTextField.getText());
-            daiLy.setDienThoai(dienThoaiTextField.getText());
-            daiLy.setNgayTiepNhan( ngayTiepNhan);
-            daiLy.setGhiChu( ghiChuTextArea.getText());
-        }
-        catch(NumberFormatException e){
-            System.out.println("Quan not set!");
-            return null;
-        }
+        daiLy.setTenDaiLy(tenDaiLyTextField.getText());
+        daiLy.setDiaChi(diaChiTextField.getText());
+        daiLy.setEmail(emailTextField.getText());
+        daiLy.setDienThoai(dienThoaiTextField.getText());
+        daiLy.setNgayTiepNhan( ngayTiepNhan);
+        daiLy.setGhiChu( ghiChuTextArea.getText());
         return daiLy;
     }
     private void initValidation(){

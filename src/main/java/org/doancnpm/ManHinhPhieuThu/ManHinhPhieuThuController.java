@@ -1,6 +1,5 @@
 package org.doancnpm.ManHinhPhieuThu;
 
-import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -14,6 +13,7 @@ import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 
+import javafx.scene.layout.Region;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
 
@@ -23,52 +23,90 @@ import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.controlsfx.control.MasterDetailPane;
 import org.doancnpm.DAO.DaiLyDAO;
 import org.doancnpm.DAO.NhanVienDAO;
-import org.doancnpm.DAO.PhieuThuDao;
+import org.doancnpm.DAO.PhieuThuDAO;
 
-import org.doancnpm.DAO.QuanDAO;
-import org.doancnpm.Filters.DaiLyFilter;
 import org.doancnpm.Filters.PhieuThuFilter;
-import org.doancnpm.ManHinhDaiLy.DirectAddDialog;
 import org.doancnpm.Models.*;
 import org.doancnpm.Ultilities.DayFormat;
 import org.doancnpm.Ultilities.PopDialog;
+import javafx.scene.text.Text;
 
 import java.io.*;
 import java.net.URL;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 public class ManHinhPhieuThuController implements Initializable {
-    public MenuItem addDirectButton;
-    @FXML Node manHinhPhieuThu;
+
+    @FXML private Node manHinhPhieuThu;
     @FXML private TableView mainTableView;
     @FXML private Button refreshButton;
     @FXML private MFXTextField maPhieuThuTextField;
     @FXML private MFXTextField maDaiLyTextField;
     @FXML private MFXTextField maNhanVienTextField;
-    @FXML private MenuItem addExcelButton;
 
+    @FXML private MenuItem addExcelButton;
+    @FXML private MenuItem addDirectButton;
+
+    @FXML private Text maPhieuThuText;
+    @FXML private Text maDLText;
+    @FXML private Text tenDLText;
+    @FXML private Text maNVText;
+    @FXML private Text tenNVText;
+    @FXML private Text ngayLapPhieuText;
+    @FXML private Text soTienThuText;
+    @FXML private TextArea ghiChuTextArea;
+
+    @FXML private MasterDetailPane masterDetailPane;
+
+    @FXML private Region masterPane;
+    @FXML private Button toggleDetailButton;
+    @FXML private Region detailPane;
 
     private final ObservableList<PhieuThu> dsPhieuThu = FXCollections.observableArrayList();
     private final ObservableList<PhieuThu> dsPhieuThuFiltered = FXCollections.observableArrayList();
     private final PhieuThuFilter filter = new PhieuThuFilter();
 
+    NhanVien nhanVienLoggedIn = null;
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initTableView();
         initEvent();
         initDatabaseBinding();
+        initFilterBinding();
+
         initUIDataBinding();
 
         updateListFromDatabase();
+        initDetailPane();
         //init data
-
     }
+    public void setVisibility(boolean visibility) {
+        manHinhPhieuThu.setVisible(visibility);
+    }
+    public void setNhanVienLoggedIn(NhanVien nhanVienLoggedIn) {
+        this.nhanVienLoggedIn = nhanVienLoggedIn;
+    }
+    //init
+    private void initDetailPane(){
+        masterDetailPane.setDetailNode(detailPane);
+        masterDetailPane.setMasterNode(masterPane);
 
+        masterDetailPane.widthProperty().addListener(ob ->{
+            detailPane.setMinWidth(masterDetailPane.getWidth()*0.3);
+            detailPane.setMaxWidth(masterDetailPane.getWidth()*0.3);
+        });
+        mainTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, phieuThu) -> {
+            UpdateDetailPane((PhieuThu) phieuThu);
+        });
+    }
     private void initEvent() {
         addDirectButton.setOnAction(_ -> {
             OpenDirectAddDialog();
@@ -79,66 +117,75 @@ public class ManHinhPhieuThuController implements Initializable {
         addExcelButton.setOnAction(_ ->{
             exportDialog();
         });
+        toggleDetailButton.setOnAction(ob ->{
+            if(masterDetailPane.isShowDetailNode()){
+                CloseDetailPanel();
+            }
+            else{
+                OpenDetailPanel();
+            }
+        });
     }
+    private void initDatabaseBinding() {
+        PhieuThuDAO.getInstance().AddDatabaseListener(_ -> updateListFromDatabase());
 
-    private void OpenDirectAddDialog() {
-        try {
-            new LapPhieuThuDialog().showAndWait().ifPresent(
-                    phieuThuAdded -> {
-                        try {
-                            PhieuThuDao.getInstance().Insert(phieuThuAdded);
-                            PopDialog.popSuccessDialog("Thêm mới thành công");
-                        }
-                        catch (SQLException e) {
-                            PopDialog.popErrorDialog("Thêm mới đại lý thất bại", e.toString());
-                        }
-                    }
-            );
-        }
-        catch (IOException e) {
-            PopDialog.popErrorDialog("Không thể mở dialog thêm đại lý", e.toString());
-        }
     }
+    private void initUIDataBinding() {
+        mainTableView.setItems(dsPhieuThuFiltered);
+    }
+    private void initFilterBinding(){
+        filter.setInput(dsPhieuThu);
 
-    public void initTableView() {
+        maPhieuThuTextField.textProperty().addListener(_ -> {
+            filter.setMaPhieuThu(maPhieuThuTextField.getText());
+            filterList();
+        });
+        maDaiLyTextField.textProperty().addListener(_ -> {
+            try{
+                filter.setMaDaiLy(Integer.parseInt(maDaiLyTextField.getText()));
+            }
+            catch (NumberFormatException e){
+                filter.setMaDaiLy(null);
+            }
+            filterList();
+        });
+        maNhanVienTextField.textProperty().addListener(_ -> {
+            try{
+                filter.setMaNhanVien(Integer.parseInt(maNhanVienTextField.getText()));
+            }
+            catch (NumberFormatException e){
+                filter.setMaNhanVien(null);
+            }
+            filterList();
+        });
+    }
+    private void initTableView() {
         // Tạo các cột cho TableView
         TableColumn<PhieuThu, String> maPTCol = new TableColumn<>("Mã Phiếu Thu");
         maPTCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getMaPhieuThu()));
 
-        TableColumn<PhieuThu, String> maDLCol = new TableColumn<>("Mã đại lý");
+        TableColumn<PhieuThu, String> maDLCol = new TableColumn<>("Đại lý");
         maDLCol.setCellValueFactory(data -> {
             DaiLy daiLy = null;
             try {
-                daiLy = DaiLyDAO.getInstance().QueryID(data.getValue().getMaDaiLi());
-            } catch (SQLException _){
-
+                daiLy = DaiLyDAO.getInstance().QueryID(data.getValue().getMaDaiLy());
             }
+            catch (SQLException _){}
             return new SimpleObjectProperty<>(daiLy.getMaDaiLy());
         });
 
 
-        TableColumn<PhieuThu, String> maNVCol = new TableColumn<>("Mã Nhân Viên");
+        TableColumn<PhieuThu, String> maNVCol = new TableColumn<>("Nhân Viên");
         maNVCol.setCellValueFactory(data -> {
             NhanVien nhanVien = null;
             try{
                 nhanVien = NhanVienDAO.getInstance().QueryID(data.getValue().getMaNhanVien());
-            } catch(SQLException _){
-
-            }
+            } catch(SQLException _){}
             return new SimpleObjectProperty<>(nhanVien.getMaNhanVien());
-        });
-
-        TableColumn<PhieuThu, String> ngayCol = new TableColumn<>("Ngày lập phiếu ");
-        ngayCol.setCellValueFactory(data -> {
-            Date ngay = data.getValue().getNgayLap();
-            return new SimpleObjectProperty<>(DayFormat.GetDayStringFormatted(ngay));
         });
 
         TableColumn<PhieuThu, Integer> tongTienThuCol = new TableColumn<>("Tổng tiền thu");
         tongTienThuCol.setCellValueFactory(new PropertyValueFactory<>("SoTienThu"));
-
-        TableColumn<PhieuThu, String> ghiChuCol = new TableColumn<>("Ghi chú");
-        ghiChuCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getGhiChu()));
 
         TableColumn<PhieuThu, Boolean> selectedCol = new TableColumn<>("Selected");
         selectedCol.setCellValueFactory(new PropertyValueFactory<>("selected"));
@@ -146,7 +193,6 @@ public class ManHinhPhieuThuController implements Initializable {
 
         //action column
         TableColumn actionCol = new TableColumn("Action");
-        //actionCol.setCellValueFactory(new PropertyValueFactory<>("DUMMY"));
 
         Callback<TableColumn<PhieuThu, String>, TableCell<PhieuThu, String>> cellFactory
                 = //
@@ -155,7 +201,6 @@ public class ManHinhPhieuThuController implements Initializable {
                     public TableCell call(final TableColumn<PhieuThu, String> param) {
                         final TableCell<PhieuThu, String> cell = new TableCell<PhieuThu, String>() {
                             final Button suaBtn = new javafx.scene.control.Button("Sửa");
-                            final Button xoaBtn = new javafx.scene.control.Button("Xóa");
 
                             @Override
                             public void updateItem(String item, boolean empty) {
@@ -164,31 +209,17 @@ public class ManHinhPhieuThuController implements Initializable {
                                     setGraphic(null);
                                     setText(null);
                                 } else {
-                                    xoaBtn.setOnAction(event -> {
-                                        PhieuThu pt = getTableView().getItems().get(getIndex());
-                                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                                        alert.setTitle("Xóa phiếu thu");
-
-                                        Optional<ButtonType> result = alert.showAndWait();
-                                        if (result.get() == ButtonType.OK) {
-                                            try {
-                                                PhieuThuDao.getInstance().Delete(pt.getID());
-                                                PopDialog.popSuccessDialog("Xóa phiếu thu" + " thành công");
-                                            } catch (SQLException e) {
-                                                PopDialog.popErrorDialog("Xóa phiếu thu" + " thất bại", e.toString());
-                                            }
-                                        }
-                                    });
                                     suaBtn.setOnAction(_ -> {
                                         try {
                                             PhieuThu phieuThu = getTableView().getItems().get(getIndex());
-                                            new LapPhieuThuDialog(phieuThu).showAndWait().ifPresent(_ -> {
+                                            new LapPhieuThuDialog(phieuThu, nhanVienLoggedIn).showAndWait().ifPresent(_ -> {
                                                 try {
-                                                    PhieuThuDao.getInstance().Update(phieuThu.getID(),phieuThu);
+                                                    PhieuThuDAO.getInstance().Update(phieuThu.getID(),phieuThu);
                                                     PopDialog.popSuccessDialog("Cập nhật phiếu thu tiền "+phieuThu.getMaPhieuThu()+" thành công");
-                                                } catch (SQLException e) {
+                                                }
+                                                catch (SQLException e) {
                                                     PopDialog.popErrorDialog("Cập nhật phiếu thu tiền "+phieuThu.getMaPhieuThu()+" thất bại",
-                                                            e.toString());
+                                                            e.getMessage());
                                                 }
                                                 //mainTableView.getItems().set(selectedIndex, response);
                                             });
@@ -197,7 +228,7 @@ public class ManHinhPhieuThuController implements Initializable {
                                         }
                                     });
                                     HBox hbox = new HBox();
-                                    hbox.getChildren().addAll(suaBtn, xoaBtn);
+                                    hbox.getChildren().addAll(suaBtn);
                                     hbox.setSpacing(5);
                                     hbox.setPrefWidth(USE_COMPUTED_SIZE);
                                     hbox.setPrefHeight(USE_COMPUTED_SIZE);
@@ -218,24 +249,57 @@ public class ManHinhPhieuThuController implements Initializable {
                 maPTCol,
                 maDLCol,
                 maNVCol,
-                ngayCol,
                 tongTienThuCol,
-                ghiChuCol,
                 actionCol
         );
         mainTableView.setEditable(true);
+        mainTableView.widthProperty().addListener(ob -> {
+            double width = mainTableView.getWidth();
+            selectedCol.setPrefWidth(width*0.1);
+            maPTCol.setPrefWidth(width*0.1);
+            maDLCol.setPrefWidth(width*0.1);
+            maNVCol.setPrefWidth(width*0.1);
+            tongTienThuCol.setPrefWidth(width*0.45);
+            actionCol.setPrefWidth(width*0.15);
+        });
+        mainTableView.setEditable( true );
         mainTableView.setPrefWidth(1100);
-    }
-
-    public void setVisibility(boolean visibility) {
-        manHinhPhieuThu.setVisible(visibility);
-    }
-
-    private void initDatabaseBinding() {
-        PhieuThuDao.getInstance().AddDatabaseListener(_ -> updateListFromDatabase());
 
     }
-    //open import dialog
+
+    //detail pane
+    public void UpdateDetailPane(PhieuThu phieuThu){
+        if(phieuThu==null){
+            CloseDetailPanel();
+            return;
+        }
+        maPhieuThuText.setText(phieuThu.getMaPhieuThu());
+
+        try{
+            DaiLy dl = DaiLyDAO.getInstance().QueryID(phieuThu.getMaDaiLy());
+            NhanVien nv = NhanVienDAO.getInstance().QueryID(phieuThu.getMaNhanVien());
+            maDLText.setText(dl.getMaDaiLy());
+            tenDLText.setText(dl.getTenDaiLy());
+            maNVText.setText(nv.getMaNhanVien());
+            tenNVText.setText(nv.getHoTen());
+
+            ngayLapPhieuText.setText(DayFormat.GetDayStringFormatted(phieuThu.getNgayLap()));
+            soTienThuText.setText(Double.toString(phieuThu.getSoTienThu()));
+            ghiChuTextArea.setText(phieuThu.getGhiChu());
+        }
+        catch (SQLException _){}
+    }
+    public void OpenDetailPanel(){
+        toggleDetailButton.setText(">");
+        masterDetailPane.setShowDetailNode(true);
+
+    }
+    public void CloseDetailPanel(){
+        masterDetailPane.setShowDetailNode(false);
+        toggleDetailButton.setText("<");
+    }
+
+    //import - export
     public void importDialog() {
         // Hiển thị hộp thoại chọn tệp Excel
         FileChooser fileChooser = new FileChooser();
@@ -257,7 +321,7 @@ public class ManHinhPhieuThuController implements Initializable {
             fis = new FileInputStream(file);
         }
         catch (FileNotFoundException e) {
-            PopDialog.popErrorDialog("Không thể mở file excel", e.toString());
+            PopDialog.popErrorDialog("Không thể mở file excel");
             return;
         }
 
@@ -266,33 +330,52 @@ public class ManHinhPhieuThuController implements Initializable {
             workbook = new XSSFWorkbook(fis);
         }
         catch (IOException e) {
-            PopDialog.popErrorDialog("Có lỗi trong quá trình thực hiện", e.toString());
+            PopDialog.popErrorDialog("Có lỗi trong quá trình thực hiện", e.getMessage());
             return;
         }
         XSSFSheet sheet = workbook.getSheetAt(0); // Assuming data is in the first sheet
-
 
         Date ngayLapPhieu = new Date(System.currentTimeMillis());
 
         for (int i = 1; i <= sheet.getLastRowNum()-1; i++) {
             Row row = sheet.getRow(i);
             if (row != null) { // Kiểm tra xem dòng có tồn tại hay không
-                org.apache.poi.ss.usermodel.Cell maDaiLyCell = row.getCell(0);
-                org.apache.poi.ss.usermodel.Cell tienThuCell = row.getCell(1);
-                org.apache.poi.ss.usermodel.Cell ghiChuCell = row.getCell(2);
+                Cell maDaiLyCell = row.getCell(0);
+                Cell maNhanVienCell = row.getCell(1);
+                Cell tienThuCell = row.getCell(2);
+                Cell ghiChuCell = row.getCell(3);
 
                 PhieuThu phieuThu = new PhieuThu();
+                String maDaiLy = maDaiLyCell.getStringCellValue();
+                String maNhanVien = maNhanVienCell.getStringCellValue();
+                int idDL, idNV;
 
+                try{
+                    idNV = Integer.parseInt(maNhanVien.substring(2));
+                }
+                catch (NumberFormatException e){
+                    PopDialog.popErrorDialog("Định dạng mã nhân viên không đúng");
+                    return;
+                }
+                try{
+                    idDL = Integer.parseInt(maDaiLy.substring(2));
+                }
+                catch (NumberFormatException e){
+                    PopDialog.popErrorDialog("Định dạng mã đại lý không đúng");
+                    return;
+                }
+
+                phieuThu.setMaDaiLy(idDL);
+                phieuThu.setMaNhanVien(idNV);
                 phieuThu.setSoTienThu((int) tienThuCell.getNumericCellValue());
                 phieuThu.setGhiChu(ghiChuCell.getStringCellValue());
 
-
                 phieuThu.setNgayLap(ngayLapPhieu);
                 try {
-                    PhieuThuDao.getInstance().Insert(phieuThu); // Thêm đối tượng vào cơ sở dữ liệu
+                    PhieuThuDAO.getInstance().Insert(phieuThu); // Thêm đối tượng vào cơ sở dữ liệu
                 }
                 catch (SQLException e) {
-                    PopDialog.popErrorDialog("Có lỗi trong quá trình thêm mới phiếu thu", e.toString());
+                    PopDialog.popErrorDialog("Thêm mới phiếu thu thất bại", e.getMessage());
                     return;
                 }
             }
@@ -304,7 +387,7 @@ public class ManHinhPhieuThuController implements Initializable {
             PopDialog.popSuccessDialog("Thêm danh sách phiếu thu từ file excel thành công");
         }
         catch (IOException e) {
-            PopDialog.popErrorDialog("Có lỗi trong quá trình thực hiện", e.toString());
+            PopDialog.popErrorDialog("Có lỗi trong quá trình thực hiện", e.getMessage());
         }
 
     }
@@ -361,26 +444,22 @@ public class ManHinhPhieuThuController implements Initializable {
 
             DaiLy daiLy = null;
             try {
-                daiLy = DaiLyDAO.getInstance().QueryID(phieuThu.getMaDaiLi());
-            } catch (SQLException e) {
-                // Handle exception if necessary
-            }
+                daiLy = DaiLyDAO.getInstance().QueryID(phieuThu.getMaDaiLy());
+            } catch (SQLException _) {}
             if (daiLy != null) {
                 row.createCell(cellnum++).setCellValue(daiLy.getMaDaiLy());
             } else {
-                row.createCell(cellnum++).setCellValue(""); // Or handle the null case appropriately
+                row.createCell(cellnum++).setCellValue("???"); // Or handle the null case appropriately
             }
 
             NhanVien nhanVien = null;
             try {
                 nhanVien = NhanVienDAO.getInstance().QueryID(phieuThu.getMaNhanVien());
-            } catch (SQLException e) {
-                // Handle exception if necessary
-            }
+            } catch (SQLException _) {}
             if (nhanVien != null) {
                 row.createCell(cellnum++).setCellValue(nhanVien.getMaNhanVien());
             } else {
-                row.createCell(cellnum++).setCellValue(""); // Or handle the null case appropriately
+                row.createCell(cellnum++).setCellValue("???"); // Or handle the null case appropriately
             }
 
             row.createCell(cellnum++).setCellValue(phieuThu.getSoTienThu());
@@ -391,7 +470,7 @@ public class ManHinhPhieuThuController implements Initializable {
                 dateCell.setCellValue(phieuThu.getNgayLap());
                 dateCell.setCellStyle(dateCellStyle);
             } else {
-                dateCell.setCellValue(""); // Or handle the null case appropriately
+                dateCell.setCellValue("???"); // Or handle the null case appropriately
             }
         }
 
@@ -400,32 +479,35 @@ public class ManHinhPhieuThuController implements Initializable {
             workbook.write(fos);
             workbook.close();
         } catch (IOException e) {
-            PopDialog.popErrorDialog("Xuất file excel thất bại", e.toString());
+            PopDialog.popErrorDialog("Xuất file excel thất bại", e.getMessage());
         }
     }
-    private void initUIDataBinding() {
-        mainTableView.setItems(dsPhieuThuFiltered);
-        initFilterBinding();
+
+    //functionalities
+    public void OpenDirectAddDialog() {
+        try {
+            new LapPhieuThuDialog(nhanVienLoggedIn).showAndWait().ifPresent(
+                    phieuThuAdded -> {
+                        try {
+                            PhieuThuDAO.getInstance().Insert(phieuThuAdded);
+                            PopDialog.popSuccessDialog("Thêm mới phiếu thu thành công");
+                        }
+                        catch (SQLException e) {
+                            PopDialog.popErrorDialog("Thêm mới phiếu thu thất bại", e.toString());
+                        }
+                    }
+            );
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            PopDialog.popErrorDialog("Không thể mở dialog thêm phiếu thu", e.toString());
+        }
     }
-    private void initFilterBinding(){
-        filter.setInput(dsPhieuThu);
-        maPhieuThuTextField.textProperty().addListener(_ -> {
-            filter.setMaPhieuThu(maPhieuThuTextField.getText());
-            filterList();
-        });
-        maDaiLyTextField.textProperty().addListener(_ -> {
-            filter.setMaDaiLy(Integer.parseInt(maDaiLyTextField.getText()));
-            filterList();
-        });
-        maNhanVienTextField.textProperty().addListener(_ -> {
-            filter.setMaNhanVien(Integer.parseInt(maNhanVienTextField.getText()));
-            filterList();
-        });
-    }
+
     private void updateListFromDatabase() {
         dsPhieuThu.clear();
         try {
-            dsPhieuThu.addAll(PhieuThuDao.getInstance().QueryAll());
+            dsPhieuThu.addAll(PhieuThuDAO.getInstance().QueryAll());
             filterList();
         } catch (SQLException e) {
             throw new RuntimeException(e);

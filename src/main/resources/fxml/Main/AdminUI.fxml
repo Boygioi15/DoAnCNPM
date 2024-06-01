@@ -76,24 +76,16 @@
                <content>
                   <VBox spacing="5.0">
                      <children>
-                        <Button alignment="TOP_LEFT" mnemonicParsing="false" prefWidth="320.0" styleClass="menu-body" text="Danh sách tồn kho" />
-                        <Button alignment="TOP_LEFT" mnemonicParsing="false" prefWidth="320.0" styleClass="menu-body" text="Lịch sử nhập/ xuất kho" />
+                        <Button fx:id="openKhoHangButton" alignment="TOP_LEFT" mnemonicParsing="false" prefWidth="320.0" styleClass="menu-body" text="Kho hàng" />
+                        <Button fx:id="openPhieuNhapButton" alignment="TOP_LEFT" mnemonicParsing="false" prefWidth="320.0" styleClass="menu-body" text="Danh sách phiếu nhập" />
+                        <Button fx:id="openPhieuXuatButton" alignment="TOP_LEFT" mnemonicParsing="false" prefWidth="320.0" styleClass="menu-body" text="Danh sách phiếu xuất" />
                      </children>
                   </VBox>
                </content>
             </TitledPane>
-            <Button alignment="TOP_LEFT" mnemonicParsing="false" prefWidth="320.0" styleClass="menu-title" text="Nhân viên" />
-            <TitledPane contentDisplay="RIGHT" styleClass="menu-title" text="Báo cáo">
-               <content>
-                  <VBox spacing="5.0">
-                     <children>
-                        <Button alignment="TOP_LEFT" mnemonicParsing="false" prefWidth="320.0" styleClass="menu-body" text="Báo cáo doanh số" />
-                        <Button alignment="TOP_LEFT" mnemonicParsing="false" prefWidth="320.0" styleClass="menu-body" text="Báo cáo công nợ đại lý" />
-                     </children>
-                  </VBox>
-               </content>
-            </TitledPane>
-            <Button alignment="TOP_LEFT" mnemonicParsing="false" prefWidth="320.0" styleClass="menu-title" text="Thay đổi quy định" />
+            <Button fx:id="openNhanVienButton" alignment="TOP_LEFT" mnemonicParsing="false" prefWidth="320.0" styleClass="menu-title" text="Nhân viên" />
+            <Button fx:id="openBaoCaoButton" alignment="TOP_LEFT" mnemonicParsing="false" prefWidth="320.0" styleClass="menu-title" text="Báo cáo" />
+            <Button fx:id="openQuyDinhButton" alignment="TOP_LEFT" mnemonicParsing="false" prefWidth="320.0" styleClass="menu-title" text="Thay đổi quy định" />
          </children>
       </VBox>
    </left>

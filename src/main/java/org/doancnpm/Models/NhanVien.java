@@ -1,8 +1,13 @@
 package org.doancnpm.Models;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+
 import java.sql.Date;
 
 public class NhanVien {
+    private BooleanProperty selected = new SimpleBooleanProperty(false);
+
     private Integer ID;
     private String maNhanVien;
     private String hoTen;
@@ -10,7 +15,7 @@ public class NhanVien {
     private Date ngaySinh;
     private String SDT;
     private String email;
-    private int maChucVu;
+    private Integer maChucVu;
     private double luong;
     private String ghiChu;
 
@@ -73,11 +78,11 @@ public class NhanVien {
         this.email = email;
     }
 
-    public int getMaChucVu() {
+    public Integer getMaChucVu() {
         return maChucVu;
     }
 
-    public void setMaChucVu(int maChucVu) {
+    public void setMaChucVu(Integer maChucVu) {
         this.maChucVu = maChucVu;
     }
 
@@ -95,5 +100,17 @@ public class NhanVien {
 
     public void setGhiChu(String ghiChu) {
         this.ghiChu = ghiChu;
+    }
+
+    public boolean isSelected() {
+        return selected.get();
+    }
+
+    public BooleanProperty selectedProperty() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected.set(selected);
     }
 }

@@ -7,7 +7,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -19,7 +18,7 @@
 <?import javafx.scene.text.Text?>
 <?import org.controlsfx.control.MasterDetailPane?>
 
-<VBox fx:id="manHinhKhoHang" spacing="10.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<VBox fx:id="manHinhKhoHang" spacing="10.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.doancnpm.ManHinhKhoHang.ManHinhKhoHangController">
    <children>
       <Label text="Kho hàng">
          <font>
@@ -31,19 +30,10 @@
       </Label>
       <HBox spacing="10.0">
          <children>
-            <MenuButton mnemonicParsing="false" styleClass="action-menu-button" text="Thêm phiếu nhập">
-               <font>
-                  <Font size="18.0" />
-               </font>
+            <MenuButton mnemonicParsing="false" styleClass="action-menu-button" text="Thêm mặt hàng">
                <items>
-                  <MenuItem fx:id="phieuNhapAddDirectButton" mnemonicParsing="false" text="Thêm trực tiếp" />
-                  <MenuItem fx:id="phieuNhapAddExcelButton" mnemonicParsing="false" text="Thêm từ file excel" />
-               </items>
-            </MenuButton>
-            <MenuButton mnemonicParsing="false" styleClass="action-menu-button" text="Thêm phiếu xuất">
-               <items>
-                  <MenuItem fx:id="phieuXuatAddDirectButton" mnemonicParsing="false" text="Thêm trực tiếp" />
-                  <MenuItem fx:id="phieuXuatAddExcelButton" mnemonicParsing="false" text="Thêm từ file excel" />
+                  <MenuItem fx:id="addDirectButton" mnemonicParsing="false" text="Thêm trực tiếp" />
+                  <MenuItem fx:id="addExcelButton" mnemonicParsing="false" text="Thêm từ file excel" />
                </items>
                <font>
                   <Font size="18.0" />
@@ -69,23 +59,14 @@
             </Button>
             <MFXTextField fx:id="maMHTextField" borderGap="6.0" floatMode="BORDER" floatingText="Mã" prefWidth="120.0" styleClass="body-label" />
             <MFXTextField fx:id="tenMHTextField" borderGap="6.0" floatMode="BORDER" floatingText="Tên" prefWidth="120.0" styleClass="body-label" />
-            <MFXTextField fx:id="DVTTextTield" borderGap="6.0" floatMode="BORDER" floatingText="Đơn vị tính" prefWidth="120.0" styleClass="body-label" />
+            <MFXComboBox fx:id="dvtComboBox" floatingText="Đơn vị tính" />
             <MFXComboBox fx:id="soLuongComboBox" floatingText="Tồn kho" />
          </children>
       </HBox>
-      <MasterDetailPane fx:id="masterDetailPane" />
+      <MasterDetailPane fx:id="masterDetailPane" VBox.vgrow="ALWAYS" />
       <HBox fx:id="masterPane" spacing="1.0">
          <children>
-            <TableView fx:id="mainTableView" HBox.hgrow="ALWAYS">
-               <columns>
-                  <TableColumn prefWidth="104.79995381832123" text="Selected" />
-                  <TableColumn prefWidth="96.79995858669281" text="Mã mặt hàng" />
-                  <TableColumn prefWidth="90.39997100830078" text="Tên mặt hàng" />
-                  <TableColumn prefWidth="79.99998474121094" text="Đơn vị tính" />
-                  <TableColumn prefWidth="91.20001220703125" text="Đơn giá nhập" />
-                  <TableColumn prefWidth="98.39996337890625" text="Số lượng" />
-                  <TableColumn prefWidth="98.39996337890625" text="Thao tác" />
-               </columns></TableView>
+            <TableView fx:id="mainTableView" HBox.hgrow="ALWAYS" />
             <Button fx:id="toggleDetailButton" maxHeight="1000.0" mnemonicParsing="false" text="&gt;" />
          </children>
       </HBox>

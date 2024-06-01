@@ -64,10 +64,10 @@
                 <MFXComboBox fx:id="loaiDaiLyCombobox" allowEdit="true" floatingText="Loại đại lý" />
             </children>
         </HBox>
-      <MasterDetailPane fx:id="masterDetailPane" dividerSizeHint="1.0" stylesheets="@../../../css/masterDetailPane.css" VBox.vgrow="ALWAYS" />
+      <MasterDetailPane fx:id="masterDetailPane" dividerPosition="0.6" dividerSizeHint="1.0" stylesheets="@../../../css/masterDetailPane.css" VBox.vgrow="ALWAYS" />
         <HBox fx:id="masterPane" spacing="1.0">
             <children>
-                <TableView fx:id="mainTableView" HBox.hgrow="ALWAYS" />
+                <TableView fx:id="mainTableView" stylesheets="@../../../css/tableView.css" HBox.hgrow="ALWAYS" />
             <Button fx:id="toggleDetailButton" maxHeight="1000.0" mnemonicParsing="false" text="&gt;" />
             </children>
         </HBox>
