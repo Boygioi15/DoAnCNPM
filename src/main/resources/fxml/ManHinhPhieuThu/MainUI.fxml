@@ -17,7 +17,7 @@
 <?import javafx.scene.text.Text?>
 <?import org.controlsfx.control.MasterDetailPane?>
 
-<VBox fx:id="manHinhPhieuThu" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" spacing="10.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.doancnpm.ManHinhPhieuThu.ManHinhPhieuThuController">
+<VBox fx:id="manHinhPhieuThu" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="861.0" prefWidth="704.0" spacing="10.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.doancnpm.ManHinhPhieuThu.ManHinhPhieuThuController">
    <children>
       <Label text="Lịch sử phiếu thu">
          <VBox.margin>
@@ -61,14 +61,14 @@
             <MFXTextField fx:id="maNhanVienTextField" borderGap="6.0" floatMode="BORDER" floatingText="Mã nhân viên lập phiếu" prefWidth="120.0" styleClass="body-label" />
          </children>
       </HBox>
-      <MasterDetailPane fx:id="masterDetailPane" />
-      <HBox fx:id="masterPane" spacing="1.0">
+      <MasterDetailPane fx:id="masterDetailPane" VBox.vgrow="ALWAYS" />
+      <HBox fx:id="masterPane" spacing="1.0" VBox.vgrow="ALWAYS">
          <children>
-            <TableView fx:id="mainTableView" minWidth="800.0" />
+            <TableView fx:id="mainTableView" HBox.hgrow="ALWAYS" />
             <Button fx:id="toggleDetailButton" maxHeight="1000.0" mnemonicParsing="false" text="&gt;" />
          </children>
       </HBox>
-      <VBox fx:id="detailPane" spacing="5.0">
+      <VBox fx:id="detailPane" spacing="5.0" VBox.vgrow="ALWAYS">
          <children>
             <Label text="Thông tin chi tiết" />
             <GridPane hgap="15.0" vgap="10.0">
