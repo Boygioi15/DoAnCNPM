@@ -9,7 +9,7 @@ public class PhieuThu {
     private BooleanProperty selected = new SimpleBooleanProperty(false);
     private Integer ID;
     private String MaPhieuThu;
-    private Integer MaDaiLi;
+    private Integer MaDaiLy;
     private Integer MaNhanVien;
     private Date NgayLap;
     private int SoTienThu;
@@ -19,10 +19,10 @@ public class PhieuThu {
 
     }
 
-    public PhieuThu(Integer ID, String maPhieuThu, Integer maDaiLi, Integer maNhanVien, Date ngayLap,int SoTienThu,String GhiChu) {
+    public PhieuThu(Integer ID, String maPhieuThu, Integer maDaiLy, Integer maNhanVien, Date ngayLap,int SoTienThu,String GhiChu) {
         this.ID = ID;
         this.MaPhieuThu = maPhieuThu;
-        this.MaDaiLi = maDaiLi;
+        this.MaDaiLy = maDaiLy;
         this.MaNhanVien = maNhanVien;
         this.NgayLap = ngayLap;
         this.SoTienThu = SoTienThu;
@@ -69,21 +69,22 @@ public class PhieuThu {
         MaNhanVien = maNhanVien;
     }
 
-    public Integer getMaDaiLi() {
-        return MaDaiLi;
+    public Integer getMaDaiLy() {
+        return MaDaiLy;
     }
 
-    public void setMaDaiLi(Integer maDaiLi) {
-        MaDaiLi = maDaiLi;
+    public void setMaDaiLy(Integer maDaiLy) {
+        MaDaiLy = maDaiLy;
     }
 
     public String getMaPhieuThu() {
         return MaPhieuThu;
     }
 
-    public void setMaPhieuThu(String maPhieuThu) {
-        MaPhieuThu = maPhieuThu;
+    public boolean isSelected() {
+        return selected.get();
     }
+
     public BooleanProperty selectedProperty() {
         return selected;
     }

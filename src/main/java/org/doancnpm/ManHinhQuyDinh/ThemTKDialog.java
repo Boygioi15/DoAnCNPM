@@ -1,10 +1,10 @@
-package org.doancnpm.ManHinhDaiLy;
+package org.doancnpm.ManHinhQuyDinh;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
-import org.doancnpm.Models.DaiLy;
+import org.doancnpm.Models.TaiKhoan;
 
 import java.io.IOException;
 
@@ -14,23 +14,12 @@ import java.io.IOException;
  *
  * @author carl
  */
-public class DirectAddDialog extends Dialog<DaiLy>  {
+public class ThemTKDialog extends Dialog<TaiKhoan>  {
 
-    public DirectAddDialog() throws IOException {
-        this(null);
-    }
-
-    /**
-     * HyperlinkDialog can be pre-filled with values from initialValue or
-     * left blank when initialValue is null
-     *
-     * @param initialValue allows null
-     * @throws IOException
-     */
-    public DirectAddDialog(DaiLy initialValue) throws IOException {
+    public ThemTKDialog() throws IOException {
         super();
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/Main/ManHinhDaiLy/TiepNhanDaiLyUI.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/Main/ManHinhQuyDinh/ThemTaiKhoanDialog.fxml"));
 
         ButtonType saveButtonType = new ButtonType("Thêm mới", ButtonBar.ButtonData.OK_DONE);
         ButtonType cancelButtonType = new ButtonType("Thoát", ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -38,13 +27,10 @@ public class DirectAddDialog extends Dialog<DaiLy>  {
         this.setTitle("Tiếp nhận đại lý");
         this.getDialogPane().setContent(fxmlLoader.load());
 
-        DirectAddDialogController c = fxmlLoader.getController();
-
-        c.setInitialValue(initialValue); // null safe
-
+        ThemTKDialogController c = fxmlLoader.getController();
         this.setResultConverter(p -> {
             if( p == saveButtonType ) {
-                return c.getDaiLy();
+                return c.getTaiKhoan();
             } else {
                 return null;
             }
@@ -54,7 +40,5 @@ public class DirectAddDialog extends Dialog<DaiLy>  {
                 .getDialogPane()
                 .getButtonTypes()
                 .addAll(saveButtonType, cancelButtonType);
-
-        //this.getDialogPane().lookupButton(saveButtonType).disableProperty().bind(c.validProperty().not());
     }
 }

@@ -5,6 +5,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import org.doancnpm.Models.NhanVien;
 import org.doancnpm.Models.DatabaseDriver;
+import org.doancnpm.Ultilities.CurrentNVInfor;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -185,5 +186,29 @@ public class NhanVienDAO implements Idao<NhanVien> {
 
     private void notifyChange() {
         nhanVienDtbChanged.set(!nhanVienDtbChanged.get());
+    }
+
+    public void updatePasswordByEmail(String email, String newPassword) throws SQLException {
+        Connection conn = DatabaseDriver.getConnect();
+        String sql = "UPDATE TAIKHOAN " +
+                "SET Password = ? " +
+                "WHERE MaNhanVien IN (SELECT ID FROM NHANVIEN WHERE Email = ?)";
+
+        assert conn != null;
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setString(1, newPassword);
+        pstmt.setString(2, email);
+
+        int rowsUpdated = pstmt.executeUpdate();
+        if (rowsUpdated > 0) {
+            System.out.println("Mật khẩu đã được cập nhật thành công.");
+        } else {
+            System.out.println("Không tìm thấy tài khoản tương ứng với địa chỉ email: " + email);
+        }
+        // khi sua moi cap nhat
+        if(CurrentNVInfor.getInstance().getLoggedInNhanVien()!=null){
+            CurrentNVInfor.getInstance().getTaiKhoanOfNhanien().setPassword(newPassword);
+        }
+        pstmt.close();
     }
 }

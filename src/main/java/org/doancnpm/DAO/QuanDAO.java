@@ -27,7 +27,7 @@ public class QuanDAO implements Idao<Quan> {
     @Override
     public int Insert(Quan quan) throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
-        String sql = "INSERT INTO QUAN (TenQuan,GhiChu) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO QUAN (TenQuan,GhiChu) VALUES (?, ?)";
 
         assert conn != null;
         PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -88,17 +88,20 @@ public class QuanDAO implements Idao<Quan> {
         pstmt.setInt(1, ID);
 
         ResultSet rs = pstmt.executeQuery();
-
+        Quan quan = null;
         if (rs.next()) {
+            quan = new Quan();
             int id = rs.getInt("ID");
             String maQuan = rs.getString("MaQuan");
             String tenQuan = rs.getString("TenQuan");
             String ghiChu = rs.getString("GhiChu");
 
-            return new Quan(id, maQuan, tenQuan, ghiChu);
-
+            quan.setId(id);
+            quan.setMaQuan(maQuan);
+            quan.setTenQuan(tenQuan);
+            quan.setGhiChu(ghiChu);
+            return quan;
         }
-
         return null; // No record found with the given ID
     }
 
@@ -118,10 +121,41 @@ public class QuanDAO implements Idao<Quan> {
             String tenQuan = rs.getString("TenQuan");
             String ghiChu = rs.getString("GhiChu");
 
-            quans.add(new Quan(id, maQuan, tenQuan, ghiChu));
+            Quan quan = new Quan();
+            quan.setId(id);
+            quan.setMaQuan(maQuan);
+            quan.setTenQuan(tenQuan);
+            quan.setGhiChu(ghiChu);
+            quans.add(quan);
         }
 
         return quans;
+    }
+
+    public Quan QueryMostRecent() throws SQLException {
+        Connection conn = DatabaseDriver.getConnect();
+        String sql = "SELECT TOP 1 * " +
+                "FROM Quan " +
+                "ORDER BY ID DESC;";
+
+        assert conn != null;
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next()) {
+            int id = rs.getInt("ID");
+            String maQuan = rs.getString("MaQuan");
+            String tenQuan = rs.getString("TenQuan");
+            String ghiChu = rs.getString("GhiChu");
+
+            Quan quan = new Quan();
+            quan.setId(id);
+            quan.setMaQuan(maQuan);
+            quan.setTenQuan(tenQuan);
+            quan.setGhiChu(ghiChu);
+            return quan;
+        }
+        return null; // No record found with the given ID
     }
 
     @Override

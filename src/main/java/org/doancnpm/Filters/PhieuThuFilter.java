@@ -2,7 +2,7 @@ package org.doancnpm.Filters;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.doancnpm.Models.DaiLy;
+import org.doancnpm.Models.MatHang;
 import org.doancnpm.Models.PhieuThu;
 
 public class PhieuThuFilter implements IFilter{
@@ -27,7 +27,7 @@ public class PhieuThuFilter implements IFilter{
             if (maPhieuThu != null && !maPhieuThu.isEmpty() && !phieuThu.getMaPhieuThu().contains(maPhieuThu)) {
                 matches = false;
             }
-            if (maDaiLy != null && !phieuThu.getMaDaiLi().equals(maDaiLy)) {
+            if (maDaiLy != null && !phieuThu.getMaDaiLy().equals(maDaiLy)) {
                 matches = false;
             }
 

@@ -1,16 +1,19 @@
 package org.doancnpm;
 
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.PopupControl;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import org.doancnpm.ManHinhBaoCao.ManHinhBaoCaoController;
+import org.doancnpm.ManHinhDieuKhien.ManHinhDieuKhienController;
 
 import java.io.IOException;
 
 public class AppStart extends Application {
     @Override
-    public void start(Stage stage){
+    public void start(Stage stage) throws IOException {
         Scene scene = new Scene(new StackPane());
 
         NavController loginManager = new NavController(scene);

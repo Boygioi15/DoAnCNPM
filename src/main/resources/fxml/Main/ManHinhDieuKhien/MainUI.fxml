@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -8,12 +12,13 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<VBox fx:id="manHinhKhoHang" spacing="10.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<VBox fx:id="manHinhDieuKhien" spacing="10.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.doancnpm.ManHinhDieuKhien.ManHinhDieuKhienController">
    <children>
       <Label text="Bảng điều khiển">
          <font>
@@ -23,14 +28,14 @@
             <Insets />
          </VBox.margin>
       </Label>
-      <GridPane hgap="10.0">
+      <GridPane hgap="10.0" VBox.vgrow="ALWAYS">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="60.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints minHeight="10.0" percentHeight="40.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" vgrow="ALWAYS" />
         </rowConstraints>
          <children>
             <HBox>
@@ -98,7 +103,7 @@
                         </Pane>
                         <VBox spacing="5.0">
                            <children>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Tổng giá trị kho hàng" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Tổng giá trị kho hàng (VNĐ)" />
                               <Text fx:id="tongGiaTriKhoHangText" strokeType="OUTSIDE" strokeWidth="0.0" text="9" />
                            </children>
                         </VBox>
@@ -112,12 +117,19 @@
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
               </columnConstraints>
               <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
               </rowConstraints>
                <children>
-                  <Pane fx:id="bieuDoKhoHangGraph" style="-fx-border-color: #ff0000;" GridPane.rowSpan="2" />
-                  <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1">
+                  <Pane fx:id="bieuDoKhoHangGraph" prefHeight="253.0" prefWidth="230.0" style="-fx-border-color: #ff0000;" GridPane.rowSpan="2">
+                     <children>
+                        <StackPane fx:id="pieChartContainer" layoutX="-19.0" layoutY="7.0">
+                           <children>
+                              <PieChart fx:id="tonkhoPieChart" prefHeight="231.0" prefWidth="200.0" />
+                           </children>
+                        </StackPane>
+                     </children></Pane>
+                  <VBox alignment="CENTER_LEFT" prefHeight="159.0" prefWidth="61.0" GridPane.columnIndex="1">
                      <children>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Số lượng mặt hàng" />
                         <Text fx:id="slMatHangText" strokeType="OUTSIDE" strokeWidth="0.0" text="Text">
@@ -139,7 +151,17 @@
                   </VBox>
                </children>
             </GridPane>
-            <Pane fx:id="bieuDoBaoCaoGraph" style="-fx-border-color: #ff0000;" GridPane.rowIndex="1" />
+            <Pane fx:id="bieuDoBaoCaoGraph" style="-fx-border-color: #ff0000;" GridPane.rowIndex="1">
+               <children>
+                  <LineChart fx:id="mixlineChart" layoutX="4.0" layoutY="7.0" prefHeight="244.0" prefWidth="477.0">
+                    <xAxis>
+                      <CategoryAxis side="BOTTOM" />
+                    </xAxis>
+                    <yAxis>
+                      <NumberAxis side="LEFT" />
+                    </yAxis>
+                  </LineChart>
+               </children></Pane>
          </children>
       </GridPane>
    </children>

@@ -27,7 +27,7 @@ public class LoaiDaiLyDAO implements Idao<LoaiDaiLy> {
     @Override
     public int Insert(LoaiDaiLy loaiDaiLy) throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
-        String sql = "INSERT INTO DAILY (SoNoToiDa,TenLoai,GhiChu) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO LoaiDaiLy (SoNoToiDa,TenLoai,GhiChu) VALUES (?, ?, ?)";
 
         assert conn != null;
         PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -46,7 +46,7 @@ public class LoaiDaiLyDAO implements Idao<LoaiDaiLy> {
     @Override
     public int Update(int id, LoaiDaiLy loaiDaiLy) throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
-        String sql = "UPDATE DAILY SET SoNoToiDa = ?, TenLoai =? , GhiChu =? WHERE ID =? ";
+        String sql = "UPDATE LoaiDaiLy SET SoNoToiDa = ?, TenLoai =? , GhiChu =? WHERE ID =? ";
 
         assert conn != null;
         PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -125,6 +125,35 @@ public class LoaiDaiLyDAO implements Idao<LoaiDaiLy> {
         }
 
         return loaiDaiLys;
+    }
+
+    public LoaiDaiLy QueryMostRecent() throws SQLException {
+        Connection conn = DatabaseDriver.getConnect();
+        String sql = "SELECT TOP 1 * " +
+                "FROM LoaiDaiLy " +
+                "ORDER BY ID DESC;";
+
+        assert conn != null;
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        ResultSet rs = pstmt.executeQuery();
+
+        if (rs.next()) {
+            LoaiDaiLy ldl = new LoaiDaiLy();
+            int id = rs.getInt("ID");
+            String maLoai = rs.getString("MaLoai");
+            int soNoToiDa = rs.getInt("SoNoToiDa");
+            String tenLoai = rs.getString("TenLoai");
+            String ghiChu = rs.getString("GhiChu");
+
+            ldl.setId(id);
+            ldl.setTenLoai(tenLoai);
+            ldl.setSoNoToiDa(soNoToiDa);
+            ldl.setGhiChu(ghiChu);
+
+            return ldl;
+        }
+
+        return null;
     }
 
     @Override
