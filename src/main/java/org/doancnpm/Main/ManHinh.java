@@ -10,4 +10,8 @@ public enum ManHinh {
     BAO_CAO,
     QUY_DINH,
     INFOR
+  
+    DIEU_KHIEN,
+    BAO_CAO,
+    
 }

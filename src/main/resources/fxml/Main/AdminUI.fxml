@@ -61,7 +61,7 @@
    <left>
       <VBox prefWidth="250.0" spacing="5.0" BorderPane.alignment="CENTER">
          <children>
-            <Button alignment="TOP_LEFT" mnemonicParsing="false" prefWidth="320.0" styleClass="menu-title" text="Bảng điều khiển" />
+            <Button fx:id="openBangDieuKhienButton" alignment="TOP_LEFT" mnemonicParsing="false" prefWidth="320.0" styleClass="menu-title" text="Bảng điều khiển" />
             <TitledPane alignment="TOP_LEFT" styleClass="menu-title" text="Đại lý">
                <content>
                   <VBox prefWidth="320.0" spacing="5.0">

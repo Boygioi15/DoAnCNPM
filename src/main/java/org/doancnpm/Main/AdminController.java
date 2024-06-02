@@ -8,7 +8,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import org.doancnpm.ManHinhBaoCao.ManHinhBaoCaoController;
 import org.doancnpm.ManHinhDaiLy.ManHinhDaiLyController;
+import org.doancnpm.ManHinhDieuKhien.ManHinhDieuKhienController;
 import org.doancnpm.ManHinhKhoHang.ManHinhKhoHangController;
 import org.doancnpm.ManHinhNhanVien.ManHinhNhanVienController;
 import org.doancnpm.ManHinhPhieuNhap.ManHinhPhieuNhapController;
@@ -28,6 +30,8 @@ public class AdminController implements Initializable {
 
     private @FXML Button openDaiLyButton;
     private @FXML Button openPhieuThuButton;
+    private @FXML Button openBangDieuKhienButton;
+    private @FXML Button openBaoCaoButton;
     private @FXML Button openKhoHangButton;
     private @FXML Button openPhieuNhapButton;
     private @FXML Button openPhieuXuatButton;
@@ -43,9 +47,12 @@ public class AdminController implements Initializable {
     private ManHinhPhieuNhapController manHinhPhieuNhapController;
     private ManHinhPhieuXuatController manHinhPhieuXuatController;
     private ManHinhNhanVienController manHinhNhanVienController;
+  
     private ManHinhQuyDinhController manHinhQuyDinhController;
     private ManHinhTaiKhoanController manHinhTaiKhoanController;
-
+    private ManHinhDieuKhienController manHinhDieuKhienController;
+    private ManHinhBaoCaoController manHinhBaoCaoController;
+  
     private NhanVien nhanVienLoggedIn = null;
 
     ManHinh currentManHinh;
@@ -63,6 +70,30 @@ public class AdminController implements Initializable {
     }
 
     private void initScreens() throws IOException {
+        FXMLLoader mhDaiLyLoader = new FXMLLoader(getClass().getResource("/fxml/Main/ManHinhDaiLy/MainUI.fxml"));
+        Parent mhDaiLyGraph = (Parent) mhDaiLyLoader.load();
+        manHinhDaiLyController = mhDaiLyLoader.getController();
+        centerScreen.getChildren().add(mhDaiLyGraph);
+        AnchorPane.setLeftAnchor(mhDaiLyGraph,0.0);
+        AnchorPane.setTopAnchor(mhDaiLyGraph,0.0);
+        AnchorPane.setBottomAnchor(mhDaiLyGraph,0.0);
+        AnchorPane.setRightAnchor(mhDaiLyGraph,0.0);
+
+        FXMLLoader mhPhieuThuLoader = new FXMLLoader(getClass().getResource("/fxml/Main/ManHinhPhieuThu/MainUI.fxml"));
+        Parent mhPhieuThuGraph = (Parent) mhPhieuThuLoader.load();
+        manHinhPhieuThuController = mhPhieuThuLoader.getController();
+        centerScreen.getChildren().add(mhPhieuThuGraph);
+
+        FXMLLoader mhDieuKhien = new FXMLLoader(getClass().getResource("/fxml/Main/ManHInhDieuKhien/MainUI.fxml"));
+        Parent mhDieuKhienGraph = (Parent) mhDieuKhien.load();
+        manHinhDieuKhienController = mhDieuKhien.getController();
+        centerScreen.getChildren().add(mhDieuKhienGraph);
+
+        FXMLLoader mhBaoCao = new FXMLLoader(getClass().getResource("/fxml/Main/ManHinhBaoCao/MainUI.fxml"));
+        Parent mhBaoCaoGraph = (Parent) mhBaoCao.load();
+        manHinhBaoCaoController = mhBaoCao.getController();
+        centerScreen.getChildren().add(mhBaoCaoGraph);
+
         manHinhDaiLyController = loadAndDoStuff("/fxml/Main/ManHinhDaiLy/MainUI.fxml").getController();
         manHinhPhieuThuController = loadAndDoStuff("/fxml/Main/ManHinhPhieuThu/MainUI.fxml").getController();
         manHinhKhoHangController = loadAndDoStuff("/fxml/Main/ManHinhKhoHang/MainUI.fxml").getController();
@@ -87,6 +118,11 @@ public class AdminController implements Initializable {
         openPhieuThuButton.setOnAction(_ ->{
             SwitchScreen(ManHinh.PHIEU_THU);
         });
+        openBangDieuKhienButton.setOnAction(_->{
+            SwitchScreen(ManHinh.DIEU_KHIEN);
+        });
+        openBaoCaoButton.setOnAction(_->{
+            SwitchScreen(ManHinh.BAO_CAO);
         openKhoHangButton.setOnAction(_ ->{
             SwitchScreen(ManHinh.KHO_HANG);
         });
@@ -114,6 +150,10 @@ public class AdminController implements Initializable {
         manHinhPhieuXuatController.setVisibility(false);
         manHinhQuyDinhController.setVisibility(false);
         manHinhTaiKhoanController.setVisibility(false);
+      
+        manHinhDieuKhienController.setVisibility(false);
+        manHinhBaoCaoController.setVisibility(false);
+
         switch (manHinhCode){
             case DAI_LY -> manHinhDaiLyController.setVisibility(true);
             case PHIEU_THU -> manHinhPhieuThuController.setVisibility(true);
@@ -123,6 +163,9 @@ public class AdminController implements Initializable {
             case NHAN_VIEN -> manHinhNhanVienController.setVisibility(true);
             case QUY_DINH -> manHinhQuyDinhController.setVisibility(true);
             case INFOR -> manHinhTaiKhoanController.setVisibility(true);
+            
+            case DIEU_KHIEN -> manHinhDieuKhienController.setVisibility(true);
+            case BAO_CAO -> manHinhBaoCaoController.setVisibility(true);
         }
         currentManHinh = manHinhCode;
     }
