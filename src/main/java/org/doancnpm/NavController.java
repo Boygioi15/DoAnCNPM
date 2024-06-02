@@ -3,6 +3,7 @@ package org.doancnpm;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Stage;
 import org.doancnpm.Login.LoginController;
 import org.doancnpm.Main.AdminController;
 import org.doancnpm.Models.NhanVien;
@@ -32,7 +33,17 @@ public class NavController {
      * Will show the login application screen.
      */
     public void logout() {
-        showLoginScreen();
+        Stage currentStage = (Stage) scene.getWindow();
+        currentStage.close(); // Đóng màn hình hiện tại
+
+        Stage stage = new Stage();
+        Scene loginScene = new Scene(new Parent() {  });
+
+        NavController navController = new NavController(loginScene);
+        navController.showLoginScreen();
+
+        stage.setScene(loginScene);
+        stage.show();
     }
 
     public void showLoginScreen() {
@@ -56,7 +67,9 @@ public class NavController {
             );
             Parent objectGraph = (Parent) loader.load();
             AdminController controller = loader.getController();
+
             if (controller != null) {
+                controller.initManager(this);
                 controller.setNhanvienLoggedIn(nhanVienLoggedIn);
             } else {
                 Logger.getLogger(NavController.class.getName()).log(Level.SEVERE, "MainController is null.");

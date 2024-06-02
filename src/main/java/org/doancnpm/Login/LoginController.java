@@ -94,7 +94,6 @@ public class LoginController implements Initializable {
 
     StringProperty currentScreenString = new SimpleStringProperty("");
     private TaiKhoanDAO taiKhoanDAO = TaiKhoanDAO.getInstance();
-    private Preferences preferences;
 
 
     @Override
