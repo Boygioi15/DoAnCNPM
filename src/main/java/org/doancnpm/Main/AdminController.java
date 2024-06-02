@@ -17,6 +17,7 @@ import org.doancnpm.ManHinhPhieuNhap.ManHinhPhieuNhapController;
 import org.doancnpm.ManHinhPhieuThu.ManHinhPhieuThuController;
 import org.doancnpm.ManHinhPhieuXuat.ManHinhPhieuXuatController;
 import org.doancnpm.ManHinhQuyDinh.ManHinhQuyDinhController;
+import org.doancnpm.ManHinhTaiKhoan.ManHinhTaiKhoanController;
 import org.doancnpm.Models.NhanVien;
 import org.doancnpm.Ultilities.PopDialog;
 
@@ -70,29 +71,6 @@ public class AdminController implements Initializable {
     }
 
     private void initScreens() throws IOException {
-        FXMLLoader mhDaiLyLoader = new FXMLLoader(getClass().getResource("/fxml/Main/ManHinhDaiLy/MainUI.fxml"));
-        Parent mhDaiLyGraph = (Parent) mhDaiLyLoader.load();
-        manHinhDaiLyController = mhDaiLyLoader.getController();
-        centerScreen.getChildren().add(mhDaiLyGraph);
-        AnchorPane.setLeftAnchor(mhDaiLyGraph,0.0);
-        AnchorPane.setTopAnchor(mhDaiLyGraph,0.0);
-        AnchorPane.setBottomAnchor(mhDaiLyGraph,0.0);
-        AnchorPane.setRightAnchor(mhDaiLyGraph,0.0);
-
-        FXMLLoader mhPhieuThuLoader = new FXMLLoader(getClass().getResource("/fxml/Main/ManHinhPhieuThu/MainUI.fxml"));
-        Parent mhPhieuThuGraph = (Parent) mhPhieuThuLoader.load();
-        manHinhPhieuThuController = mhPhieuThuLoader.getController();
-        centerScreen.getChildren().add(mhPhieuThuGraph);
-
-        FXMLLoader mhDieuKhien = new FXMLLoader(getClass().getResource("/fxml/Main/ManHInhDieuKhien/MainUI.fxml"));
-        Parent mhDieuKhienGraph = (Parent) mhDieuKhien.load();
-        manHinhDieuKhienController = mhDieuKhien.getController();
-        centerScreen.getChildren().add(mhDieuKhienGraph);
-
-        FXMLLoader mhBaoCao = new FXMLLoader(getClass().getResource("/fxml/Main/ManHinhBaoCao/MainUI.fxml"));
-        Parent mhBaoCaoGraph = (Parent) mhBaoCao.load();
-        manHinhBaoCaoController = mhBaoCao.getController();
-        centerScreen.getChildren().add(mhBaoCaoGraph);
 
         manHinhDaiLyController = loadAndDoStuff("/fxml/Main/ManHinhDaiLy/MainUI.fxml").getController();
         manHinhPhieuThuController = loadAndDoStuff("/fxml/Main/ManHinhPhieuThu/MainUI.fxml").getController();
@@ -102,6 +80,9 @@ public class AdminController implements Initializable {
         manHinhNhanVienController = loadAndDoStuff("/fxml/Main/ManHinhNhanVien/MainUI.fxml").getController();
         manHinhQuyDinhController = loadAndDoStuff("/fxml/Main/ManHinhQuyDinh/MainUI.fxml").getController();
         manHinhTaiKhoanController = loadAndDoStuff("/fxml/Main/ManHinhTaiKhoan/MainUI.fxml").getController();
+
+        manHinhDieuKhienController = loadAndDoStuff("/fxml/Main/ManHinhDieuKhien/MainUI.fxml").getController();
+        manHinhBaoCaoController = loadAndDoStuff("/fxml/Main/ManHinhBaoCao/MainUI.fxml").getController();
     }
 
     private FXMLLoader loadAndDoStuff(String path) throws IOException {
@@ -121,8 +102,9 @@ public class AdminController implements Initializable {
         openBangDieuKhienButton.setOnAction(_->{
             SwitchScreen(ManHinh.DIEU_KHIEN);
         });
-        openBaoCaoButton.setOnAction(_->{
+        openBaoCaoButton.setOnAction(_-> {
             SwitchScreen(ManHinh.BAO_CAO);
+        });
         openKhoHangButton.setOnAction(_ ->{
             SwitchScreen(ManHinh.KHO_HANG);
         });

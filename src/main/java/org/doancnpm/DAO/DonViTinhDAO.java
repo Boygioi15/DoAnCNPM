@@ -5,6 +5,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import org.doancnpm.Models.DatabaseDriver;
 import org.doancnpm.Models.DonViTinh;
+import org.doancnpm.Models.Quan;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -136,6 +137,30 @@ public class DonViTinhDAO implements Idao<DonViTinh> {
         return donViTinhs;
     }
 
+    public DonViTinh QueryMostRecent() throws SQLException {
+        Connection conn = DatabaseDriver.getConnect();
+        String sql = "SELECT TOP 1 * " +
+                "FROM DonViTinh " +
+                "ORDER BY ID DESC;";
+
+        assert conn != null;
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next()) {
+            int id = rs.getInt("ID");
+            String tenDonViTinh = rs.getString("TenDonViTinh");
+            String ghiChu = rs.getString("GhiChu");
+
+            DonViTinh donViTinh = new DonViTinh();
+            donViTinh.setId(id);
+            donViTinh.setTenDVT(tenDonViTinh);
+            donViTinh.setGhiChu(ghiChu);
+            return donViTinh;
+        }
+        return null; // No record found with the given ID
+    }
+    
     @Override
     public void AddDatabaseListener(InvalidationListener listener) {
         dvtDTBChanged.addListener(listener);

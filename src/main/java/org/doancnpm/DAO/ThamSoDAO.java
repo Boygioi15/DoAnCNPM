@@ -44,7 +44,7 @@ public class ThamSoDAO {
         pstmt.close();
         return rs;
     }
-    public void UpdateTyLeNhapXuat(double newTiLe) throws SQLException {
+    public void UpdateTyLeDonGiaXuat(double newTiLe) throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
         String sql = "Update ThamSo Set TyLeDonGiaXuat = ?";
 
@@ -53,6 +53,22 @@ public class ThamSoDAO {
         pstmt.setDouble(1,newTiLe);
         pstmt.executeUpdate();
         pstmt.close();
+    }
+    public double GetTyLeDonGiaXuat() throws SQLException {
+        Connection conn = DatabaseDriver.getConnect();
+        String sql = "Select TyLeDonGiaXuat From ThamSo";
+
+        assert conn != null;
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+
+        ResultSet resultSet = pstmt.executeQuery();
+        double rs = -1;
+        if(resultSet.next()){
+            rs = resultSet.getDouble("TyLeDonGiaXuat");
+        }
+
+        pstmt.close();
+        return rs;
     }
     public void UpdateChoPhepVuotNo(Boolean newChoPhepVuotNo) throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
@@ -68,5 +84,23 @@ public class ThamSoDAO {
 
         pstmt.executeUpdate();
         pstmt.close();
+    }
+    public Boolean GetChoPhepVuotNo() throws SQLException {
+        Connection conn = DatabaseDriver.getConnect();
+        String sql = "Select ChoPhepVuotNo From ThamSo";
+
+        assert conn != null;
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+
+        ResultSet resultSet = pstmt.executeQuery();
+        if(resultSet.next()){
+            int t = resultSet.getInt("ChoPhepVuotNo");
+            pstmt.close();
+            if(t==0){
+                return false;
+            }
+            return true;
+        }
+        return null;
     }
 }

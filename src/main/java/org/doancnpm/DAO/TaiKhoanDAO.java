@@ -3,16 +3,14 @@ package org.doancnpm.DAO;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import org.doancnpm.Models.PhieuNhap;
 import org.doancnpm.Models.TaiKhoan;
 import org.doancnpm.Models.DatabaseDriver;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 
-public class TaiKhoanDAO implements Idao<TaiKhoan> {
+public class TaiKhoanDAO {
     private static TaiKhoanDAO singleton = null;
 
     public static TaiKhoanDAO getInstance() {
@@ -24,7 +22,6 @@ public class TaiKhoanDAO implements Idao<TaiKhoan> {
 
     private final BooleanProperty taiKhoanDtbChanged = new SimpleBooleanProperty(false);
 
-    @Override
     public int Insert(TaiKhoan taiKhoan) throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
         String sql = "INSERT INTO TAIKHOAN (UserName, Password, MaNhanVien) VALUES (?, ?, ?)";
@@ -33,6 +30,7 @@ public class TaiKhoanDAO implements Idao<TaiKhoan> {
         PreparedStatement pstmt = conn.prepareStatement(sql);
         pstmt.setString(1, taiKhoan.getUserName());
         pstmt.setString(2, taiKhoan.getPassword());
+
         pstmt.setInt(3, taiKhoan.getMaNhanVien());
 
         int rowsAffected = pstmt.executeUpdate();
@@ -43,16 +41,16 @@ public class TaiKhoanDAO implements Idao<TaiKhoan> {
         return rowsAffected;
     }
 
-    @Override
-    public int Update(int maNhanVien, TaiKhoan taiKhoan) throws SQLException {
+    public int Update(String userName, TaiKhoan taiKhoan) throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
-        String sql = "UPDATE TAIKHOAN SET UserName = ?, Password = ? WHERE MaNhanVien = ?";
+        String sql = "UPDATE TAIKHOAN SET UserName = ?, maNhanVien = ?  WHERE userName = ?";
 
         assert conn != null;
         PreparedStatement pstmt = conn.prepareStatement(sql);
-        pstmt.setString(1, taiKhoan.getUserName());
-        pstmt.setString(2, taiKhoan.getPassword());
-        pstmt.setInt(3, maNhanVien);
+        pstmt.setString(1, userName);
+        pstmt.setInt(2, taiKhoan.getMaNhanVien());
+        pstmt.setString(3, taiKhoan.getUserName());
+
 
         int rowsAffected = pstmt.executeUpdate();
         if (rowsAffected > 0) {
@@ -62,14 +60,13 @@ public class TaiKhoanDAO implements Idao<TaiKhoan> {
         return rowsAffected;
     }
 
-    @Override
-    public int Delete(int maNhanVien) throws SQLException {
+    public int Delete(String userName) throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
-        String sql = "DELETE FROM TAIKHOAN WHERE MaNhanVien = ?";
+        String sql = "DELETE FROM TAIKHOAN WHERE UserName = ?";
 
         assert conn != null;
         PreparedStatement pstmt = conn.prepareStatement(sql);
-        pstmt.setInt(1, maNhanVien);
+        pstmt.setString(1, userName);
 
         int rowsAffected = pstmt.executeUpdate();
         if (rowsAffected > 0) {
@@ -79,14 +76,13 @@ public class TaiKhoanDAO implements Idao<TaiKhoan> {
         return rowsAffected;
     }
 
-    @Override
-    public TaiKhoan QueryID(int maNhanVien) throws SQLException {
+    public TaiKhoan QueryUserName(String userName) throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
         String sql = "SELECT * FROM TAIKHOAN WHERE MaNhanVien = ?";
 
         assert conn != null;
         PreparedStatement pstmt = conn.prepareStatement(sql);
-        pstmt.setInt(1, maNhanVien);
+        pstmt.setString(1, userName);
 
         ResultSet rs = pstmt.executeQuery();
         TaiKhoan taiKhoan = null;
@@ -94,21 +90,19 @@ public class TaiKhoanDAO implements Idao<TaiKhoan> {
         if (rs.next()) {
             taiKhoan = new TaiKhoan();
 
-            String userName = rs.getString("UserName");
-            String password = rs.getString("Password");
-
-            taiKhoan.setUserName(userName);
-            taiKhoan.setPassword(password);
-            taiKhoan.setMaNhanVien(maNhanVien);
+            String userName1 = rs.getString("UserName");
+            String mk = rs.getString("Password");
+            Integer maNV = rs.getInt("maNhanVien");
+            taiKhoan.setUserName(userName1);
+            taiKhoan.setPassword(mk);
+            taiKhoan.setMaNhanVien(maNV);
         }
-
         rs.close();
         pstmt.close();
 
         return taiKhoan;
     }
 
-    @Override
     public ArrayList<TaiKhoan> QueryAll() throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
         String sql = "SELECT * FROM TAIKHOAN";
@@ -122,11 +116,11 @@ public class TaiKhoanDAO implements Idao<TaiKhoan> {
             TaiKhoan taiKhoan = new TaiKhoan();
 
             String userName = rs.getString("UserName");
-            String password = rs.getString("Password");
+            String mk = rs.getString("Password");
             int maNhanVien = rs.getInt("MaNhanVien");
 
             taiKhoan.setUserName(userName);
-            taiKhoan.setPassword(password);
+            taiKhoan.setPassword(mk);
             taiKhoan.setMaNhanVien(maNhanVien);
 
             taiKhoanList.add(taiKhoan);
@@ -138,7 +132,6 @@ public class TaiKhoanDAO implements Idao<TaiKhoan> {
         return taiKhoanList;
     }
 
-    @Override
     public void AddDatabaseListener(InvalidationListener listener) {
         taiKhoanDtbChanged.addListener(listener);
     }

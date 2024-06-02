@@ -6,7 +6,6 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
@@ -80,17 +79,10 @@
                      <content>
                         <VBox prefHeight="256.0" prefWidth="400.0" spacing="5.0">
                            <children>
-                              <TableView fx:id="mainTableView12" prefHeight="200.0" prefWidth="400.0">
-                                 <columns>
-                                    <TableColumn prefWidth="71.19996964931488" text="Username" />
-                                    <TableColumn minWidth="-1.0" prefWidth="84.80005645751953" text="Password" />
-                                    <TableColumn minWidth="-1.0" prefWidth="107.19999694824219" text="Nhân viên" />
-                                    <TableColumn maxWidth="263.20005798339844" minWidth="-1.0" prefWidth="114.4000244140625" text="Thao tác" />
-                                 </columns>
-                              </TableView>
+                              <TableView fx:id="tkTableView" prefHeight="200.0" prefWidth="400.0" />
                               <HBox alignment="TOP_RIGHT" spacing="10.0">
                                  <children>
-                                    <Button mnemonicParsing="false" text="Thêm mới" />
+                                    <Button fx:id="tkThemMoiBtn" mnemonicParsing="false" text="Thêm mới" />
                                  </children>
                               </HBox>
                               <HBox alignment="CENTER_LEFT" spacing="10.0" />
@@ -114,15 +106,10 @@
                         <VBox prefWidth="400.0" spacing="5.0">
                            <children>
                               <Label text="Danh sách đơn vị tính" />
-                              <TableView fx:id="mainTableView11" prefHeight="200.0">
-                                 <columns>
-                                    <TableColumn prefWidth="67.19997537136078" text="STT" />
-                                    <TableColumn minWidth="-1.0" prefWidth="311.2000427246094" text="Đơn vị tính" />
-                                 </columns>
-                              </TableView>
+                              <TableView fx:id="donViTinhTableView" prefHeight="200.0" />
                               <HBox alignment="TOP_RIGHT" spacing="10.0">
                                  <children>
-                                    <Button mnemonicParsing="false" text="Thêm mới" />
+                                    <Button fx:id="donViTinhThemMoiBtn" mnemonicParsing="false" text="Thêm mới" />
                                  </children>
                               </HBox>
                               <GridPane hgap="20.0">
@@ -142,8 +129,13 @@
                                        </children>
                                     </HBox>
                                     <Label text="Cho phép vượt nợ:" GridPane.rowIndex="1" />
-                                    <TextField GridPane.columnIndex="1" />
-                                    <CheckBox mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <CheckBox fx:id="choPhepVuotNoCheckBox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <HBox GridPane.columnIndex="1">
+                                       <children>
+                                          <TextField fx:id="tyleTextField" HBox.hgrow="ALWAYS" />
+                                          <Button fx:id="tyLeCommitButton" mnemonicParsing="false" text="Xong" />
+                                       </children>
+                                    </HBox>
                                  </children>
                               </GridPane>
                               <HBox alignment="CENTER_LEFT" spacing="10.0" />

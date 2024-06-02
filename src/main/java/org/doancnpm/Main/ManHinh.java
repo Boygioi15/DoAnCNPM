@@ -7,11 +7,9 @@ public enum ManHinh {
     NHAP,
     XUAT,
     NHAN_VIEN,
-    BAO_CAO,
     QUY_DINH,
-    INFOR
-  
+    INFOR,
+
     DIEU_KHIEN,
-    BAO_CAO,
-    
+    BAO_CAO
 }
