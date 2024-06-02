@@ -1,34 +1,26 @@
 package org.doancnpm.Models;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+
 public class MatHang {
-    private int ID;
-    private int maDonViTinh;
-    private String tenMaHang;
-    private String ghiChu;
+    private BooleanProperty selected = new SimpleBooleanProperty(false);
+
+    private Integer ID;
     private String maMatHang;
-    public MatHang(String maMatHang,int maDonViTinh, String tenMaHang, String ghiChu) {
-        this.maDonViTinh = maDonViTinh;
-        this.tenMaHang = tenMaHang;
-        this.ghiChu = ghiChu;
-        this.maMatHang = maMatHang;
+    private String tenMatHang;
+    private Integer maDVT;
+    private Double donGiaNhap;
+    private Double donGiaXuat;
+    private Integer soLuong;
+    private String ghiChu;
+
+    public Integer getID() {
+        return ID;
     }
 
-    public MatHang(int maDonViTinh, String tenMaHang, String ghiChu) {
-        this.maDonViTinh = maDonViTinh;
-        this.ghiChu = ghiChu;
-        this.tenMaHang = tenMaHang;
-    }
-
-    public String getGhiChu() {
-        return ghiChu;
-    }
-
-    public int getMaDonViTinh() {
-        return maDonViTinh;
-    }
-
-    public void setMaDonViTinh(int maDonViTinh) {
-        this.maDonViTinh = maDonViTinh;
+    public void setID(Integer ID) {
+        this.ID = ID;
     }
 
     public String getMaMatHang() {
@@ -39,20 +31,63 @@ public class MatHang {
         this.maMatHang = maMatHang;
     }
 
+    public String getTenMatHang() {
+        return tenMatHang;
+    }
+
+    public void setTenMatHang(String tenMatHang) {
+        this.tenMatHang = tenMatHang;
+    }
+
+    public Integer getMaDVT() {
+        return maDVT;
+    }
+
+    public void setMaDVT(Integer maDVT) {
+        this.maDVT = maDVT;
+    }
+
+    public Double getDonGiaNhap() {
+        return donGiaNhap;
+    }
+
+    public void setDonGiaNhap(Double donGiaNhap) {
+        this.donGiaNhap = donGiaNhap;
+    }
+
+    public Double getDonGiaXuat() {
+        return donGiaXuat;
+    }
+
+    public void setDonGiaXuat(Double donGiaXuat) {
+        this.donGiaXuat = donGiaXuat;
+    }
+
+    public Integer getSoLuong() {
+        return soLuong;
+    }
+
+    public void setSoLuong(Integer soLuong) {
+        this.soLuong = soLuong;
+    }
+
+    public String getGhiChu() {
+        return ghiChu;
+    }
+
     public void setGhiChu(String ghiChu) {
         this.ghiChu = ghiChu;
     }
 
-    public String getTenMaHang() {
-        return tenMaHang;
+    public boolean isSelected() {
+        return selected.get();
     }
 
-    public void setTenMaHang(String tenMaHang) {
-        this.tenMaHang = tenMaHang;
+    public BooleanProperty selectedProperty() {
+        return selected;
     }
 
-
-    public int getID() {
-        return ID;
+    public void setSelected(boolean selected) {
+        this.selected.set(selected);
     }
 }

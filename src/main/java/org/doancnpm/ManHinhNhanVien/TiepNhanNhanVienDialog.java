@@ -1,10 +1,11 @@
-package org.doancnpm.ManHinhDaiLy;
+package org.doancnpm.ManHinhNhanVien;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import org.doancnpm.Models.DaiLy;
+import org.doancnpm.Models.NhanVien;
 
 import java.io.IOException;
 
@@ -14,9 +15,9 @@ import java.io.IOException;
  *
  * @author carl
  */
-public class DirectAddDialog extends Dialog<DaiLy>  {
+public class TiepNhanNhanVienDialog extends Dialog<NhanVien>  {
 
-    public DirectAddDialog() throws IOException {
+    public TiepNhanNhanVienDialog() throws IOException {
         this(null);
     }
 
@@ -27,24 +28,30 @@ public class DirectAddDialog extends Dialog<DaiLy>  {
      * @param initialValue allows null
      * @throws IOException
      */
-    public DirectAddDialog(DaiLy initialValue) throws IOException {
+    public TiepNhanNhanVienDialog(NhanVien initialValue) throws IOException {
         super();
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/Main/ManHinhDaiLy/TiepNhanDaiLyUI.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/Main/ManHinhNhanVien/TiepNhanNhanVien.fxml"));
 
-        ButtonType saveButtonType = new ButtonType("Thêm mới", ButtonBar.ButtonData.OK_DONE);
+        ButtonType saveButtonType;
+        if(initialValue==null){
+            saveButtonType = new ButtonType("Thêm mới", ButtonBar.ButtonData.OK_DONE);
+        }
+        else{
+            saveButtonType = new ButtonType("Cập nhật", ButtonBar.ButtonData.OK_DONE);
+        }
         ButtonType cancelButtonType = new ButtonType("Thoát", ButtonBar.ButtonData.CANCEL_CLOSE);
 
-        this.setTitle("Tiếp nhận đại lý");
+        this.setTitle("Tiếp nhận nhân viên");
         this.getDialogPane().setContent(fxmlLoader.load());
 
-        DirectAddDialogController c = fxmlLoader.getController();
+        TiepNhanNhanVienDialogController c = fxmlLoader.getController();
 
         c.setInitialValue(initialValue); // null safe
 
         this.setResultConverter(p -> {
             if( p == saveButtonType ) {
-                return c.getDaiLy();
+                return c.getNhanVien();
             } else {
                 return null;
             }

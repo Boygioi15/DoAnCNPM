@@ -6,8 +6,8 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -17,7 +17,7 @@
 <?import javafx.scene.text.Text?>
 <?import org.controlsfx.control.MasterDetailPane?>
 
-<VBox fx:id="khoHang1" spacing="10.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<VBox fx:id="manHinhPhieuNhap" spacing="10.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.doancnpm.ManHinhPhieuNhap.ManHinhPhieuNhapController">
    <children>
       <Label styleClass="headline" text="Danh sách phiếu nhập">
          <font>
@@ -51,34 +51,24 @@
       </HBox>
       <HBox alignment="CENTER_LEFT" spacing="10.0">
          <children>
-            <Button mnemonicParsing="false" styleClass="action-button" text="Refresh">
+            <Button fx:id="refreshButton" mnemonicParsing="false" styleClass="action-button" text="Refresh">
                <font>
                   <Font size="18.0" />
                </font>
             </Button>
             <MFXTextField fx:id="maPNTextField" borderGap="6.0" floatMode="BORDER" floatingText="Mã phiếu" prefWidth="120.0" styleClass="body-label" />
+            <MFXTextField fx:id="nccTextField" borderGap="6.0" floatMode="BORDER" floatingText="Nhà cung cấp" prefWidth="120.0" styleClass="body-label" />
             <MFXTextField fx:id="nvTextField" borderGap="6.0" floatMode="BORDER" floatingText="Nhân viên" prefWidth="120.0" styleClass="body-label" />
-            <MFXTextField fx:id="ttMinTextField" borderGap="6.0" floatMode="BORDER" floatingText="Tổng tiền min" prefWidth="120.0" styleClass="body-label" />
-            <MFXTextField fx:id="ttMaxTextField" borderGap="6.0" floatMode="BORDER" floatingText="Tổng tiền max" prefWidth="120.0" styleClass="body-label" />
          </children>
       </HBox>
-      <MasterDetailPane fx:id="masterDetailPane" dividerSizeHint="1.0" stylesheets="@../../../css/masterDetailPane.css" />
-      <HBox fx:id="masterPane" spacing="1.0">
+      <MasterDetailPane fx:id="masterDetailPane" dividerSizeHint="1.0" stylesheets="@../../../css/masterDetailPane.css" VBox.vgrow="ALWAYS" />
+      <HBox fx:id="masterPane" spacing="1.0" VBox.vgrow="ALWAYS">
          <children>
-            <TableView fx:id="mainTableView" HBox.hgrow="ALWAYS">
-               <columns>
-                  <TableColumn prefWidth="104.79995381832123" text="Selected" />
-                  <TableColumn prefWidth="104.79995381832123" text="Mã phiếu nhập" />
-                  <TableColumn prefWidth="126.40003967285156" text="Nhân viên lập phiếu" />
-                  <TableColumn prefWidth="126.40003967285156" text="Tổng tiền" />
-                  <TableColumn prefWidth="126.40003967285156" text="Ngày lập phiếu" />
-                  <TableColumn prefWidth="126.40003967285156" text="Thao tác" />
-               </columns>
-            </TableView>
+            <TableView fx:id="mainTableView" HBox.hgrow="ALWAYS" />
             <Button fx:id="toggleDetailButton" maxHeight="1000.0" mnemonicParsing="false" text="&gt;" />
          </children>
       </HBox>
-      <VBox fx:id="detailPane" spacing="5.0">
+      <VBox fx:id="detailPane" spacing="5.0" VBox.vgrow="ALWAYS">
          <children>
             <Label text="Thông tin chi tiết" />
             <GridPane hgap="15.0" vgap="10.0">
@@ -90,28 +80,21 @@
                   <RowConstraints />
                   <RowConstraints />
                   <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                   <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
                   <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
                   <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
                   <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Nhân viên lập phiếu:" GridPane.rowIndex="2" />
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Ngày lập phiếu:" GridPane.rowIndex="3" />
-                  <Text fx:id="ngayLapPhieuText" strokeType="OUTSIDE" strokeWidth="0.0" text="01/01/2004" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Ngày lập phiếu:" GridPane.rowIndex="4" />
+                  <Text fx:id="ngayLapPhieuText" strokeType="OUTSIDE" strokeWidth="0.0" text="01/01/2004" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Mã phiếu nhập:" GridPane.rowIndex="1" />
                   <Text fx:id="maPNText" strokeType="OUTSIDE" strokeWidth="0.0" text="Mã phiếu" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <TableView fx:id="detailTableView" GridPane.columnSpan="2" GridPane.rowIndex="4">
-                     <columns>
-                        <TableColumn editable="false" prefWidth="75.0" text="STT" />
-                        <TableColumn editable="false" prefWidth="75.0" text="Mặt hàng" />
-                        <TableColumn editable="false" prefWidth="75.0" text="Đơn vị tính" />
-                        <TableColumn editable="false" prefWidth="75.0" text="Số lượng" />
-                        <TableColumn editable="false" prefWidth="75.0" text="Đơn giá" />
-                        <TableColumn editable="false" prefWidth="75.0" text="Thành tiền" />
-                     </columns>
-                  </TableView>
-                  <HBox alignment="CENTER_RIGHT" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                  <TableView fx:id="detailTableView" GridPane.columnSpan="2" GridPane.rowIndex="5" />
+                  <HBox alignment="CENTER_RIGHT" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
                      <children>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Tổng tiền:" />
                         <Text fx:id="tongTienText" strokeType="OUTSIDE" strokeWidth="0.0" text="12000" />
@@ -124,6 +107,10 @@
                         <Text fx:id="tenNVText" strokeType="OUTSIDE" strokeWidth="0.0" text="Tên" />
                      </children>
                   </HBox>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Nhà cung cấp:" GridPane.rowIndex="3" />
+                  <Text fx:id="nccText" strokeType="OUTSIDE" strokeWidth="0.0" text="01/01/2004" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Ghi chú:" GridPane.rowIndex="7" />
+                  <TextArea fx:id="ghiChuTextArea" editable="false" prefHeight="50.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                </children>
                <VBox.margin>
                   <Insets />

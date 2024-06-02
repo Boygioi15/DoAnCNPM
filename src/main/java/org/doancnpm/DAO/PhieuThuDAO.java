@@ -9,12 +9,12 @@ import org.doancnpm.Models.PhieuThu;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class PhieuThuDao implements Idao<PhieuThu> {
-    private static PhieuThuDao singleton = null;
+public class PhieuThuDAO implements Idao<PhieuThu> {
+    private static PhieuThuDAO singleton = null;
 
-    public static PhieuThuDao getInstance() {
+    public static PhieuThuDAO getInstance() {
         if (singleton == null) {
-            singleton = new PhieuThuDao();
+            singleton = new PhieuThuDAO();
         }
         return singleton;
     }
@@ -32,7 +32,7 @@ public class PhieuThuDao implements Idao<PhieuThu> {
 
         assert conn != null;
         PreparedStatement pstmt = conn.prepareStatement(sql);
-        pstmt.setInt(1, phieuThu.getMaDaiLi());
+        pstmt.setInt(1, phieuThu.getMaDaiLy());
         pstmt.setInt(2, phieuThu.getMaNhanVien());
         pstmt.setDate(3, phieuThu.getNgayLap());
         pstmt.setInt(4, phieuThu.getSoTienThu());
@@ -49,18 +49,13 @@ public class PhieuThuDao implements Idao<PhieuThu> {
     public int Update(int ID, PhieuThu phieuThu) throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
         String sql = "UPDATE PHIEUTHUTIEN " +
-                "SET MaDaiLy= ? , MaNhanVien =?, NgayLapPhieu =?, SoTienThu =?, GhiChu=?" +
+                "SET GhiChu=? " +
                 "WHERE ID = ?";
 
         assert conn != null;
         PreparedStatement pstmt = conn.prepareStatement(sql);
-        pstmt.setInt(1, phieuThu.getMaDaiLi());
-        pstmt.setInt(2, phieuThu.getMaNhanVien());
-        pstmt.setDate(3, phieuThu.getNgayLap());
-        pstmt.setInt(4, phieuThu.getSoTienThu());
-        pstmt.setString(5, phieuThu.getGhiChu());
-        pstmt.setInt(6,ID);
-
+        pstmt.setString(1, phieuThu.getGhiChu());
+        pstmt.setInt(2,ID);
         int rowsAffected = pstmt.executeUpdate();
         if (rowsAffected > 0) {
             notifyChange();

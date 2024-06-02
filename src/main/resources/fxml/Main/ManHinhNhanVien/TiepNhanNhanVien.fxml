@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import io.github.palexdev.materialfx.controls.MFXTextField?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextArea?>
@@ -14,23 +14,19 @@
 <?import javafx.scene.layout.VBox?>
 <?import org.controlsfx.control.SearchableComboBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="600.0" spacing="10.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="600.0" spacing="10.0" style="-fx-background-color: #ffffff;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.doancnpm.ManHinhNhanVien.TiepNhanNhanVienDialogController">
    <children>
       <Label text="Thêm mới nhân viên" />
       <AnchorPane>
          <children>
-            <HBox alignment="CENTER_RIGHT" prefWidth="200.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
-               <children>
-                  <MFXTextField fx:id="ngayTiepNhanTextField" borderGap="5.0" editable="false" floatMode="BORDER" floatingText="Ngày vào làm" floatingTextGap="0.0" text="Hôm nay" />
-               </children>
-            </HBox>
+            <HBox alignment="CENTER_RIGHT" prefWidth="200.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0" />
          </children>
       </AnchorPane>
       <Separator prefWidth="200.0" />
       <GridPane hgap="20.0" vgap="15.0">
          <columnConstraints>
             <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="20.0" />
-            <ColumnConstraints maxWidth="1.7976931348623157E308" minWidth="10.0" percentWidth="80.0" />
+            <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" percentWidth="80.0" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
@@ -48,8 +44,7 @@
             <Label text="Ngày sinh:" GridPane.rowIndex="2" />
             <Label text="SDT:" GridPane.rowIndex="3" />
             <Label text="Email:" GridPane.rowIndex="4" />
-            <SearchableComboBox fx:id="gioiTinhComboBox" promptText="Loại đại lý" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <TextField fx:id="ngaySinhTextField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <SearchableComboBox fx:id="gioiTinhComboBox" promptText="-Chọn giới tính-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <TextField fx:id="sdtTextField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             <TextField fx:id="emailTextField" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <Label text="Lương:" GridPane.rowIndex="5" />
@@ -58,7 +53,8 @@
             <TextField fx:id="luongTextField" GridPane.columnIndex="1" GridPane.rowIndex="5" />
             <SearchableComboBox fx:id="chucVuComboBox" promptText="Chức vụ" GridPane.columnIndex="1" GridPane.rowIndex="6" />
             <TextField fx:id="hoTenTextField" GridPane.columnIndex="1" />
-            <TextArea prefHeight="100.0" prefRowCount="5" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <TextArea fx:id="ghiChuTextArea" prefHeight="100.0" prefRowCount="5" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+            <DatePicker fx:id="ngaySinhDatePicker" maxWidth="1000.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
          </children>
       </GridPane>
       <AnchorPane VBox.vgrow="ALWAYS">

@@ -1,8 +1,8 @@
 package org.doancnpm.Filters;
 
 import javafx.collections.ObservableList;
-import org.doancnpm.Models.DaiLy;
+import org.doancnpm.Models.MatHang;
 
 public interface IFilter<T> {
-    public ObservableList<DaiLy> Filter();
+    public ObservableList<T> Filter();
 }
