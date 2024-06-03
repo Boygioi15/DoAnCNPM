@@ -231,17 +231,7 @@ public class ManHinhPhieuXuatController implements Initializable {
                                     suaBtn.setOnAction(_ -> {
                                         try {
                                             PhieuXuat phieuXuat = getTableView().getItems().get(getIndex());
-                                            new LapPhieuXuatDialog(phieuXuat, nhanVienLoggedIn).showAndWait().ifPresent(_ -> {
-                                                try {
-                                                    PhieuXuatDAO.getInstance().Update(phieuXuat.getID(),phieuXuat);
-                                                    PopDialog.popSuccessDialog("Cập nhật phiếu xuất hàng "+phieuXuat.getMaPhieuXuat()+" thành công");
-                                                }
-                                                catch (SQLException e) {
-                                                    PopDialog.popErrorDialog("Cập nhật phiếu xuất hàng "+phieuXuat.getMaPhieuXuat()+" thất bại",
-                                                            e.getMessage());
-                                                }
-                                                //mainTableView.getItems().set(selectedIndex, response);
-                                            });
+                                            new LapPhieuXuatDialog(phieuXuat, nhanVienLoggedIn).showAndWait();
                                         } catch(IOException exc) {
                                             exc.printStackTrace();
                                         }
@@ -249,7 +239,7 @@ public class ManHinhPhieuXuatController implements Initializable {
 
                                     xuatBtn.setOnAction(_ -> {});
                                     HBox hbox = new HBox();
-                                    hbox.getChildren().addAll(xuatBtn);
+                                    hbox.getChildren().addAll(suaBtn,xuatBtn);
                                     hbox.setSpacing(5);
                                     hbox.setPrefWidth(USE_COMPUTED_SIZE);
                                     hbox.setPrefHeight(USE_COMPUTED_SIZE);

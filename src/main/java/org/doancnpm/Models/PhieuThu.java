@@ -12,14 +12,14 @@ public class PhieuThu {
     private Integer MaDaiLy;
     private Integer MaNhanVien;
     private Date NgayLap;
-    private int SoTienThu;
+    private Long SoTienThu;
     private String GhiChu;
 
     public PhieuThu() {
 
     }
 
-    public PhieuThu(Integer ID, String maPhieuThu, Integer maDaiLy, Integer maNhanVien, Date ngayLap,int SoTienThu,String GhiChu) {
+    public PhieuThu(Integer ID, String maPhieuThu, Integer maDaiLy, Integer maNhanVien, Date ngayLap, Long SoTienThu, String GhiChu) {
         this.ID = ID;
         this.MaPhieuThu = maPhieuThu;
         this.MaDaiLy = maDaiLy;
@@ -29,11 +29,11 @@ public class PhieuThu {
         this.GhiChu = GhiChu;
     }
 
-    public int getSoTienThu() {
+    public Long getSoTienThu() {
         return SoTienThu;
     }
 
-    public void setSoTienThu(int soTienThu) {
+    public void setSoTienThu(Long soTienThu) {
         SoTienThu = soTienThu;
     }
 

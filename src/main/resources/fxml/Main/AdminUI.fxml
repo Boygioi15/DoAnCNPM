@@ -37,8 +37,8 @@
                   </MenuButton>
                   <MenuButton mnemonicParsing="false" styleClass="action-button" text="Người dùng">
                     <items>
-                      <MenuItem fx:id="openTaiKhoanButton" mnemonicParsing="false" text="Tài khoản" />
-                      <MenuItem fx:id="dangXuatButton" mnemonicParsing="false" text="Đăng xuất" />
+                       <MenuItem fx:id="openTaiKhoanButton" mnemonicParsing="false" text="Tài khoản" />
+                       <MenuItem fx:id="dangXuatButton" mnemonicParsing="false" text="Đăng xuất" />
                     </items>
                      <graphic>
                         <ImageView fitHeight="48.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true" />

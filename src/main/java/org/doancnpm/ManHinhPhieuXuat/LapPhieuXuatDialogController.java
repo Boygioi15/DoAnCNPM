@@ -149,4 +149,21 @@ public class LapPhieuXuatDialogController implements Initializable {
         }
         return chiTietPhieuXuatList;
     }
+
+    public String GetValid(){
+        Boolean emptyDaiLy = dlComboBox.getValue()==null;
+        String validRows = "";
+        if(emptyDaiLy){
+            validRows = validRows.concat("Đại lý không được để trống. \n");
+        }
+        for(int i = 0; i< ctpxContainer.getChildren().size(); i++){
+            if(ctpxContainer.getChildren().get(i) instanceof ChiTietPhieuXuatRow temp){
+                String validRow = temp.GetValid();
+                if(!validRow.isEmpty()){
+                    validRows = validRows.concat("Hàng "+(i+1)+": "+validRow).concat("\n");
+                }
+            }
+        }
+        return validRows;
+    }
 }

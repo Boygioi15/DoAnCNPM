@@ -63,7 +63,7 @@ public class DaiLyDAO implements Idao<DaiLy> {
         pstmt.setString(5, daiLy.getEmail());
         pstmt.setString(6, daiLy.getDiaChi());
         pstmt.setDate(7, daiLy.getNgayTiepNhan());
-        pstmt.setInt(8, daiLy.getNoHienTai());
+        pstmt.setLong(8, daiLy.getNoHienTai());
         pstmt.setString(9, daiLy.getGhiChu());
         pstmt.setInt(10, id);
         int rowsAffected = pstmt.executeUpdate();
@@ -114,7 +114,7 @@ public class DaiLyDAO implements Idao<DaiLy> {
             String email = rs.getString("email");
             String diaChi = rs.getString("DiaChi");
             Date ngayTiepNhan = rs.getDate("ngayTiepNhan");
-            int noHienTai = rs.getInt("NoHienTai");
+            Long noHienTai = rs.getLong("NoHienTai");
             String ghiChu = rs.getString("GhiChu");
 
             daiLy.setMaDaiLy(maDL);
@@ -158,7 +158,7 @@ public class DaiLyDAO implements Idao<DaiLy> {
             String email = rs.getString("email");
             String diaChi = rs.getString("DiaChi");
             Date ngayTiepNhan = rs.getDate("ngayTiepNhan");
-            Integer noHienTai = rs.getInt("NoHienTai");
+            Long noHienTai = rs.getLong("NoHienTai");
             String ghiChu = rs.getString("GhiChu");
 
             daiLy.setID(ID);

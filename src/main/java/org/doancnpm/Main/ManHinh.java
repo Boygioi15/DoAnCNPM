@@ -8,8 +8,8 @@ public enum ManHinh {
     XUAT,
     NHAN_VIEN,
     QUY_DINH,
-    INFOR,
     TAI_KHOAN,
+
     DIEU_KHIEN,
     BAO_CAO
 }

@@ -30,6 +30,7 @@ import org.doancnpm.Models.DaiLy;
 import org.doancnpm.Models.LoaiDaiLy;
 import org.doancnpm.Models.Quan;
 import org.doancnpm.Ultilities.DayFormat;
+import org.doancnpm.Ultilities.MoneyFormatter;
 import org.doancnpm.Ultilities.PopDialog;
 
 import java.io.*;
@@ -142,8 +143,10 @@ public class ManHinhDaiLyController implements Initializable {
         TableColumn<DaiLy, String> tenDLCol = new TableColumn<>("Tên");
         tenDLCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getTenDaiLy()));
 
-        TableColumn<DaiLy, Integer> noHienTaiCol = new TableColumn<>("Số nợ");
-        noHienTaiCol.setCellValueFactory( new PropertyValueFactory<>("noHienTai"));
+        TableColumn<DaiLy, String> noHienTaiCol = new TableColumn<>("Số nợ");
+        noHienTaiCol.setCellValueFactory(data -> {
+            return new SimpleStringProperty(MoneyFormatter.ConvertLongToString(data.getValue().getNoHienTai()));
+        });
 
         TableColumn<DaiLy, String> ghiChuCol = new TableColumn<>("Ghi chú");
         ghiChuCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getGhiChu()));
@@ -195,21 +198,7 @@ public class ManHinhDaiLyController implements Initializable {
                                     suaBtn.setOnAction(_ -> {
                                         try {
                                             DaiLy daily = getTableView().getItems().get(getIndex());
-                                            new TiepNhanDaiLyDialog(daily).showAndWait().ifPresent(daiLyInfo -> {
-                                                //set "database" info
-                                                daiLyInfo.setID(daily.getID());
-                                                daiLyInfo.setNoHienTai(daily.getNoHienTai());
-                                                daiLyInfo.setNgayTiepNhan(daily.getNgayTiepNhan());
-                                                daiLyInfo.setMaDaiLy(daily.getMaDaiLy());
-                                                try {
-                                                    DaiLyDAO.getInstance().Update(daily.getID(),daiLyInfo);
-                                                    PopDialog.popSuccessDialog("Cập nhật đại lý "+daiLyInfo.getMaDaiLy()+" thành công");
-                                                } catch (SQLException e) {
-                                                    PopDialog.popErrorDialog("Cập nhật đại lý "+daiLyInfo.getMaDaiLy()+" thất bại",
-                                                            e.getMessage());
-                                                }
-                                                //mainTableView.getItems().set(selectedIndex, response);
-                                            });
+                                            new TiepNhanDaiLyDialog(daily).showAndWait();
                                         } catch(IOException exc) {
                                             exc.printStackTrace();
                                         }
@@ -382,7 +371,7 @@ public class ManHinhDaiLyController implements Initializable {
             emailText.setText(daiLy.getEmail());
             diaChiText.setText(daiLy.getDiaChi());
             ngayTiepNhanText.setText(DayFormat.GetDayStringFormatted(daiLy.getNgayTiepNhan()));
-            noHienTaiText.setText(daiLy.getNoHienTai().toString());
+            noHienTaiText.setText(MoneyFormatter.ConvertLongToString(daiLy.getNoHienTai()));
             ghiChuTextArea.setText(daiLy.getGhiChu());
         }
         catch (SQLException _){}
@@ -547,17 +536,7 @@ public class ManHinhDaiLyController implements Initializable {
     //functionalities
     public void OpenDirectAddDialog(){
         try {
-            new TiepNhanDaiLyDialog().showAndWait().ifPresent(
-                    daiLyAdded -> {
-                        try {
-                            DaiLyDAO.getInstance().Insert(daiLyAdded);
-                            PopDialog.popSuccessDialog("Thêm mới đại lý "+daiLyAdded.getTenDaiLy()+" thành công");
-                        }
-                        catch (SQLException e) {
-                            PopDialog.popErrorDialog("Thêm mới đại lý thất bại", e.getMessage());
-                        }
-                    }
-            );
+            new TiepNhanDaiLyDialog().showAndWait();
         }
         catch (IOException e) {
             PopDialog.popErrorDialog("Không thể mở dialog thêm đại lý");

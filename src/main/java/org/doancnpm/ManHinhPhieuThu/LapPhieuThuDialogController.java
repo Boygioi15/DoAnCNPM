@@ -15,12 +15,15 @@ import org.doancnpm.DAO.NhanVienDAO;
 import org.doancnpm.DAO.QuanDAO;
 import org.doancnpm.Models.*;
 import org.doancnpm.Ultilities.DayFormat;
+import org.doancnpm.Ultilities.MoneyFormatter;
 import org.doancnpm.Ultilities.PopDialog;
 
 import java.net.URL;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
+
+import static org.doancnpm.Ultilities.MoneyFormatter.getLongValueFromTextField;
 
 public class LapPhieuThuDialogController implements Initializable {
     @FXML private MFXTextField ngayLapPhieuTextField;
@@ -34,6 +37,8 @@ public class LapPhieuThuDialogController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initDaiLyComboBox();
+
+        MoneyFormatter.MoneyFormatTextField(soTienThuTextField);
     }
 
     private void initDaiLyComboBox(){
@@ -58,7 +63,7 @@ public class LapPhieuThuDialogController implements Initializable {
             dlComboBox.setItems(daiLy);
         }
         catch (SQLException e) {
-            PopDialog.popErrorDialog("Lấy dữ liệu các quận/ loại đại lý thất bại",e.toString());
+            PopDialog.popErrorDialog("Lấy dữ liệu đại lý thất bại",e.toString());
         }
     }
     public void setInitialValue(PhieuThu phieuThu, NhanVien nvLoggedIn) {
@@ -81,7 +86,7 @@ public class LapPhieuThuDialogController implements Initializable {
         }catch (SQLException _){}
 
         ghiChuTextArea.setText(phieuThu.getGhiChu());
-        soTienThuTextField.setText(Integer.toString(phieuThu.getSoTienThu()));
+        soTienThuTextField.setText(Long.toString(phieuThu.getSoTienThu()));
 
         ngayLapPhieuTextField.setDisable(true);
         nhanVienTextField.setDisable(true);
@@ -101,7 +106,7 @@ public class LapPhieuThuDialogController implements Initializable {
                 }
                 phieuThu.setMaDaiLy(dlComboBox.getValue().getID());
                 phieuThu.setGhiChu(ghiChuTextArea.getText());
-                phieuThu.setSoTienThu(Integer.parseInt(soTienThuTextField.getText()));
+                phieuThu.setSoTienThu(getLongValueFromTextField(soTienThuTextField));
                 phieuThu.setNgayLap(ngayTiepNhan);
                 phieuThu.setGhiChu(ghiChuTextArea.getText());
             }
