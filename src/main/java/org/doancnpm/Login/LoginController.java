@@ -94,7 +94,6 @@ public class LoginController implements Initializable {
 
     StringProperty currentScreenString = new SimpleStringProperty("");
     private TaiKhoanDAO taiKhoanDAO = TaiKhoanDAO.getInstance();
-    private Preferences preferences;
 
 
     @Override
@@ -151,7 +150,7 @@ public class LoginController implements Initializable {
                 loginManager.authenticated(loggedInNhanVien);
             }
         } else {
-            addErrorMessage(errorBox, "Email hoặc mật khẩu đang trống ");
+            addErrorMessage(errorBox, "Phải điền đầy đủ các trường");
         }
     }
 

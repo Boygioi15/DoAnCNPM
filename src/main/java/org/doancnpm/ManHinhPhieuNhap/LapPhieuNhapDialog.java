@@ -13,6 +13,7 @@ import org.doancnpm.DAO.PhieuNhapDAO;
 import org.doancnpm.Models.ChiTietPhieuNhap;
 import org.doancnpm.Models.NhanVien;
 import org.doancnpm.Models.PhieuNhap;
+import org.doancnpm.Ultilities.PopDialog;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -52,13 +53,15 @@ public class LapPhieuNhapDialog extends Dialog<PhieuNhap> {
                         PhieuNhapDAO.getInstance().Insert(phieuNhap);
                         //turn back to get ID
                         phieuNhap = PhieuNhapDAO.getInstance().QueryMostRecent();
-                        System.out.println(phieuNhap.getID());
                         for(ChiTietPhieuNhap ctpn: ctpns){
                             ctpn.setMaPhieuNhap(phieuNhap.getID());
                         }
                         CTPNDAO.getInstance().InsertBlock(ctpns);
-                    }catch (SQLException e){
-                        e.printStackTrace();
+                        PopDialog.popSuccessDialog("Thêm mới phiếu nhập thành công");
+                    }
+                    catch (SQLException e){
+                        PopDialog.popErrorDialog("Thêm phiếu nhập thất bại",e.getMessage());
+                        event.consume();
                     }
 
                 }

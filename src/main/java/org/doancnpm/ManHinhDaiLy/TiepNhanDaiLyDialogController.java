@@ -1,9 +1,5 @@
 package org.doancnpm.ManHinhDaiLy;
 
-import io.github.palexdev.materialfx.controls.MFXTextField;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -36,23 +32,13 @@ public class TiepNhanDaiLyDialogController implements Initializable {
     @FXML private TextField emailTextField;
     @FXML private TextArea ghiChuTextArea;
 
-
-    //validators
-    BooleanProperty notSelectedQuan = new SimpleBooleanProperty(false);
-    BooleanProperty notSelectedLoaiDaiLy = new SimpleBooleanProperty(false);
-    BooleanProperty emptyTenDaily = new SimpleBooleanProperty(false);
-
+    DaiLy initialValue = null;
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        initAction();
-        initValidator();
         displayDataInCb();
         initDate();
     }
-    public void initAction(){
-        //thoatButton.setOnAction();
-        //themButton.setOnAction(ob -> add());
-    }
+
     private void initDate() {
         Date ngayTiepNhan = new Date(System.currentTimeMillis());
         ngayTiepNhanTextField.setText(DayFormat.GetDayStringFormatted(ngayTiepNhan));
@@ -61,18 +47,14 @@ public class TiepNhanDaiLyDialogController implements Initializable {
         if(daiLy==null){
             return;
         }
+        initialValue = daiLy;
         try {
             Quan queriedQuan = QuanDAO.getInstance().QueryID(daiLy.getMaQuan());
             quanComboBox.setValue(queriedQuan);
-        } catch (SQLException e) {
-            System.out.println("Error in setting quan value for combobox");
-        }
-        try {
+
             LoaiDaiLy queriedLoaiDaiLy = LoaiDaiLyDAO.getInstance().QueryID(daiLy.getMaLoaiDaiLy());
             loaiDaiLyComboBox.setValue(queriedLoaiDaiLy);
-        } catch (SQLException e) {
-            System.out.println("Error in setting loai dai ly value for combobox");
-        }
+        } catch (SQLException _) { }
 
         tenDaiLyTextField.setText(daiLy.getTenDaiLy());
         diaChiTextField.setText(daiLy.getDiaChi());
@@ -80,12 +62,6 @@ public class TiepNhanDaiLyDialogController implements Initializable {
         emailTextField.setText(daiLy.getEmail());
         ghiChuTextArea.setText(daiLy.getGhiChu());
         ngayTiepNhanTextField.setText(DayFormat.GetDayStringFormatted(daiLy.getNgayTiepNhan()));
-    }
-    //validator
-    private void initValidator(){
-        notSelectedQuan.bind(Bindings.createBooleanBinding(this::checkQuanSelected,quanComboBox.valueProperty()));
-        notSelectedLoaiDaiLy.bind(Bindings.createBooleanBinding(this::checkLoaiDaiLySelected,loaiDaiLyComboBox.valueProperty()));
-        emptyTenDaily.bind(Bindings.createBooleanBinding(this::checkTenDaiLyEmpty,loaiDaiLyComboBox.valueProperty()));
     }
     private void displayDataInCb() {
         try {
@@ -129,38 +105,32 @@ public class TiepNhanDaiLyDialogController implements Initializable {
             PopDialog.popErrorDialog("Lấy dữ liệu các quận/ loại đại lý thất bại",e.toString());
         }
     }
-
-    private boolean allowAdding(){
-        return notSelectedQuan.getValue()&&notSelectedLoaiDaiLy.getValue()&&emptyTenDaily.getValue();
-    }
-    private boolean checkQuanSelected(){
-        return quanComboBox.getValue()==null;
-    }
-    private boolean checkLoaiDaiLySelected(){
-        return loaiDaiLyComboBox.getValue()==null;
-    }
-    private boolean checkTenDaiLyEmpty(){
-        return tenDaiLyTextField.getText().isEmpty();
-    }
-    public void exit(){
-
-    }
     public DaiLy getDaiLy(){
-        Date ngayTiepNhan = new Date(System.currentTimeMillis());
-        DaiLy daiLy = new DaiLy();
-        daiLy.setMaQuan(quanComboBox.getValue().getId());
-        daiLy.setMaLoaiDaiLy(loaiDaiLyComboBox.getValue().getId());
+        if(initialValue==null){
+            Date ngayTiepNhan = new Date(System.currentTimeMillis());
+            DaiLy daiLy = new DaiLy();
+            daiLy.setMaQuan(quanComboBox.getValue().getId());
+            daiLy.setMaLoaiDaiLy(loaiDaiLyComboBox.getValue().getId());
 
-        daiLy.setTenDaiLy(tenDaiLyTextField.getText());
-        daiLy.setDiaChi(diaChiTextField.getText());
-        daiLy.setEmail(emailTextField.getText());
-        daiLy.setDienThoai(dienThoaiTextField.getText());
-        daiLy.setNgayTiepNhan( ngayTiepNhan);
-        daiLy.setGhiChu( ghiChuTextArea.getText());
-        return daiLy;
-    }
-    private void initValidation(){
-        MFXTextField tf = new MFXTextField();
-        tf.updateInvalid(tf,true);
+            daiLy.setTenDaiLy(tenDaiLyTextField.getText());
+            daiLy.setDiaChi(diaChiTextField.getText());
+            daiLy.setEmail(emailTextField.getText());
+            daiLy.setDienThoai(dienThoaiTextField.getText());
+            daiLy.setNgayTiepNhan(ngayTiepNhan);
+            daiLy.setGhiChu( ghiChuTextArea.getText());
+            return daiLy;
+
+        }
+        else{
+            initialValue.setMaQuan(quanComboBox.getValue().getId());
+            initialValue.setMaLoaiDaiLy(loaiDaiLyComboBox.getValue().getId());
+
+            initialValue.setTenDaiLy(tenDaiLyTextField.getText());
+            initialValue.setDiaChi(diaChiTextField.getText());
+            initialValue.setEmail(emailTextField.getText());
+            initialValue.setDienThoai(dienThoaiTextField.getText());
+            initialValue.setGhiChu( ghiChuTextArea.getText());
+            return initialValue;
+        }
     }
 }

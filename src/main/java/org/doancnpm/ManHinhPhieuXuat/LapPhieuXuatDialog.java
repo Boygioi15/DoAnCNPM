@@ -14,6 +14,7 @@ import org.doancnpm.DAO.PhieuXuatDAO;
 import org.doancnpm.Models.ChiTietPhieuXuat;
 import org.doancnpm.Models.NhanVien;
 import org.doancnpm.Models.PhieuXuat;
+import org.doancnpm.Ultilities.PopDialog;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -47,6 +48,12 @@ public class LapPhieuXuatDialog extends Dialog<PhieuXuat> {
         final Button btnOk = (Button)this.getDialogPane().lookupButton(saveButtonType);
         btnOk.addEventFilter(ActionEvent.ACTION,
                 event -> {
+                    String validString = c.GetValid();
+                    if(!validString.isEmpty()){
+                        PopDialog.popErrorDialog("Thêm mới phiếu xuất thất bại",validString);
+                        event.consume();
+                        return;
+                    }
                     PhieuXuat phieuXuat = c.getPhieuXuat();
                     List<ChiTietPhieuXuat> ctpxs = c.getChiTietPhieuXuat();
                     try{
@@ -59,7 +66,8 @@ public class LapPhieuXuatDialog extends Dialog<PhieuXuat> {
                         }
                         CTPXDAO.getInstance().InsertBlock(ctpxs);
                     }catch (SQLException e){
-                        e.printStackTrace();
+                        PopDialog.popErrorDialog("Thêm mới phiếu xuất thất bại",e.getMessage());
+                        event.consume();
                     }
 
                 }

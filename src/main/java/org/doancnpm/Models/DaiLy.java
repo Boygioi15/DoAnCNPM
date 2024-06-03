@@ -17,7 +17,7 @@ public class DaiLy {
     private String email = "";
     private String diaChi = "";
     private Date ngayTiepNhan;
-    private Integer noHienTai = 0;
+    private Long noHienTai = 0L;
     private String ghiChu = "";
 
 
@@ -50,7 +50,7 @@ public class DaiLy {
     public Date getNgayTiepNhan() {
         return ngayTiepNhan;
     }
-    public Integer getNoHienTai() {
+    public Long getNoHienTai() {
         return noHienTai;
     }
     public String getGhiChu() {
@@ -70,7 +70,7 @@ public class DaiLy {
     public void setMaLoaiDaiLy(Integer maLoaiDaiLy) {
         this.maLoaiDaiLy = maLoaiDaiLy;
     }
-    public void setNoHienTai(Integer noHienTai) {
+    public void setNoHienTai(Long noHienTai) {
         this.noHienTai = noHienTai;
     }
     public void setTenDaiLy(String tenDaiLy) {
@@ -87,9 +87,6 @@ public class DaiLy {
     }
     public void setNgayTiepNhan(Date ngayTiepNhan) {
         this.ngayTiepNhan = ngayTiepNhan;
-    }
-    public void setNoHienTai(int noHienTai) {
-        this.noHienTai = noHienTai;
     }
     public void setGhiChu(String ghiChu) {
         this.ghiChu = ghiChu;

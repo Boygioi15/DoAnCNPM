@@ -367,7 +367,7 @@ public class ManHinhPhieuThuController implements Initializable {
 
                 phieuThu.setMaDaiLy(idDL);
                 phieuThu.setMaNhanVien(idNV);
-                phieuThu.setSoTienThu((int) tienThuCell.getNumericCellValue());
+                //phieuThu.setSoTienThu((int) tienThuCell.getNumericCellValue());
                 phieuThu.setGhiChu(ghiChuCell.getStringCellValue());
 
                 phieuThu.setNgayLap(ngayLapPhieu);

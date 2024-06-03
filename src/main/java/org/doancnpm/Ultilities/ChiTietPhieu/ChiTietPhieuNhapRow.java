@@ -133,4 +133,26 @@ public class ChiTietPhieuNhapRow extends HBox {
         chiTietPhieuNhap.setSoLuong(Integer.parseInt(slTextField.getText()));
         return chiTietPhieuNhap;
     }
+
+    public String GetValid(){
+        Boolean emptyMh = mhComboBox.getValue()==null;
+        Boolean emptySL = slTextField.getText().isEmpty();
+        Boolean saiSL = false;
+        try{
+            Long.parseLong(slTextField.getText());
+        }
+        catch (Exception _){saiSL = true;}
+
+        String validate = "";
+        if(emptyMh){
+            validate = validate.concat("Mặt hàng không được để trống. ");
+        }
+        if(emptySL){
+            validate = validate.concat("Số lượng không được để trống. ");
+        }
+        if(!emptySL && saiSL){
+            validate = validate.concat("Định dạng số lượng sai. ");
+        }
+        return  validate;
+    }
 }

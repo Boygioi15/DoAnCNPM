@@ -35,7 +35,7 @@ public class PhieuThuDAO implements Idao<PhieuThu> {
         pstmt.setInt(1, phieuThu.getMaDaiLy());
         pstmt.setInt(2, phieuThu.getMaNhanVien());
         pstmt.setDate(3, phieuThu.getNgayLap());
-        pstmt.setInt(4, phieuThu.getSoTienThu());
+        pstmt.setLong(4, phieuThu.getSoTienThu());
         pstmt.setString(5, phieuThu.getGhiChu());
         int rowsAffected = pstmt.executeUpdate();
         if (rowsAffected > 0) {
@@ -98,7 +98,7 @@ public class PhieuThuDAO implements Idao<PhieuThu> {
             int maNhanVien = rs.getInt("MaNhanVien");
             Date ngayLap  =rs.getDate("NgayLapPhieu");
             String maPhieuThu = rs.getString("MaPhieuThu");
-            int soTienThu = rs.getInt("SoTienThu");
+            Long soTienThu = rs.getLong("SoTienThu");
             String ghiChu = rs.getString("GhiChu");
             phieuThu = new PhieuThu(id,maPhieuThu, maDaili,maNhanVien,ngayLap,soTienThu,ghiChu);
         }
@@ -123,7 +123,7 @@ public class PhieuThuDAO implements Idao<PhieuThu> {
             int maNhanVien = rs.getInt("MaNhanVien");
             Date ngayLap  =rs.getDate("NgayLapPhieu");
             String maPhieuThu = rs.getString("MaPhieuThu");
-            int soTienThu = rs.getInt("SoTienThu");
+            Long soTienThu = rs.getLong("SoTienThu");
             String ghiChu = rs.getString("GhiChu");
             PhieuThu phieuThu = new PhieuThu(id,maPhieuThu, maDaili,maNhanVien,ngayLap,soTienThu,ghiChu);
             listPhieuThu.add(phieuThu);

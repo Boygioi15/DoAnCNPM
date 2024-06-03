@@ -6,6 +6,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import org.doancnpm.ManHinhBaoCao.ManHinhBaoCaoController;
@@ -19,6 +20,7 @@ import org.doancnpm.ManHinhPhieuXuat.ManHinhPhieuXuatController;
 import org.doancnpm.ManHinhQuyDinh.ManHinhQuyDinhController;
 import org.doancnpm.ManHinhTaiKhoan.ManHinhTaiKhoanController;
 import org.doancnpm.Models.NhanVien;
+import org.doancnpm.NavController;
 import org.doancnpm.Ultilities.PopDialog;
 
 import java.io.IOException;
@@ -38,7 +40,8 @@ public class AdminController implements Initializable {
     private @FXML Button openPhieuXuatButton;
     private @FXML Button openNhanVienButton;
     private @FXML Button openQuyDinhButton;
-
+    public @FXML MenuItem openTaiKhoanButton;
+    public @FXML MenuItem dangXuatButton;
     private @FXML Label userNameLabel;
 
     private ManHinhDaiLyController manHinhDaiLyController;
@@ -53,7 +56,7 @@ public class AdminController implements Initializable {
     private ManHinhTaiKhoanController manHinhTaiKhoanController;
     private ManHinhDieuKhienController manHinhDieuKhienController;
     private ManHinhBaoCaoController manHinhBaoCaoController;
-  
+
     private NhanVien nhanVienLoggedIn = null;
 
     ManHinh currentManHinh;
@@ -120,6 +123,9 @@ public class AdminController implements Initializable {
         openQuyDinhButton.setOnAction(_ ->{
             SwitchScreen(ManHinh.QUY_DINH);
         });
+        openTaiKhoanButton.setOnAction(_->{
+            SwitchScreen(ManHinh.TAI_KHOAN);
+        });
     }
 
     public void SwitchScreen(ManHinh manHinhCode){
@@ -144,7 +150,7 @@ public class AdminController implements Initializable {
             case XUAT -> manHinhPhieuXuatController.setVisibility(true);
             case NHAN_VIEN -> manHinhNhanVienController.setVisibility(true);
             case QUY_DINH -> manHinhQuyDinhController.setVisibility(true);
-            case INFOR -> manHinhTaiKhoanController.setVisibility(true);
+            case TAI_KHOAN -> manHinhTaiKhoanController.setVisibility(true);
             
             case DIEU_KHIEN -> manHinhDieuKhienController.setVisibility(true);
             case BAO_CAO -> manHinhBaoCaoController.setVisibility(true);
@@ -164,6 +170,12 @@ public class AdminController implements Initializable {
         manHinhPhieuThuController.setNhanVienLoggedIn(nhanVienLoggedIn);
         manHinhPhieuNhapController.setNhanVienLoggedIn(nhanVienLoggedIn);
         manHinhPhieuXuatController.setNhanVienLoggedIn(nhanVienLoggedIn);
+    }
+    public void initManager(final NavController navController) {
+        dangXuatButton.setOnAction(_ -> handleLogOut(navController));
+    }
+    private void handleLogOut(NavController navController){
+        navController.logout();
     }
 
 }
