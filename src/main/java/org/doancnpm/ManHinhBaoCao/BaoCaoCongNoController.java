@@ -124,8 +124,9 @@ public class BaoCaoCongNoController {
                     layout.getChildren().add(tableView);
 
                     Button exportButton = new Button("Xuất PDF");
+                    int finalMonthValue = monthValue;
                     exportButton.setOnAction(event -> {
-                        exportBaoCaoCongNoToPDF(tableView.getItems());
+                        exportBaoCaoCongNoToPDF(tableView.getItems(), finalMonthValue,year);
                     });
                     HBox buttonContainer = new HBox(10);
                     buttonContainer.setAlignment(Pos.CENTER_RIGHT);
@@ -148,12 +149,13 @@ public class BaoCaoCongNoController {
     }
 
 
-    private static void exportBaoCaoCongNoToPDF(List<BaoCaoCongNo> data) {
+    private static void exportBaoCaoCongNoToPDF(List<BaoCaoCongNo> data,int month,int year) {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Lưu báo cáo doanh số");
+        fileChooser.setTitle("Lưu báo cáo công nợ");
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
-        fileChooser.setInitialFileName("BaoCaoDoanhSo.pdf");
+        String initialFileName = String.format("BaoCaoCongNo_%02d_%d.pdf", month, year);
+        fileChooser.setInitialFileName(initialFileName);
 
         File selectedFile = fileChooser.showSaveDialog(null);
 
@@ -170,8 +172,8 @@ public class BaoCaoCongNoController {
                 // Add header
                 addHeader(document, titleFont, contentFont);
 
-                // Add customer and company details
-                addCustomerAndCompanyDetails(document, boldFont, contentFont);
+                // Add company details
+                addCompanyDetails(document, boldFont, contentFont);
 
                 // Create and add table
                 PdfPTable table = createTable(data, contentFont, boldFont);
@@ -201,38 +203,17 @@ public class BaoCaoCongNoController {
         document.add(Chunk.NEWLINE);
     }
 
-    private static void addCustomerAndCompanyDetails(Document document, Font boldFont, Font contentFont) throws DocumentException {
-        PdfPTable detailsTable = new PdfPTable(2);
-        detailsTable.setWidthPercentage(100);
-        detailsTable.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+    private static void addCompanyDetails(Document document, Font boldFont, Font contentFont) throws DocumentException {
+        Paragraph company = new Paragraph();
+        company.setFont(contentFont);
+        company.add(Chunk.NEWLINE);
+        company.add(new Phrase("Công ty XNK Thanh Hà\n", boldFont));
+        company.add(new Phrase("Email: xinchao@trangwebhay.vn\n", contentFont));
+        company.add(new Phrase("Địa chỉ: 123 Đường ABC, Thành phố DEF\n", contentFont));
+        company.add(new Phrase("Hotline: +84 912 345 678\n", contentFont));
+        company.setAlignment(Element.ALIGN_LEFT);
 
-        // Customer details
-        PdfPCell customerDetailsCell = new PdfPCell();
-        customerDetailsCell.setBorder(Rectangle.NO_BORDER);
-        customerDetailsCell.setHorizontalAlignment(Element.ALIGN_LEFT);
-        Paragraph customerDetails = new Paragraph();
-        customerDetails.add(new Phrase("KHÁCH SẠN TRE XANH\n", boldFont));
-        customerDetails.add(new Phrase("Số điện thoại khách hàng: +84 912 345 678\n", contentFont));
-        customerDetails.add(new Phrase("Địa chỉ khách hàng: 148 Hồ Tùng Mậu, Bắc Từ Liêm, Hà Nội\n", contentFont));
-        customerDetails.add(new Phrase("Hóa đơn #12345\n", contentFont));
-        customerDetails.add(new Phrase("Ngày: 01/06/2025\n", contentFont));
-        customerDetailsCell.addElement(customerDetails);
-
-        // Company details
-        PdfPCell companyDetailsCell = new PdfPCell();
-        companyDetailsCell.setBorder(Rectangle.NO_BORDER);
-        companyDetailsCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-        Paragraph companyDetails = new Paragraph();
-        companyDetails.add(new Phrase("Công ty XNK Thanh Hà\n", boldFont));
-        companyDetails.add(new Phrase("Email: xinchao@trangwebhay.vn\n", contentFont));
-        companyDetails.add(new Phrase("Địa chỉ: 123 Đường ABC, Thành phố DEF\n", contentFont));
-        companyDetails.add(new Phrase("Hotline: +84 912 345 678\n", contentFont));
-        companyDetailsCell.addElement(companyDetails);
-
-        detailsTable.addCell(customerDetailsCell);
-        detailsTable.addCell(companyDetailsCell);
-
-        document.add(detailsTable);
+        document.add(company);
         document.add(Chunk.NEWLINE);
     }
 
@@ -272,11 +253,6 @@ public class BaoCaoCongNoController {
     private static void addFooter(Document document, Font contentFont) throws DocumentException {
         Paragraph footer = new Paragraph();
         footer.setFont(contentFont);
-        footer.add(new Phrase("Thông tin thanh toán\n", contentFont));
-        footer.add(new Phrase("Ngân hàng VIB\n", contentFont));
-        footer.add(new Phrase("Tên tài khoản: Công ty XNK Thanh Hà\n", contentFont));
-        footer.add(new Phrase("Số tài khoản: 123-456-7890\n", contentFont));
-        footer.add(new Phrase("Hạn thanh toán: 01/07/2025\n", contentFont));
         footer.add(Chunk.NEWLINE);
         footer.add(new Phrase("Thông tin liên hệ\n", contentFont));
         footer.add(new Phrase("Email: xinchao@trangwebhay.vn\n", contentFont));
