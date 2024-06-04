@@ -34,6 +34,7 @@ import org.doancnpm.Filters.PhieuThuFilter;
 import org.doancnpm.ManHinhDaiLy.TiepNhanDaiLyDialog;
 import org.doancnpm.Models.*;
 import org.doancnpm.Ultilities.DayFormat;
+import org.doancnpm.Ultilities.MoneyFormatter;
 import org.doancnpm.Ultilities.PopDialog;
 import javafx.scene.text.Text;
 
@@ -213,8 +214,14 @@ public class ManHinhKhoHangController implements Initializable {
             return new SimpleObjectProperty<>(dvt.getTenDVT());
         });
 
-        TableColumn<MatHang, Double> donGiaNhapCol = new TableColumn<>("Đơn giá nhập");
-        donGiaNhapCol.setCellValueFactory(new PropertyValueFactory<>("donGiaNhap"));
+        TableColumn<MatHang, String> donGiaNhapCol = new TableColumn<>("Đơn giá nhập");
+        donGiaNhapCol.setCellValueFactory(data ->{
+            return  new SimpleStringProperty(MoneyFormatter.convertLongToString(data.getValue().getDonGiaNhap()));
+        });
+        TableColumn<MatHang, String> donGiaXuatCol = new TableColumn<>("Đơn giá xuất");
+        donGiaXuatCol.setCellValueFactory(data ->{
+            return  new SimpleStringProperty(MoneyFormatter.convertLongToString(data.getValue().getDonGiaXuat()));
+        });
 
         TableColumn<MatHang, Integer> soLuongCol = new TableColumn<>("Số lượng");
         soLuongCol.setCellValueFactory(new PropertyValueFactory<>("soLuong"));
@@ -304,6 +311,7 @@ public class ManHinhKhoHangController implements Initializable {
                 tenMHCol,
                 dvtCol,
                 donGiaNhapCol,
+                donGiaXuatCol,
                 soLuongCol,
                 actionCol
         );
@@ -334,8 +342,8 @@ public class ManHinhKhoHangController implements Initializable {
         try{
             DonViTinh dvt = DonViTinhDAO.getInstance().QueryID(matHang.getMaDVT());
             dvtText.setText(dvt.getTenDVT());
-            donGiaNhapText.setText(Double.toString(matHang.getDonGiaNhap()));
-            donGiaXuatText.setText(Double.toString(matHang.getDonGiaXuat()));
+            donGiaNhapText.setText(MoneyFormatter.convertLongToString(matHang.getDonGiaNhap()));
+            donGiaXuatText.setText(MoneyFormatter.convertLongToString(matHang.getDonGiaXuat()));
             soLuongText.setText(Integer.toString(matHang.getSoLuong()));
             ghiChuTextArea.setText(matHang.getGhiChu());
         }

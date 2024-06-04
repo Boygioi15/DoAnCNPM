@@ -14,6 +14,7 @@ import org.doancnpm.Models.NhanVien;
 import org.doancnpm.Models.PhieuNhap;
 import org.doancnpm.Ultilities.ChiTietPhieu.ChiTietPhieuNhapRow;
 import org.doancnpm.Ultilities.DayFormat;
+import org.doancnpm.Ultilities.MoneyFormatter;
 
 import java.net.URL;
 import java.sql.Date;
@@ -57,13 +58,15 @@ public class LapPhieuNhapDialogController implements Initializable {
         });
     }
     private void capNhatTongTien(){
-        double tt = 0;
+        Long tt = 0L;
         for(int i = 0;i<ctpnContainer.getChildren().size();i++){
             if(ctpnContainer.getChildren().get(i) instanceof ChiTietPhieuNhapRow temp){
                 tt += temp.getThanhTienDouble();
+
             }
         }
-        tongTienText.setText(Double.toString(tt));
+
+        tongTienText.setText(MoneyFormatter.convertLongToString( tt));
     }
     public void setInitialValue(PhieuNhap phieuNhap, NhanVien nvLoggedIn) {
         if(phieuNhap==null){
@@ -84,7 +87,6 @@ public class LapPhieuNhapDialogController implements Initializable {
 
         nccTextField.setText(phieuNhap.getNhaCungCap());
         ghiChuTextArea.setText(phieuNhap.getGhiChu());
-
 
         ngayLapPhieuTextField.setDisable(true);
         nhanVienTextField.setDisable(true);

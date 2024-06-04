@@ -31,6 +31,7 @@ import org.doancnpm.DAO.PhieuThuDAO;
 import org.doancnpm.Filters.PhieuThuFilter;
 import org.doancnpm.Models.*;
 import org.doancnpm.Ultilities.DayFormat;
+import org.doancnpm.Ultilities.MoneyFormatter;
 import org.doancnpm.Ultilities.PopDialog;
 import javafx.scene.text.Text;
 
@@ -184,8 +185,10 @@ public class ManHinhPhieuThuController implements Initializable {
             return new SimpleObjectProperty<>(nhanVien.getMaNhanVien());
         });
 
-        TableColumn<PhieuThu, Integer> tongTienThuCol = new TableColumn<>("Tổng tiền thu");
-        tongTienThuCol.setCellValueFactory(new PropertyValueFactory<>("SoTienThu"));
+        TableColumn<PhieuThu, String> tongTienThuCol = new TableColumn<>("Tổng tiền thu");
+        tongTienThuCol.setCellValueFactory(data ->{
+            return new SimpleStringProperty(MoneyFormatter.convertLongToString(data.getValue().getSoTienThu()));
+        });
 
         TableColumn<PhieuThu, Boolean> selectedCol = new TableColumn<>("Selected");
         selectedCol.setCellValueFactory(new PropertyValueFactory<>("selected"));
@@ -284,7 +287,7 @@ public class ManHinhPhieuThuController implements Initializable {
             tenNVText.setText(nv.getHoTen());
 
             ngayLapPhieuText.setText(DayFormat.GetDayStringFormatted(phieuThu.getNgayLap()));
-            soTienThuText.setText(Double.toString(phieuThu.getSoTienThu()));
+            soTienThuText.setText(MoneyFormatter.convertLongToString(phieuThu.getSoTienThu()));
             ghiChuTextArea.setText(phieuThu.getGhiChu());
         }
         catch (SQLException _){}
@@ -494,11 +497,13 @@ public class ManHinhPhieuThuController implements Initializable {
                         }
                         catch (SQLException e) {
                             PopDialog.popErrorDialog("Thêm mới phiếu thu thất bại", e.toString());
+
                         }
                     }
             );
         }
         catch (IOException e) {
+            System.out.println(e);
             e.printStackTrace();
             PopDialog.popErrorDialog("Không thể mở dialog thêm phiếu thu", e.toString());
         }

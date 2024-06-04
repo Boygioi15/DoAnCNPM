@@ -11,6 +11,7 @@ import javafx.util.StringConverter;
 import org.controlsfx.control.SearchableComboBox;
 import org.doancnpm.DAO.DonViTinhDAO;
 import org.doancnpm.Models.*;
+import org.doancnpm.Ultilities.MoneyFormatter;
 import org.doancnpm.Ultilities.PopDialog;
 
 import java.net.URL;
@@ -28,6 +29,7 @@ public class ThemMoiMatHangDialogController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         displayDataInCb();
+        MoneyFormatter.MoneyFormatTextField(donGiaNhapTextField);
     }
 
     public void setInitialValue(MatHang matHang){
@@ -79,7 +81,7 @@ public class ThemMoiMatHangDialogController implements Initializable {
     public MatHang getMatHang(){
         MatHang matHang = new MatHang();
         matHang.setTenMatHang(tenMHTextField.getText());
-        matHang.setDonGiaNhap(Double.parseDouble(donGiaNhapTextField.getText()));
+        matHang.setDonGiaNhap(MoneyFormatter.getLongValueFromTextField(donGiaNhapTextField));
         matHang.setMaDVT(dvtComboBox.getValue().getId());
         matHang.setGhiChu( ghiChuTextArea.getText());
         return matHang;

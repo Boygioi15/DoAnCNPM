@@ -20,6 +20,7 @@ import org.controlsfx.control.SearchableComboBox;
 import org.doancnpm.DAO.DonViTinhDAO;
 import org.doancnpm.DAO.MatHangDAO;
 import org.doancnpm.Models.*;
+import org.doancnpm.Ultilities.MoneyFormatter;
 import org.doancnpm.Ultilities.PopDialog;
 
 public class ChiTietPhieuNhapRow extends HBox {
@@ -37,13 +38,13 @@ public class ChiTietPhieuNhapRow extends HBox {
         initMHComboBox();
         initBinding();
     }
-    public double getThanhTienDouble(){
+    public Long getThanhTienDouble(){
 
         try{
-            Double result = Double.parseDouble(thanhTienTextField.getText());;
+            Long result = MoneyFormatter.getLongValueFromTextField(thanhTienTextField);;
             return  result;
         }catch (Exception e){
-            return 0;
+            return 0L;
         }
 
     }
@@ -114,7 +115,7 @@ public class ChiTietPhieuNhapRow extends HBox {
             try {
                 DonViTinh dvt = DonViTinhDAO.getInstance().QueryID(mhComboBox.getValue().getMaDVT());
                 dvtTextField.setText(dvt.getTenDVT());
-                donGiaTextField.setText(Double.toString(mhComboBox.getValue().getDonGiaNhap()));
+                donGiaTextField.setText(MoneyFormatter.convertLongToString(mhComboBox.getValue().getDonGiaNhap()));
             }catch (SQLException _) {}
 
             slTextField.setDisable(false);
@@ -122,8 +123,8 @@ public class ChiTietPhieuNhapRow extends HBox {
         slTextField.textProperty().addListener(ob -> {
             try{
                 Integer sl = Integer.parseInt(slTextField.getText());
-                double thanhTien = sl*mhComboBox.getValue().getDonGiaNhap();
-                thanhTienTextField.setText(Double.toString(thanhTien));
+                Long thanhTien = sl*mhComboBox.getValue().getDonGiaNhap();
+                thanhTienTextField.setText(MoneyFormatter.convertLongToString(thanhTien));
             }catch (Exception e){}
         });
     }

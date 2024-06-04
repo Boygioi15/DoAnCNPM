@@ -21,6 +21,7 @@ import org.doancnpm.DAO.*;
 import org.doancnpm.Filters.PhieuXuatFilter;
 import org.doancnpm.Models.*;
 import org.doancnpm.Ultilities.DayFormat;
+import org.doancnpm.Ultilities.MoneyFormatter;
 import org.doancnpm.Ultilities.PopDialog;
 
 import java.io.*;
@@ -123,16 +124,17 @@ public class ManHinhPhieuXuatController implements Initializable {
         TableColumn<ChiTietPhieuXuat, Integer> slCol = new TableColumn<>("Số lượng");
         slCol.setCellValueFactory( new PropertyValueFactory<>("soLuong"));
 
-        TableColumn<ChiTietPhieuXuat, Double> donGiaNhapCol = new TableColumn<>("Đơn giá");
+        TableColumn<ChiTietPhieuXuat, String> donGiaNhapCol = new TableColumn<>("Đơn giá");
         donGiaNhapCol.setCellValueFactory(data -> {
             MatHang mh = null;
             try {
                 mh = MatHangDAO.getInstance().QueryID(data.getValue().getMaMatHang());
             } catch (SQLException _) {}
-            return new SimpleObjectProperty<>(mh.getDonGiaNhap());
+            assert mh != null;
+            return new SimpleObjectProperty<>(MoneyFormatter.convertLongToString(mh.getDonGiaNhap()));
         });
 
-        TableColumn<MatHang, Integer> thanhTienCol = new TableColumn<>("Thành tiền");
+        TableColumn<MatHang, String> thanhTienCol = new TableColumn<>("Thành tiền");
         thanhTienCol.setCellValueFactory(new PropertyValueFactory<>("thanhTien"));
 
         detailTableView.getColumns().addAll(

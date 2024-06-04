@@ -107,6 +107,7 @@ public class LapPhieuThuDialogController implements Initializable {
                 phieuThu.setMaDaiLy(dlComboBox.getValue().getID());
                 phieuThu.setGhiChu(ghiChuTextArea.getText());
                 phieuThu.setSoTienThu(getLongValueFromTextField(soTienThuTextField));
+                System.out.println("Phong chekc >>>" + getLongValueFromTextField(soTienThuTextField));
                 phieuThu.setNgayLap(ngayTiepNhan);
                 phieuThu.setGhiChu(ghiChuTextArea.getText());
             }

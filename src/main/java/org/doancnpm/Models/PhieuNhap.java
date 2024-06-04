@@ -40,11 +40,11 @@ public class PhieuNhap {
         this.ngayLapPhieu = ngayLapPhieu;
     }
 
-    public Double getTongTien() {
+    public Long getTongTien() {
         return tongTien;
     }
 
-    public void setTongTien(Double tongTien) {
+    public void setTongTien(Long tongTien) {
         this.tongTien = tongTien;
     }
 
@@ -69,7 +69,7 @@ public class PhieuNhap {
     String nhaCungCap;
     Integer maNhanVien;
     Date ngayLapPhieu;
-    Double tongTien;
+    Long tongTien;
     String ghiChu;
 
     public boolean isSelected() {

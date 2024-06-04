@@ -63,7 +63,7 @@ public class CTPNDAO{
             int maPhieuNhap = rs.getInt("MaPhieuNhap");
             int maMatHang = rs.getInt("MaMatHang");
             int soLuong = rs.getInt("SoLuong");
-            double thanhTien = rs.getInt("ThanhTien");
+            Long thanhTien = rs.getLong("ThanhTien");
 
             ChiTietPhieuNhap temp = new ChiTietPhieuNhap();
             temp.setMaMatHang(maMatHang);

@@ -61,9 +61,17 @@ public class MoneyFormatter {
         return value != null ? value.longValue() : 0L; // Trả về 0 nếu giá trị null
     }
 
-    static public String ConvertLongToString(Long value) {
-        //format here
-        return value.toString();
+    static public String convertLongToString(Long value) {
+        if (value == null) {
+            return "";
+        }
+
+        // Create a DecimalFormat instance with a pattern for thousand separators
+        DecimalFormat decimalFormat = (DecimalFormat) DecimalFormat.getNumberInstance(Locale.getDefault());
+        decimalFormat.applyPattern("#,###");
+
+        // Format the long value and return the result as a string
+        return decimalFormat.format(value);
     }
     static public void MoneyFormatTextField(TextField textField){
         TextFormatter<Number> textFormatter = new TextFormatter<>(converter, null, filter);

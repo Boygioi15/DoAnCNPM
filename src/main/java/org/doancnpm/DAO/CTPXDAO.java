@@ -61,7 +61,7 @@ public class CTPXDAO{
             int maPhieuXuat = rs.getInt("MaPhieuXuat");
             int maMatHang = rs.getInt("MaMatHang");
             int soLuong = rs.getInt("SoLuong");
-            double thanhTien = rs.getInt("ThanhTien");
+            Long thanhTien = rs.getLong("ThanhTien");
 
             ChiTietPhieuXuat temp = new ChiTietPhieuXuat();
             temp.setMaMatHang(maMatHang);

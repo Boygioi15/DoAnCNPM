@@ -98,8 +98,8 @@ public class MatHangDAO implements Idao<MatHang> {
             String maMH = rs.getString("MaMatHang");
             int maDVT = rs.getInt("MaDonViTinh");
             String tenMH = rs.getString("TenMatHang");
-            Double donGiaNhap = rs.getDouble("DonGiaNhap");
-            Double donGiaXuat = rs.getDouble("DonGiaXuat");
+            Long donGiaNhap = rs.getLong("DonGiaNhap");
+            Long donGiaXuat = rs.getLong("DonGiaXuat");
             String ghiChu = rs.getString("GhiChu");
             int sl = rs.getInt("SoLuong");
 
@@ -137,8 +137,8 @@ public class MatHangDAO implements Idao<MatHang> {
             String maMH = rs.getString("MaMatHang");
             int maDVT = rs.getInt("MaDonViTinh");
             String tenMH = rs.getString("TenMatHang");
-            Double donGiaNhap = rs.getDouble("DonGiaNhap");
-            Double donGiaXuat = rs.getDouble("DonGiaXuat");
+            Long donGiaNhap = rs.getLong("DonGiaNhap");
+            Long donGiaXuat = rs.getLong("DonGiaXuat");
             String ghiChu = rs.getString("GhiChu");
             int sl = rs.getInt("SoLuong");
 

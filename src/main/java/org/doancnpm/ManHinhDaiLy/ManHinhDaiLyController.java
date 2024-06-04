@@ -145,7 +145,7 @@ public class ManHinhDaiLyController implements Initializable {
 
         TableColumn<DaiLy, String> noHienTaiCol = new TableColumn<>("Số nợ");
         noHienTaiCol.setCellValueFactory(data -> {
-            return new SimpleStringProperty(MoneyFormatter.ConvertLongToString(data.getValue().getNoHienTai()));
+            return new SimpleStringProperty(MoneyFormatter.convertLongToString(data.getValue().getNoHienTai()));
         });
 
         TableColumn<DaiLy, String> ghiChuCol = new TableColumn<>("Ghi chú");
@@ -371,7 +371,7 @@ public class ManHinhDaiLyController implements Initializable {
             emailText.setText(daiLy.getEmail());
             diaChiText.setText(daiLy.getDiaChi());
             ngayTiepNhanText.setText(DayFormat.GetDayStringFormatted(daiLy.getNgayTiepNhan()));
-            noHienTaiText.setText(MoneyFormatter.ConvertLongToString(daiLy.getNoHienTai()));
+            noHienTaiText.setText(MoneyFormatter.convertLongToString(daiLy.getNoHienTai()));
             ghiChuTextArea.setText(daiLy.getGhiChu());
         }
         catch (SQLException _){}
