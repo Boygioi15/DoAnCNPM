@@ -8,6 +8,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.layout.Region;
@@ -43,17 +44,17 @@ import java.util.*;
 public class ManHinhDaiLyController implements Initializable {
 
     @FXML private Region manHinhDaiLy;
-    @FXML private Button refreshButton, filterButton;
+    @FXML private Button filterButton;
     @FXML private MenuItem addDirectButton;
     @FXML private MenuItem addExcelButton;
     @FXML private Button lapPhieuThuTienButton;
     @FXML private MenuItem deleteSelectedButton;
     @FXML private MenuItem exportExcelButton;
 
-    @FXML private MFXTextField maDaiLyTextField;
-    @FXML private MFXTextField tenDaiLyTextField;
-    @FXML private MFXComboBox<Quan> quanComboBox;
-    @FXML private MFXComboBox<LoaiDaiLy> loaiDaiLyCombobox;
+    @FXML private TextField maDaiLyTextField;
+    @FXML private TextField tenDaiLyTextField;
+    @FXML private ComboBox<Quan> quanComboBox;
+    @FXML private ComboBox<LoaiDaiLy> loaiDaiLyCombobox;
 
 
     @FXML private TableView mainTableView;
@@ -116,8 +117,9 @@ public class ManHinhDaiLyController implements Initializable {
     }
     private void initTableView(){
         // Tạo các cột cho TableView
-        TableColumn<DaiLy, String> maDLCol = new TableColumn<>("Mã");
+        TableColumn<DaiLy, String> maDLCol = new TableColumn<>("Mã đại lý");
         maDLCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getMaDaiLy()));
+
 
         TableColumn<DaiLy, String> quanCol = new TableColumn<>("Quận");
         quanCol.setCellValueFactory(data -> {
@@ -140,22 +142,48 @@ public class ManHinhDaiLyController implements Initializable {
             return new SimpleObjectProperty<>(loaiDaiLy.getTenLoai());
         });
 
-        TableColumn<DaiLy, String> tenDLCol = new TableColumn<>("Tên");
+        TableColumn<DaiLy, String> tenDLCol = new TableColumn<>("Tên đại lý");
         tenDLCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getTenDaiLy()));
 
-        TableColumn<DaiLy, String> noHienTaiCol = new TableColumn<>("Số nợ");
+        TableColumn<DaiLy, String> noHienTaiCol = new TableColumn<>("Nợ hiện tại");
         noHienTaiCol.setCellValueFactory(data -> {
             return new SimpleStringProperty(MoneyFormatter.ConvertLongToString(data.getValue().getNoHienTai()));
         });
 
-        TableColumn<DaiLy, String> ghiChuCol = new TableColumn<>("Ghi chú");
-        ghiChuCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getGhiChu()));
-
-
         //selected collumn:
-        TableColumn<DaiLy, Boolean> selectedCol = new TableColumn<>( "Selected" );
+
+        TableColumn<DaiLy, Boolean> selectedCol = new TableColumn<>( );
+        HBox headerBox = new HBox();
+        CheckBox headerCheckBox = new CheckBox();
+        headerBox.getChildren().add(headerCheckBox);
+        headerBox.setAlignment(Pos.CENTER); // Center align the content
+        headerCheckBox.setDisable(true);
+        selectedCol.setGraphic(headerBox);
+        selectedCol.setSortable(false);
         selectedCol.setCellValueFactory( new PropertyValueFactory<>( "selected" ));
-        selectedCol.setCellFactory( tc -> new CheckBoxTableCell<>());
+        selectedCol.setCellFactory(new Callback<TableColumn<DaiLy, Boolean>, TableCell<DaiLy, Boolean>>() {
+            @Override
+            public TableCell<DaiLy, Boolean> call(TableColumn<DaiLy, Boolean> param) {
+                TableCell<DaiLy, Boolean> cell = new TableCell<DaiLy, Boolean>() {
+                    @Override
+                    protected void updateItem(Boolean item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty || item == null) {
+                            setGraphic(null);
+                        } else {
+                            CheckBox checkBox = new CheckBox();
+                            checkBox.selectedProperty().bindBidirectional(((DaiLy) getTableRow().getItem()).selectedProperty());
+                            checkBox.getStyleClass().add("cell-center");
+                            setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+                            setGraphic(checkBox);
+                        }
+                    }
+                };
+                cell.getStyleClass().add("cell-center");
+                return cell;
+            }
+        });
+
 
         //action column
         TableColumn actionCol = new TableColumn("Action");
@@ -205,9 +233,9 @@ public class ManHinhDaiLyController implements Initializable {
                                     });
                                     HBox hbox = new HBox();
                                     hbox.getChildren().addAll(suaBtn,xoaBtn);
+                                    hbox.setAlignment(Pos.CENTER);
+                                    hbox.setMaxHeight(1000);
                                     hbox.setSpacing(5);
-                                    hbox.setPrefWidth(USE_COMPUTED_SIZE);
-                                    hbox.setPrefHeight(USE_COMPUTED_SIZE);
                                     setGraphic(hbox);
                                     setText(null);
                                 }
@@ -222,13 +250,12 @@ public class ManHinhDaiLyController implements Initializable {
         // Thêm các cột vào TableView
         mainTableView.getColumns().addAll(selectedCol,
                 maDLCol,
+                tenDLCol,
                 quanCol,
                 loaiDLCol,
-                tenDLCol,
                 noHienTaiCol,
                 actionCol
         );
-
         maDLCol.setResizable(false);
         quanCol.setResizable(false);
         loaiDLCol.setResizable(false);
@@ -236,25 +263,30 @@ public class ManHinhDaiLyController implements Initializable {
         noHienTaiCol.setResizable(false);
         actionCol.setResizable(false);
 
-        mainTableView.widthProperty().addListener(ob -> {
-            double width = mainTableView.getWidth();
-            selectedCol.setPrefWidth(width*0.1);
-            maDLCol.setPrefWidth(width*0.1);
-            quanCol.setPrefWidth(width*0.1);
-            loaiDLCol.setPrefWidth(width*0.1);
-            tenDLCol.setPrefWidth(width*0.3);
-            noHienTaiCol.setPrefWidth(width*0.15);
-            actionCol.setPrefWidth(width*0.15);
-        });
+        maDLCol.getStyleClass().add("column-header-left");
+        quanCol.getStyleClass().add("column-header-left");
+        loaiDLCol.getStyleClass().add("column-header-left");
+        tenDLCol.getStyleClass().add("column-header-left");
+        noHienTaiCol.getStyleClass().add("column-header-left");
+        selectedCol.getStyleClass().add("column-header-center");
+        actionCol.getStyleClass().add("column-header-center");
+
+
+        selectedCol.setPrefWidth(50);
+        maDLCol.setPrefWidth(80);
+        tenDLCol.setPrefWidth(150);
+
+        quanCol.setPrefWidth(80);
+        loaiDLCol.setPrefWidth(80);
+        noHienTaiCol.setPrefWidth(120);
+        actionCol.setPrefWidth(100);
+
         mainTableView.setEditable( true );
         mainTableView.setPrefWidth(1100);
     }
     private void initEvent(){
         addDirectButton.setOnAction(_ -> {
             OpenDirectAddDialog();
-        });
-        refreshButton.setOnAction(_ -> {
-            resetFilter();
         });
         deleteSelectedButton.setOnAction(_ -> DeleteSelectedRow());
 
@@ -586,11 +618,13 @@ public class ManHinhDaiLyController implements Initializable {
         dsDaiLyFiltered.addAll(filter.Filter());
     }
     private void resetFilter(){
-        quanComboBox.clearSelection();
-        quanComboBox.clear();
+        quanComboBox.getSelectionModel().clearSelection();
+        quanComboBox.setValue(null);
+
         maDaiLyTextField.clear();
         tenDaiLyTextField.clear();
-        loaiDaiLyCombobox.clearSelection();
-        loaiDaiLyCombobox.clear();
+
+        loaiDaiLyCombobox.getSelectionModel().clearSelection();
+        loaiDaiLyCombobox.setValue(null);
     }
 }

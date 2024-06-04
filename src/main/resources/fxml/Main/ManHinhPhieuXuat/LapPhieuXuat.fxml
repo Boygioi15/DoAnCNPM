@@ -57,6 +57,15 @@
                   <Insets left="15.0" top="10.0" />
                </padding>
             </Label>
+            <HBox spacing="5.0">
+               <children>
+                  <Button fx:id="loadExcelBtn" mnemonicParsing="false" text="Load" />
+                  <Button mnemonicParsing="false" text="Xuất" fx:id="xuatExcelBtn" />
+               </children>
+               <padding>
+                  <Insets left="20.0" />
+               </padding>
+            </HBox>
             <ScrollPane fitToWidth="true" prefHeight="300.0" style="-fx-background-color: #ffffff;">
                <content>
                   <VBox fx:id="ctpxContainer" alignment="TOP_RIGHT" spacing="10.0" style="-fx-background-color: #ffffff;">

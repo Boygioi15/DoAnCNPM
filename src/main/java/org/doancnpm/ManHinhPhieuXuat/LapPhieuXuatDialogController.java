@@ -35,6 +35,9 @@ public class LapPhieuXuatDialogController implements Initializable {
 
     @FXML private TextArea ghiChuTextArea;
 
+    @FXML Button loadExcelBtn;
+    @FXML Button xuatExcelBtn;
+
     @FXML Button themCTPXButton;
     @FXML VBox ctpxContainer;
 
