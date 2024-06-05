@@ -32,7 +32,7 @@
             <MenuButton mnemonicParsing="false" styleClass="action-button" text="Thêm mới">
                <items>
                   <MenuItem fx:id="addDirectButton" mnemonicParsing="false" text="Thêm trực tiếp" />
-                  <MenuItem mnemonicParsing="false" text="Thêm từ file Excel" />
+                  <MenuItem fx:id="addExcelButton" mnemonicParsing="false" text="Thêm từ file Excel" />
                </items>
                <font>
                   <Font size="18.0" />
@@ -41,7 +41,7 @@
             <MenuButton mnemonicParsing="false" styleClass="action-button" text="Thao tác">
                <items>
                   <MenuItem mnemonicParsing="false" text="Xóa các dòng đã chọn" />
-                  <MenuItem fx:id="addExcelButton" mnemonicParsing="false" text="Xuất file excel" />
+                  <MenuItem fx:id="exportExcelButton" mnemonicParsing="false" text="Xuất file excel" />
                </items>
                <font>
                   <Font size="18.0" />

@@ -1,5 +1,10 @@
 package org.doancnpm.ManHinhPhieuThu;
 
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -24,9 +29,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.controlsfx.control.MasterDetailPane;
-import org.doancnpm.DAO.DaiLyDAO;
-import org.doancnpm.DAO.NhanVienDAO;
-import org.doancnpm.DAO.PhieuThuDAO;
+import org.doancnpm.DAO.*;
 
 import org.doancnpm.Filters.PhieuThuFilter;
 import org.doancnpm.ManHinhPhieuXuat.LapPhieuXuatDialog;
@@ -39,10 +42,11 @@ import java.io.*;
 import java.net.URL;
 import java.sql.Date;
 import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.List;
 
 public class ManHinhPhieuThuController implements Initializable {
 
@@ -55,7 +59,7 @@ public class ManHinhPhieuThuController implements Initializable {
 
     @FXML private MenuItem addExcelButton;
     @FXML private MenuItem addDirectButton;
-
+    @FXML private MenuItem exportExcelButton;
     @FXML private Text maPhieuThuText;
     @FXML private Text maDLText;
     @FXML private Text tenDLText;
@@ -115,7 +119,7 @@ public class ManHinhPhieuThuController implements Initializable {
         refreshButton.setOnAction(_ -> {
             resetFilter();
         });
-        addExcelButton.setOnAction(_ ->{
+        exportExcelButton.setOnAction(_ ->{
             exportDialog();
         });
         toggleDetailButton.setOnAction(ob ->{
@@ -125,6 +129,9 @@ public class ManHinhPhieuThuController implements Initializable {
             else{
                 OpenDetailPanel();
             }
+        });
+        addExcelButton.setOnAction(_ ->{
+            importDialog();
         });
     }
     private void initDatabaseBinding() {
@@ -194,12 +201,12 @@ public class ManHinhPhieuThuController implements Initializable {
 
         TableColumn actionCol = new TableColumn("Action");
 
-        Callback<TableColumn<PhieuXuat, String>, TableCell<PhieuXuat, String>> cellFactory
+        Callback<TableColumn<PhieuThu, String>, TableCell<PhieuThu, String>> cellFactory
                 = //
                 new Callback<>() {
                     @Override
-                    public TableCell call(final TableColumn<PhieuXuat, String> param) {
-                        final TableCell<PhieuXuat, String> cell = new TableCell<PhieuXuat, String>() {
+                    public TableCell call(final TableColumn<PhieuThu, String> param) {
+                        final TableCell<PhieuThu, String> cell = new TableCell<PhieuThu, String>() {
                             final Button suaBtn = new Button("Sửa");
                             final Button xuatBtn = new Button("Xuất");
 
@@ -212,14 +219,17 @@ public class ManHinhPhieuThuController implements Initializable {
                                 } else {
                                     suaBtn.setOnAction(_ -> {
                                         try {
-                                            PhieuXuat phieuXuat = getTableView().getItems().get(getIndex());
-                                            new LapPhieuXuatDialog(phieuXuat, nhanVienLoggedIn).showAndWait();
+                                            PhieuThu phieuThu = getTableView().getItems().get(getIndex());
+                                            new LapPhieuThuDialog(phieuThu, nhanVienLoggedIn).showAndWait();
                                         } catch(IOException exc) {
                                             exc.printStackTrace();
                                         }
                                     });
 
-                                    xuatBtn.setOnAction(_ -> {});
+                                    xuatBtn.setOnAction(_ -> {
+                                        PhieuThu phieuThu = getTableView().getItems().get(getIndex());
+                                        exportToPDF(phieuThu);
+                                    });
                                     HBox hbox = new HBox();
                                     hbox.getChildren().addAll(suaBtn,xuatBtn);
                                     hbox.setSpacing(5);
@@ -392,7 +402,8 @@ public class ManHinhPhieuThuController implements Initializable {
 
         // Tạo tên file với định dạng "Export_ngay_thang_nam.xlsx"
         Date ngayHienTai = new Date(System.currentTimeMillis());
-        String fileName = "DsPhieuThu_" + DayFormat.GetDayStringFormatted(ngayHienTai) + ".xlsx";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd_MM_yyyy");
+        String fileName = "DsPhieuThu_" + dateFormat.format(ngayHienTai) + ".xlsx";
 
         // Thiết lập tên file mặc định cho hộp thoại lưu
         File initialDirectory = new File(System.getProperty("user.home"));
@@ -417,17 +428,13 @@ public class ManHinhPhieuThuController implements Initializable {
 
         // Tạo hàng đầu tiên với các tiêu đề cột
         Row headerRow = sheet.createRow(0);
-        String[] columnTitles = {"Mã phiếu thu", "Mã đại lý", "Mã nhân viên", "Số tiền thu", "Ngày lập phiếu"};
+        String[] columnTitles = {"Mã phiếu thu", "Mã đại lý", "Mã nhân viên","Ngày lập phiếu","Số tiền thu","Ghi chú"};
         int cellnum = 0;
         for (String title : columnTitles) {
             Cell cell = headerRow.createCell(cellnum++);
             cell.setCellValue(title);
         }
 
-        // Tạo CellStyle cho định dạng ngày
-        CreationHelper createHelper = workbook.getCreationHelper();
-        CellStyle dateCellStyle = workbook.createCellStyle();
-        dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("dd/MM/yyyy"));
 
         int rownum = 1; // Bắt đầu từ hàng thứ 2 sau tiêu đề
         for (PhieuThu phieuThu : dsPhieuThuFiltered) {
@@ -454,17 +461,14 @@ public class ManHinhPhieuThuController implements Initializable {
             } else {
                 row.createCell(cellnum++).setCellValue("???"); // Or handle the null case appropriately
             }
-
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            row.createCell(cellnum++).setCellValue(dateFormat.format(phieuThu.getNgayLap()));
             row.createCell(cellnum++).setCellValue(phieuThu.getSoTienThu());
-
-            // Định dạng ngày
-            Cell dateCell = row.createCell(cellnum++);
-            if (phieuThu.getNgayLap() != null) {
-                dateCell.setCellValue(phieuThu.getNgayLap());
-                dateCell.setCellStyle(dateCellStyle);
-            } else {
-                dateCell.setCellValue("???"); // Or handle the null case appropriately
-            }
+            row.createCell(cellnum++).setCellValue(phieuThu.getGhiChu());
+        }
+        // Tự động điều chỉnh độ rộng của các cột
+        for (int i = 0; i < columnTitles.length; i++) {
+            sheet.autoSizeColumn(i);
         }
 
         // Lưu tệp Excel
@@ -475,7 +479,126 @@ public class ManHinhPhieuThuController implements Initializable {
             PopDialog.popErrorDialog("Xuất file excel thất bại", e.getMessage());
         }
     }
+    public void exportToPDF(PhieuThu phieuThu) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Lưu phiếu thu");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
+        fileChooser.setInitialFileName("PhieuThu_"+phieuThu.getMaPhieuThu()+".pdf");
 
+        File selectedFile = fileChooser.showSaveDialog(null);
+
+        if (selectedFile != null) {
+            Document document = new Document();
+            try {
+                BaseFont baseFont = BaseFont.createFont("src/main/resources/vuArial.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                Font titleFont = new Font(baseFont, 28, Font.BOLD);
+                Font contentFont = new Font(baseFont, 12);
+                Font boldFont = new Font(baseFont, 16, Font.BOLD);
+                Font contentTienThu = new Font(baseFont, 18);
+                Font DaiLyFont = new Font(baseFont, 18);
+                PdfWriter.getInstance(document, new FileOutputStream(selectedFile.getAbsolutePath()));
+                document.open();
+
+                // Add header
+                addHeader(document, boldFont, contentFont, phieuThu);
+                document.add(Chunk.NEWLINE);
+                document.add(new Paragraph("\n"));
+                document.add(new Paragraph("\n"));
+                document.add(new Paragraph("\n"));
+                addTittle(document,titleFont,DaiLyFont,contentFont,phieuThu);
+                document.add(Chunk.NEWLINE);
+                document.add(new Paragraph("\n"));
+
+                // Add detail
+                addDetail(document,contentTienThu,phieuThu);
+                // Add footer
+                addFooter(document, contentFont,phieuThu);
+
+                document.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private static void addHeader(Document document, Font boldFont, Font contentFont, PhieuThu phieuThu) throws DocumentException {
+        PdfPTable detailsTable = new PdfPTable(2);
+        detailsTable.setWidthPercentage(100);
+        detailsTable.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+
+        PdfPCell brand = new PdfPCell();
+        brand.setBorder(Rectangle.NO_BORDER);
+        brand.setHorizontalAlignment(Element.ALIGN_CENTER);
+        brand.setVerticalAlignment(Element.ALIGN_CENTER);
+        brand.setPadding(5);
+        Paragraph brandP = new Paragraph();
+        brandP.add(new Phrase("NHÓM 27\n", boldFont));
+        brandP.add(new Phrase("SE104.O27\n", contentFont));
+        brand.addElement(brandP);
+
+        PdfPCell dateTime = new PdfPCell();
+        dateTime.setBorder(Rectangle.NO_BORDER);
+        dateTime.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        // Format date for "ngày ... tháng ... năm ..."
+        SimpleDateFormat dateFormat = new SimpleDateFormat("'Ngày' dd 'tháng' MM 'năm' yyyy");
+        String formattedDate = dateFormat.format(phieuThu.getNgayLap());
+
+        Paragraph dateTimeP = new Paragraph();
+        dateTimeP.add(new Phrase("PHIẾU THU #" + phieuThu.getMaPhieuThu() + "\n", boldFont));
+        dateTimeP.add(new Phrase(formattedDate + "\n", contentFont));
+        dateTimeP.setAlignment(Element.ALIGN_RIGHT);
+        dateTime.addElement(dateTimeP);
+
+        detailsTable.addCell(brand);
+        detailsTable.addCell(dateTime);
+        document.add(detailsTable);
+        document.add(Chunk.NEWLINE);
+    }
+
+    private void addTittle(Document document, Font titleFont,Font DaiLyFont,Font contentFont, PhieuThu phieuThu) throws DocumentException {
+        document.add(Chunk.NEWLINE);
+        Paragraph tittle = new Paragraph();
+        tittle.setFont(contentFont);
+        tittle.add(new Phrase("PHIẾU THU\n", titleFont));
+        tittle.add(new Phrase("\n",titleFont));
+        tittle.add(Chunk.NEWLINE);
+        DaiLy daiLy = null;
+        try {
+            daiLy = DaiLyDAO.getInstance().QueryID(phieuThu.getMaDaiLy());
+        } catch (SQLException _) {
+        }
+        tittle.add(new Phrase(daiLy.getTenDaiLy()+"\n", DaiLyFont));
+        tittle.add(new Phrase("Điện thoại: "+daiLy.getDienThoai()+"\n", contentFont));
+        tittle.add(new Phrase("Địa chỉ: "+daiLy.getDiaChi()+"\n", contentFont));
+        tittle.add(new Phrase("Email: "+daiLy.getEmail()+"\n", contentFont));
+        tittle.setAlignment(Element.ALIGN_LEFT);
+        document.add(tittle);
+        document.add(Chunk.NEWLINE);
+    }
+    private void addDetail(Document document,Font contentTienThu, PhieuThu phieuThu) throws DocumentException {
+        document.add(Chunk.NEWLINE);
+        Paragraph detail = new Paragraph();
+        detail.setFont(contentTienThu);
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
+        symbols.setGroupingSeparator('.');
+        DecimalFormat df = new DecimalFormat("#,##0", symbols);
+        df.setMaximumFractionDigits(8);
+        detail.add(new Phrase("Số tiền thu: "+df.format(phieuThu.getSoTienThu())+" VNĐ\n", contentTienThu));
+        detail.setAlignment(Element.ALIGN_LEFT);
+        document.add(detail);
+        document.add(Chunk.NEWLINE);
+    }
+
+    private static void addFooter(Document document, Font contentFont,PhieuThu phieuThu) throws DocumentException {
+        if(phieuThu.getGhiChu()!= null) {
+            Paragraph footer = new Paragraph();
+            footer.setFont(contentFont);
+            footer.add(new Phrase("Ghi chú: \n", contentFont));
+            footer.add(new Phrase(phieuThu.getGhiChu(), contentFont));
+            document.add(footer);
+        }
+    }
     //functionalities
     public void OpenDirectAddDialog() {
         try {

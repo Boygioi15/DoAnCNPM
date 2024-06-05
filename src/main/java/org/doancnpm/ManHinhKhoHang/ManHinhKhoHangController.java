@@ -41,6 +41,7 @@ import java.io.*;
 import java.net.URL;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -55,6 +56,7 @@ public class ManHinhKhoHangController implements Initializable {
 
     @FXML private MenuItem addDirectButton;
     @FXML private MenuItem addExcelButton;
+    @FXML private MenuItem exportExcelButton;
 
     @FXML private Text maMHText;
     @FXML private Text tenMHText;
@@ -116,6 +118,9 @@ public class ManHinhKhoHangController implements Initializable {
             resetFilter();
         });
         addExcelButton.setOnAction(_ ->{
+
+        });
+        exportExcelButton.setOnAction(_ ->{
             exportDialog();
         });
         toggleDetailButton.setOnAction(ob ->{
@@ -201,7 +206,7 @@ public class ManHinhKhoHangController implements Initializable {
         TableColumn<MatHang, String> maMHCol = new TableColumn<>("Mã mặt hàng");
         maMHCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getMaMatHang()));
 
-        TableColumn<MatHang, String> tenMHCol = new TableColumn<>("Mã mặt hàng");
+        TableColumn<MatHang, String> tenMHCol = new TableColumn<>("Tên mặt hàng");
         tenMHCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getTenMatHang()));
 
         TableColumn<MatHang, String> dvtCol = new TableColumn<>("Đơn vị tính");
@@ -451,7 +456,8 @@ public class ManHinhKhoHangController implements Initializable {
 
         // Tạo tên file với định dạng "Export_ngay_thang_nam.xlsx"
         Date ngayHienTai = new Date(System.currentTimeMillis());
-        String fileName = "DsPhieuThu_" + DayFormat.GetDayStringFormatted(ngayHienTai) + ".xlsx";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd_MM_yyyy");
+        String fileName = "DsMatHang_" + dateFormat.format(ngayHienTai) + ".xlsx";
 
         // Thiết lập tên file mặc định cho hộp thoại lưu
         File initialDirectory = new File(System.getProperty("user.home"));
@@ -470,63 +476,48 @@ public class ManHinhKhoHangController implements Initializable {
 
     }
     public void exportToExcel(String filePath) {
-        /*
         // Tạo hoặc mở tệp Excel
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet("PhieuThuData"); // Tạo một sheet mới hoặc sử dụng sheet hiện có
+        XSSFSheet sheet = workbook.createSheet("MatHangData"); // Tạo một sheet mới hoặc sử dụng sheet hiện có
 
         // Tạo hàng đầu tiên với các tiêu đề cột
         Row headerRow = sheet.createRow(0);
-        String[] columnTitles = {"Mã phiếu thu", "Mã đại lý", "Mã nhân viên", "Số tiền thu", "Ngày lập phiếu"};
+        String[] columnTitles = {"Mã mặt hàng", "Tên mặt hàng", "Đơn vị tính", "Đơn giá nhập","Đơn giá xuất","Số lượng","Ghi chú"};
         int cellnum = 0;
         for (String title : columnTitles) {
             Cell cell = headerRow.createCell(cellnum++);
             cell.setCellValue(title);
         }
 
-        // Tạo CellStyle cho định dạng ngày
-        CreationHelper createHelper = workbook.getCreationHelper();
-        CellStyle dateCellStyle = workbook.createCellStyle();
-        dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("dd/MM/yyyy"));
-
         int rownum = 1; // Bắt đầu từ hàng thứ 2 sau tiêu đề
-        for (PhieuThu phieuThu : dsMatHangFiltered) {
+        for (MatHang matHang : dsMatHangFiltered) {
             Row row = sheet.createRow(rownum++);
             cellnum = 0;
-            row.createCell(cellnum++).setCellValue(phieuThu.getMaPhieuThu());
+            row.createCell(cellnum++).setCellValue(matHang.getMaMatHang());
+            row.createCell(cellnum++).setCellValue(matHang.getTenMatHang());
 
-            DaiLy daiLy = null;
-            try {
-                daiLy = DaiLyDAO.getInstance().QueryID(phieuThu.getMaDaiLy());
-            } catch (SQLException _) {}
-            if (daiLy != null) {
-                row.createCell(cellnum++).setCellValue(daiLy.getMaDaiLy());
-            } else {
-                row.createCell(cellnum++).setCellValue("???"); // Or handle the null case appropriately
+            DonViTinh donViTinh = new DonViTinh();
+            try{
+                donViTinh = DonViTinhDAO.getInstance().QueryID(matHang.getMaDVT());
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            if(donViTinh != null){
+                row.createCell(cellnum++).setCellValue(donViTinh.getTenDVT());
+            }
+            else{
+                row.createCell(cellnum++).setCellValue("???");
             }
 
-            NhanVien nhanVien = null;
-            try {
-                nhanVien = NhanVienDAO.getInstance().QueryID(phieuThu.getMaNhanVien());
-            } catch (SQLException _) {}
-            if (nhanVien != null) {
-                row.createCell(cellnum++).setCellValue(nhanVien.getMaNhanVien());
-            } else {
-                row.createCell(cellnum++).setCellValue("???"); // Or handle the null case appropriately
-            }
-
-            row.createCell(cellnum++).setCellValue(phieuThu.getSoTienThu());
-
-            // Định dạng ngày
-            Cell dateCell = row.createCell(cellnum++);
-            if (phieuThu.getNgayLap() != null) {
-                dateCell.setCellValue(phieuThu.getNgayLap());
-                dateCell.setCellStyle(dateCellStyle);
-            } else {
-                dateCell.setCellValue("???"); // Or handle the null case appropriately
-            }
+            row.createCell(cellnum++).setCellValue(matHang.getDonGiaNhap());
+            row.createCell(cellnum++).setCellValue(matHang.getDonGiaXuat());
+            row.createCell(cellnum++).setCellValue(matHang.getSoLuong());
+            row.createCell(cellnum++).setCellValue(matHang.getGhiChu());
         }
-
+        // Tự động điều chỉnh độ rộng của các cột
+        for (int i = 0; i < columnTitles.length; i++) {
+            sheet.autoSizeColumn(i);
+        }
         // Lưu tệp Excel
         try (FileOutputStream fos = new FileOutputStream(filePath)) {
             workbook.write(fos);
@@ -534,8 +525,6 @@ public class ManHinhKhoHangController implements Initializable {
         } catch (IOException e) {
             PopDialog.popErrorDialog("Xuất file excel thất bại", e.getMessage());
         }
-
-         */
     }
 
     //functionalities

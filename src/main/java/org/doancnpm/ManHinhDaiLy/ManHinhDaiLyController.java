@@ -38,6 +38,7 @@ import java.io.*;
 import java.net.URL;
 import java.sql.SQLException;
 import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /** Controls the main application screen */
@@ -507,7 +508,8 @@ public class ManHinhDaiLyController implements Initializable {
 
         // Tạo tên file với định dạng "Export_ngay_thang_nam.xlsx"
         Date ngayHienTai = new Date(System.currentTimeMillis());
-        String fileName = "DsDaiLy_" + DayFormat.GetDayStringFormatted(ngayHienTai) + ".xlsx";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd_MM_yyyy");
+        String fileName = "DsDaiLy_" + dateFormat.format(ngayHienTai) + ".xlsx";
 
         // Thiết lập tên file mặc định cho hộp thoại lưu
         File initialDirectory = new File(System.getProperty("user.home"));
@@ -532,7 +534,7 @@ public class ManHinhDaiLyController implements Initializable {
 
         // Tạo hàng đầu tiên với các tiêu đề cột
         Row headerRow = sheet.createRow(0);
-        String[] columnTitles = {"Mã đại lý", "Quận", "Loại đại lý", "Tên đại lý", "Số điện thoại", "Email", "Địa chỉ", "Nợ hiện tại", "Ghi chú"};
+        String[] columnTitles = {"Mã đại lý", "Quận", "Loại đại lý", "Tên đại lý", "Số điện thoại", "Email", "Địa chỉ", "Nợ hiện tại","Ngày tiếp nhận", "Ghi chú"};
         int cellnum = 0;
         for (String title : columnTitles) {
             Cell cell = headerRow.createCell(cellnum++);
@@ -552,7 +554,13 @@ public class ManHinhDaiLyController implements Initializable {
             row.createCell(cellnum++).setCellValue(daiLy.getEmail());
             row.createCell(cellnum++).setCellValue(daiLy.getDiaChi());
             row.createCell(cellnum++).setCellValue(daiLy.getNoHienTai());
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            row.createCell(cellnum++).setCellValue(dateFormat.format(daiLy.getNgayTiepNhan()));
             row.createCell(cellnum++).setCellValue(daiLy.getGhiChu());
+        }
+        // Tự động điều chỉnh độ rộng của các cột
+        for (int i = 0; i < columnTitles.length; i++) {
+            sheet.autoSizeColumn(i);
         }
 
         // Lưu tệp Excel

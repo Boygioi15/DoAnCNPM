@@ -36,6 +36,7 @@ import java.io.*;
 import java.net.URL;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -443,7 +444,8 @@ public class ManHinhNhanVienController implements Initializable {
 
         // Tạo tên file với định dạng "Export_ngay_thang_nam.xlsx"
         Date ngayHienTai = new Date(System.currentTimeMillis());
-        String fileName = "DsNhanVien_" + DayFormat.GetDayStringFormatted(ngayHienTai) + ".xlsx";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd_MM_yyyy");
+        String fileName = "DsNhanVien_" + dateFormat.format(ngayHienTai) + ".xlsx";
 
         // Thiết lập tên file mặc định cho hộp thoại lưu
         File initialDirectory = new File(System.getProperty("user.home"));
@@ -462,14 +464,13 @@ public class ManHinhNhanVienController implements Initializable {
 
     }
     public void exportToExcel(String filePath) {
-        /*
         // Tạo hoặc mở tệp Excel
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet("NhanVienData"); // Tạo một sheet mới hoặc sử dụng sheet hiện có
 
         // Tạo hàng đầu tiên với các tiêu đề cột
         Row headerRow = sheet.createRow(0);
-        String[] columnTitles = {"Mã nhân viên", "Quận", "Loại nhân viên", "Tên nhân viên", "Số điện thoại", "Email", "Địa chỉ", "Nợ hiện tại", "Ghi chú"};
+        String[] columnTitles = {"Mã nhân viên", "Họ tên", "Giới tính", "Ngày sinh", "Số điện thoại", "Email", "Chức vụ", "Lương", "Ghi chú"};
         int cellnum = 0;
         for (String title : columnTitles) {
             Cell cell = headerRow.createCell(cellnum++);
@@ -482,16 +483,31 @@ public class ManHinhNhanVienController implements Initializable {
             Row row = sheet.createRow(rownum++);
             cellnum = 0;
             row.createCell(cellnum++).setCellValue(nhanVien.getMaNhanVien());
-            row.createCell(cellnum++).setCellValue(nhanVien.getMaQuan());
-            row.createCell(cellnum++).setCellValue(nhanVien.getMaLoaiNhanVien());
-            row.createCell(cellnum++).setCellValue(nhanVien.getTenNhanVien());
-            row.createCell(cellnum++).setCellValue(nhanVien.getDienThoai());
+            row.createCell(cellnum++).setCellValue(nhanVien.getHoTen());
+            row.createCell(cellnum++).setCellValue(nhanVien.getGioiTinh());
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            row.createCell(cellnum++).setCellValue(dateFormat.format(nhanVien.getNgaySinh()));
+            row.createCell(cellnum++).setCellValue(nhanVien.getSDT());
             row.createCell(cellnum++).setCellValue(nhanVien.getEmail());
-            row.createCell(cellnum++).setCellValue(nhanVien.getDiaChi());
-            row.createCell(cellnum++).setCellValue(nhanVien.getNoHienTai());
+            ChucVu chucVu = new ChucVu();
+            try{
+                chucVu=ChucVuDAO.getInstance().QueryID(nhanVien.getMaChucVu());
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            if (chucVu!=null){
+                row.createCell(cellnum++).setCellValue(chucVu.getTenCV());
+            }
+            else{
+                row.createCell(cellnum++).setCellValue("???");
+            }
+            row.createCell(cellnum++).setCellValue(nhanVien.getLuong());
             row.createCell(cellnum++).setCellValue(nhanVien.getGhiChu());
         }
-
+        // Tự động điều chỉnh độ rộng của các cột
+        for (int i = 0; i < columnTitles.length; i++) {
+            sheet.autoSizeColumn(i);
+        }
         // Lưu tệp Excel
         try (FileOutputStream fos = new FileOutputStream(filePath)) {
             workbook.write(fos);
@@ -500,8 +516,6 @@ public class ManHinhNhanVienController implements Initializable {
         catch (IOException e){
             PopDialog.popErrorDialog("Xuất file excel thất bại",e.getMessage());
         }
-
-         */
     }
 
     //functionalities
