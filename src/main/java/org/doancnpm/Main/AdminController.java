@@ -57,7 +57,7 @@ public class AdminController implements Initializable {
     private ManHinhDieuKhienController manHinhDieuKhienController;
     private ManHinhBaoCaoController manHinhBaoCaoController;
 
-    private NhanVien nhanVienLoggedIn = null;
+    private NhanVien nhanVienLoggedIn;
 
     ManHinh currentManHinh;
     @Override

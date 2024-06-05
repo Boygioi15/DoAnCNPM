@@ -13,6 +13,7 @@ import org.doancnpm.Models.ChiTietPhieuNhap;
 import org.doancnpm.Models.NhanVien;
 import org.doancnpm.Models.PhieuNhap;
 import org.doancnpm.Ultilities.ChiTietPhieu.ChiTietPhieuNhapRow;
+import org.doancnpm.Ultilities.ChiTietPhieu.ChiTietPhieuXuatRow;
 import org.doancnpm.Ultilities.DayFormat;
 import org.doancnpm.Ultilities.MoneyFormatter;
 
@@ -61,11 +62,10 @@ public class LapPhieuNhapDialogController implements Initializable {
         Long tt = 0L;
         for(int i = 0;i<ctpnContainer.getChildren().size();i++){
             if(ctpnContainer.getChildren().get(i) instanceof ChiTietPhieuNhapRow temp){
-                tt += temp.getThanhTienDouble();
+                tt += temp.getThanhTien();
 
             }
         }
-
         tongTienText.setText(MoneyFormatter.convertLongToString( tt));
     }
     public void setInitialValue(PhieuNhap phieuNhap, NhanVien nvLoggedIn) {
@@ -116,5 +116,21 @@ public class LapPhieuNhapDialogController implements Initializable {
             }
         }
         return chiTietPhieuNhapList;
+    }
+
+    public String GetValid() {
+        String validRows = "";
+        if(nccTextField.getText().isEmpty()){
+            validRows = "Nhà cung cấp không được để trống ";
+        }
+        for(int i = 0; i< ctpnContainer.getChildren().size(); i++){
+            if(ctpnContainer.getChildren().get(i) instanceof ChiTietPhieuNhapRow temp){
+                String validRow = temp.GetValid();
+                if(!validRow.isEmpty()){
+                    validRows = validRows.concat("Hàng "+(i+1)+": "+validRow).concat("\n");
+                }
+            }
+        }
+        return validRows;
     }
 }

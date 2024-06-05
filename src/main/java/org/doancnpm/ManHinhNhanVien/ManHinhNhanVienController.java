@@ -30,6 +30,7 @@ import org.doancnpm.Models.ChucVu;
 import org.doancnpm.Models.NhanVien;
 import org.doancnpm.Models.Quan;
 import org.doancnpm.Ultilities.DayFormat;
+import org.doancnpm.Ultilities.MoneyFormatter;
 import org.doancnpm.Ultilities.PopDialog;
 
 import java.io.*;
@@ -124,7 +125,9 @@ public class ManHinhNhanVienController implements Initializable {
         gioiTinhCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getGioiTinh()));
 
         TableColumn<NhanVien, String> luongCol = new TableColumn<>("Lương");
-        luongCol.setCellValueFactory(new PropertyValueFactory<>("luong"));
+        luongCol.setCellValueFactory(data->{
+            return new SimpleStringProperty(MoneyFormatter.convertLongToString(data.getValue().getLuong()));
+        });
 
         TableColumn<NhanVien, String> chucVuCol = new TableColumn<>("Chức vụ");
         chucVuCol.setCellValueFactory(data -> {
@@ -179,19 +182,7 @@ public class ManHinhNhanVienController implements Initializable {
                                     suaBtn.setOnAction(_ -> {
                                         try {
                                             NhanVien nhanVien = getTableView().getItems().get(getIndex());
-                                            new TiepNhanNhanVienDialog(nhanVien).showAndWait().ifPresent(nhanVienInfo -> {
-                                                //set "database" info
-                                                nhanVienInfo.setID(nhanVien.getID());
-                                                nhanVienInfo.setMaNhanVien(nhanVien.getMaNhanVien());
-                                                try {
-                                                    NhanVienDAO.getInstance().Update(nhanVien.getID(),nhanVienInfo);
-                                                    PopDialog.popSuccessDialog("Cập nhật nhân viên "+nhanVienInfo.getMaNhanVien()+" thành công");
-                                                } catch (SQLException e) {
-                                                    PopDialog.popErrorDialog("Cập nhật nhân viên "+nhanVienInfo.getMaNhanVien()+" thất bại",
-                                                            e.getMessage());
-                                                }
-                                                //mainTableView.getItems().set(selectedIndex, response);
-                                            });
+                                            new TiepNhanNhanVienDialog(nhanVien).showAndWait();
                                         } catch(IOException exc) {
                                             exc.printStackTrace();
                                         }
@@ -335,7 +326,7 @@ public class ManHinhNhanVienController implements Initializable {
             chucVuText.setText(chucVu.getTenCV());
             sdtText.setText(nhanVien.getSDT());
             emailText.setText(nhanVien.getEmail());
-            luongText.setText(Double.toString(nhanVien.getLuong()));
+            luongText.setText(MoneyFormatter.convertLongToString(nhanVien.getLuong()));
             ngaySinhText.setText(DayFormat.GetDayStringFormatted(nhanVien.getNgaySinh()));
             gioiTinhText.setText(nhanVien.getGioiTinh());
             ghiChuTextArea.setText(nhanVien.getGhiChu());
@@ -507,17 +498,7 @@ public class ManHinhNhanVienController implements Initializable {
     //functionalities
     public void OpenDirectAddDialog(){
         try {
-            new TiepNhanNhanVienDialog().showAndWait().ifPresent(
-                    nhanVienAdded -> {
-                        try {
-                            NhanVienDAO.getInstance().Insert(nhanVienAdded);
-                            PopDialog.popSuccessDialog("Thêm mới nhân viên "+nhanVienAdded.getHoTen()+" thành công");
-                        }
-                        catch (SQLException e) {
-                            PopDialog.popErrorDialog("Thêm mới nhân viên thất bại", e.getMessage());
-                        }
-                    }
-            );
+            new TiepNhanNhanVienDialog().showAndWait();
         }
         catch (IOException e) {
             PopDialog.popErrorDialog("Không thể mở dialog thêm nhân viên");

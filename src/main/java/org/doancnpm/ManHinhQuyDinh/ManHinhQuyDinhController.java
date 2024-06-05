@@ -17,6 +17,7 @@ import javafx.util.Callback;
 import org.doancnpm.DAO.*;
 import org.doancnpm.ManHinhDaiLy.TiepNhanDaiLyDialog;
 import org.doancnpm.Models.*;
+import org.doancnpm.Ultilities.MoneyFormatter;
 import org.doancnpm.Ultilities.PopDialog;
 
 import java.io.IOException;
@@ -71,6 +72,8 @@ public class ManHinhQuyDinhController implements Initializable {
 
         initEvent();
         initData();
+
+
     }
     private void initEvent(){
         quanThemMoiBtn.setOnAction(ob -> {
@@ -320,7 +323,7 @@ public class ManHinhQuyDinhController implements Initializable {
         ldlCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getTenLoai()));
 
         TableColumn<LoaiDaiLy, String> noToiDaCol = new TableColumn<>("Nợ tối đa");
-        noToiDaCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getSoNoToiDa().toString()));
+        noToiDaCol.setCellValueFactory(data -> new SimpleStringProperty(MoneyFormatter.convertLongToString(data.getValue().getSoNoToiDa())));
 
         TableColumn<LoaiDaiLy, String> ghiChuCol = new TableColumn<>("Ghi chú");
         ghiChuCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getGhiChu()));
@@ -426,7 +429,7 @@ public class ManHinhQuyDinhController implements Initializable {
                     LoaiDaiLy ldl = (LoaiDaiLy) t.getTableView().getItems().get(
                             t.getTablePosition().getRow());
                     try {
-                        ldl.setSoNoToiDa(Integer.parseInt(t.getNewValue()));
+                        ldl.setSoNoToiDa(Long.parseLong(t.getNewValue()));
                         LoaiDaiLyDAO.getInstance().Update(ldl.getId(), ldl);
                     }
                     catch (NumberFormatException e) {
@@ -486,7 +489,7 @@ public class ManHinhQuyDinhController implements Initializable {
             Integer id = ldlLast.getId();
             while(true){
                 newLDL.setTenLoai("Loại " + id.toString());
-                newLDL.setSoNoToiDa(500000);
+                newLDL.setSoNoToiDa(0L);
                 id++;
                 try{
                     LoaiDaiLyDAO.getInstance().Insert(newLDL);

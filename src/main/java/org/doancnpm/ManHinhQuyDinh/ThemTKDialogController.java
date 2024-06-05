@@ -14,6 +14,7 @@ import org.doancnpm.Models.NhanVien;
 import org.doancnpm.Models.Quan;
 import org.doancnpm.Models.TaiKhoan;
 import org.doancnpm.Ultilities.PopDialog;
+import org.doancnpm.Ultilities.SHA256;
 
 import java.net.URL;
 import java.sql.Date;
@@ -60,7 +61,7 @@ public class ThemTKDialogController implements Initializable {
     public TaiKhoan getTaiKhoan(){
         TaiKhoan taiKhoan = new TaiKhoan();
         taiKhoan.setUserName(username.getText());
-        taiKhoan.setPassword(password.getText());
+        taiKhoan.setPassword(SHA256.getSHA256Hash(password.getText()));
         taiKhoan.setMaNhanVien(nhanVien.getValue().getID());
         return taiKhoan;
     }

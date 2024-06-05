@@ -536,7 +536,7 @@ public class ManHinhDaiLyController implements Initializable {
     //functionalities
     public void OpenDirectAddDialog(){
         try {
-            new TiepNhanDaiLyDialog().showAndWait();
+            new TiepNhanDaiLyDialog(null).showAndWait();
         }
         catch (IOException e) {
             PopDialog.popErrorDialog("Không thể mở dialog thêm đại lý");

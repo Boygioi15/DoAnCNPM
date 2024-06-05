@@ -47,6 +47,13 @@ public class LapPhieuNhapDialog extends Dialog<PhieuNhap> {
         final Button btnOk = (Button)this.getDialogPane().lookupButton(saveButtonType);
         btnOk.addEventFilter(ActionEvent.ACTION,
                 event -> {
+                    String validString = c.GetValid();
+                    if(!validString.isEmpty()){
+                        PopDialog.popErrorDialog("Thêm mới phiếu nhập thất bại",validString);
+                        event.consume();
+                        return;
+                    }
+
                     PhieuNhap phieuNhap = c.getPhieuNhap();
                     List<ChiTietPhieuNhap> ctpns = c.getChiTietPhieuNhap();
                     try{

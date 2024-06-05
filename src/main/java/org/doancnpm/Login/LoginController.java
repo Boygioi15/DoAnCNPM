@@ -22,6 +22,7 @@ import org.doancnpm.Models.TaiKhoan;
 import org.doancnpm.NavController;
 import org.doancnpm.Ultilities.CurrentNVInfor;
 import org.doancnpm.Ultilities.PopDialog;
+import org.doancnpm.Ultilities.SHA256;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -170,7 +171,7 @@ public class LoginController implements Initializable {
             for (TaiKhoan taiKhoan : taiKhoanList) {
                 if (taiKhoan.getUserName().equals(userName)) {
                     userFound = true;
-                    if (taiKhoan.getPassword().equals(pass)) {
+                    if (taiKhoan.getPassword().equals(SHA256.getSHA256Hash(pass))) {
                         // Authorized
                         int maNhanVien = taiKhoan.getMaNhanVien();
                         CurrentNVInfor.getInstance().setTaiKhoanOfNhanien(taiKhoan);

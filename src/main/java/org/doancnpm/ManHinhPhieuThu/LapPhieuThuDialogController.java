@@ -32,7 +32,7 @@ public class LapPhieuThuDialogController implements Initializable {
     @FXML private TextArea ghiChuTextArea;
     @FXML private TextField soTienThuTextField;
 
-    NhanVien nvLapPhieu = null;
+    NhanVien nvLapPhieu;
     PhieuThu phieuThuGoc;
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -96,30 +96,28 @@ public class LapPhieuThuDialogController implements Initializable {
     public PhieuThu getPhieuThu(){
         if(phieuThuGoc==null){
             Date ngayTiepNhan = new Date(System.currentTimeMillis());
-
             PhieuThu phieuThu = new PhieuThu();
-            try{
-                phieuThu.setMaNhanVien(nvLapPhieu.getID());
-                if(dlComboBox.getValue()==null){
-                    PopDialog.popErrorDialog("Chưa chọn đại lý!");
-                    return null;
-                }
-                phieuThu.setMaDaiLy(dlComboBox.getValue().getID());
-                phieuThu.setGhiChu(ghiChuTextArea.getText());
-                phieuThu.setSoTienThu(getLongValueFromTextField(soTienThuTextField));
-                System.out.println("Phong chekc >>>" + getLongValueFromTextField(soTienThuTextField));
-                phieuThu.setNgayLap(ngayTiepNhan);
-                phieuThu.setGhiChu(ghiChuTextArea.getText());
-            }
-            catch(NumberFormatException e){
-                PopDialog.popErrorDialog("Định dạng số tiền thu không đúng");
-                return null;
-            }
+            phieuThu.setMaNhanVien(nvLapPhieu.getID());
+            phieuThu.setMaDaiLy(dlComboBox.getValue().getID());
+            phieuThu.setGhiChu(ghiChuTextArea.getText());
+            phieuThu.setSoTienThu(getLongValueFromTextField(soTienThuTextField));
+            phieuThu.setNgayLap(ngayTiepNhan);
+            phieuThu.setGhiChu(ghiChuTextArea.getText());
             return phieuThu;
         }
         else{
             phieuThuGoc.setGhiChu(ghiChuTextArea.getText());
-            return phieuThuGoc;
+           return phieuThuGoc;
         }
+
+    }
+    public String getValidData(){
+        if (dlComboBox.getValue() == null) {
+            return "Đại lý không được để trống";
+        }
+        if (soTienThuTextField.getText().isEmpty()) {
+            return "Số tiền thu không được để trống";
+        }
+        return "";
     }
 }

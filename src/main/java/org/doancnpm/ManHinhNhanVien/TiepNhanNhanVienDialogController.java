@@ -18,12 +18,15 @@ import org.doancnpm.DAO.LoaiDaiLyDAO;
 import org.doancnpm.DAO.QuanDAO;
 import org.doancnpm.Models.*;
 import org.doancnpm.Ultilities.DayFormat;
+import org.doancnpm.Ultilities.MoneyFormatter;
 import org.doancnpm.Ultilities.PopDialog;
 
 import java.net.URL;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TiepNhanNhanVienDialogController implements Initializable {
 
@@ -40,6 +43,7 @@ public class TiepNhanNhanVienDialogController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initAction();
         displayDataInCb();
+        MoneyFormatter.MoneyFormatTextField(luongTextField);
     }
     public void initAction(){
         //thoatButton.setOnAction();
@@ -59,7 +63,7 @@ public class TiepNhanNhanVienDialogController implements Initializable {
         ngaySinhDatePicker.setValue((nhanVien.getNgaySinh().toLocalDate()));
         sdtTextField.setText(nhanVien.getSDT());
         emailTextField.setText(nhanVien.getEmail());
-        luongTextField.setText(Double.toString(nhanVien.getLuong()));
+        luongTextField.setText(MoneyFormatter.convertLongToString(nhanVien.getLuong()));
         ghiChuTextArea.setText(nhanVien.getGhiChu());
         gioiTinhComboBox.setValue(nhanVien.getGioiTinh());
     }
@@ -101,9 +105,33 @@ public class TiepNhanNhanVienDialogController implements Initializable {
         nhanVien.setSDT(sdtTextField.getText());
         nhanVien.setGioiTinh(gioiTinhComboBox.getValue());
         nhanVien.setMaChucVu(chucVuComboBox.getValue().getId());
-        nhanVien.setLuong(Double.parseDouble(luongTextField.getText()));
+        nhanVien.setLuong(MoneyFormatter.getLongValueFromTextField(luongTextField));
         nhanVien.setGhiChu( ghiChuTextArea.getText());
         return nhanVien;
     }
 
+    public String GetValid() {
+        if (chucVuComboBox.getValue() == null) {
+            return "Chức vụ không được để trống";
+        }
+        if (gioiTinhComboBox.getValue() == null) {
+            return "Giới tính không được để trống";
+        }
+        if (emailTextField.getText().isEmpty()) {
+            return "Email không được để trống";
+        }
+        if (luongTextField.getText().isEmpty()) {
+            return "Lương không được để trống";
+        }
+        if (!isValidEmailFormat(emailTextField.getText().trim())) {
+            return "Email không đúng định dạng";
+        }
+        return "";
+    }
+    private boolean isValidEmailFormat(String email) {
+        String emailRegex = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
+        Pattern pattern = Pattern.compile(emailRegex);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
 }

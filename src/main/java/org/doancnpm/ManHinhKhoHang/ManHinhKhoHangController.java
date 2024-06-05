@@ -270,20 +270,7 @@ public class ManHinhKhoHangController implements Initializable {
                                     suaBtn.setOnAction(_ -> {
                                         try {
                                             MatHang matHang = getTableView().getItems().get(getIndex());
-                                            new ThemMoiMatHangDialog(matHang).showAndWait().ifPresent(matHangInfo -> {
-                                                //set "database" info
-                                                matHangInfo.setID(matHang.getID());
-                                                matHangInfo.setDonGiaXuat(matHang.getDonGiaXuat());
-                                                matHangInfo.setSoLuong(matHang.getSoLuong());
-                                                try {
-                                                    MatHangDAO.getInstance().Update(matHang.getID(),matHangInfo);
-                                                    PopDialog.popSuccessDialog("Cập nhật mặt hàng "+matHangInfo.getMaMatHang()+" thành công");
-                                                } catch (SQLException e) {
-                                                    PopDialog.popErrorDialog("Cập nhật mặt hàng "+matHangInfo.getMaMatHang()+" thất bại",
-                                                            e.getMessage());
-                                                }
-                                                //mainTableView.getItems().set(selectedIndex, response);
-                                            });
+                                            new ThemMoiMatHangDialog(matHang).showAndWait();
                                         } catch(IOException exc) {
                                             PopDialog.popErrorDialog("Không thể mở dialog thêm mặt hàng");
                                         }
@@ -549,17 +536,7 @@ public class ManHinhKhoHangController implements Initializable {
     //functionalities
     public void OpenDirectAddDialog() {
         try {
-            new ThemMoiMatHangDialog().showAndWait().ifPresent(
-                    matHangAdded -> {
-                        try {
-                            MatHangDAO.getInstance().Insert(matHangAdded);
-                            PopDialog.popSuccessDialog("Thêm mới mặt hàng thành công");
-                        }
-                        catch (SQLException e) {
-                            PopDialog.popErrorDialog("Thêm mới mặt hàng thất bại", e.getMessage());
-                        }
-                    }
-            );
+            new ThemMoiMatHangDialog().showAndWait();
         }
         catch (IOException e) {
             e.printStackTrace();

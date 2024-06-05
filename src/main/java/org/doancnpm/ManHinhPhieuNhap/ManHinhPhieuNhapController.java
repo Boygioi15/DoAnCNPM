@@ -136,7 +136,7 @@ public class ManHinhPhieuNhapController implements Initializable {
             return new SimpleObjectProperty<>(MoneyFormatter.convertLongToString(mh.getDonGiaNhap()));
         });
 
-        TableColumn<ChiTietPhieuNhap, String> thanhTienCol = new TableColumn<>("Tổng tiền ");
+        TableColumn<ChiTietPhieuNhap, String> thanhTienCol = new TableColumn<>("Thành tiền ");
         thanhTienCol.setCellValueFactory(data->{
             return new SimpleStringProperty(MoneyFormatter.convertLongToString(data.getValue().getThanhTien()));
         });

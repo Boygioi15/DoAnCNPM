@@ -30,6 +30,7 @@ import org.doancnpm.DAO.PhieuThuDAO;
 
 import org.doancnpm.Filters.PhieuThuFilter;
 import org.doancnpm.Models.*;
+import org.doancnpm.Ultilities.CurrentNVInfor;
 import org.doancnpm.Ultilities.DayFormat;
 import org.doancnpm.Ultilities.MoneyFormatter;
 import org.doancnpm.Ultilities.PopDialog;
@@ -75,7 +76,7 @@ public class ManHinhPhieuThuController implements Initializable {
     private final ObservableList<PhieuThu> dsPhieuThuFiltered = FXCollections.observableArrayList();
     private final PhieuThuFilter filter = new PhieuThuFilter();
 
-    NhanVien nhanVienLoggedIn = null;
+    NhanVien nhanVienLoggedIn;
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initTableView();
@@ -215,17 +216,7 @@ public class ManHinhPhieuThuController implements Initializable {
                                     suaBtn.setOnAction(_ -> {
                                         try {
                                             PhieuThu phieuThu = getTableView().getItems().get(getIndex());
-                                            new LapPhieuThuDialog(phieuThu, nhanVienLoggedIn).showAndWait().ifPresent(_ -> {
-                                                try {
-                                                    PhieuThuDAO.getInstance().Update(phieuThu.getID(),phieuThu);
-                                                    PopDialog.popSuccessDialog("Cập nhật phiếu thu tiền "+phieuThu.getMaPhieuThu()+" thành công");
-                                                }
-                                                catch (SQLException e) {
-                                                    PopDialog.popErrorDialog("Cập nhật phiếu thu tiền "+phieuThu.getMaPhieuThu()+" thất bại",
-                                                            e.getMessage());
-                                                }
-                                                //mainTableView.getItems().set(selectedIndex, response);
-                                            });
+                                            new LapPhieuThuDialog(phieuThu, CurrentNVInfor.getInstance().getLoggedInNhanVien()).showAndWait();
                                         } catch(IOException exc) {
                                             exc.printStackTrace();
                                         }
@@ -489,21 +480,10 @@ public class ManHinhPhieuThuController implements Initializable {
     //functionalities
     public void OpenDirectAddDialog() {
         try {
-            new LapPhieuThuDialog(nhanVienLoggedIn).showAndWait().ifPresent(
-                    phieuThuAdded -> {
-                        try {
-                            PhieuThuDAO.getInstance().Insert(phieuThuAdded);
-                            PopDialog.popSuccessDialog("Thêm mới phiếu thu thành công");
-                        }
-                        catch (SQLException e) {
-                            PopDialog.popErrorDialog("Thêm mới phiếu thu thất bại", e.toString());
+            new LapPhieuThuDialog(null,nhanVienLoggedIn).showAndWait();
 
-                        }
-                    }
-            );
         }
         catch (IOException e) {
-            System.out.println(e);
             e.printStackTrace();
             PopDialog.popErrorDialog("Không thể mở dialog thêm phiếu thu", e.toString());
         }

@@ -37,8 +37,9 @@ public class ChiTietPhieuNhapRow extends HBox {
         loadFXML();
         initMHComboBox();
         initBinding();
+        MoneyFormatter.MoneyFormatTextField(thanhTienTextField);
     }
-    public Long getThanhTienDouble(){
+    public Long getThanhTien(){
 
         try{
             Long result = MoneyFormatter.getLongValueFromTextField(thanhTienTextField);;

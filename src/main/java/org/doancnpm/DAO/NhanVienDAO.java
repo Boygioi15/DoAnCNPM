@@ -114,7 +114,7 @@ public class NhanVienDAO implements Idao<NhanVien> {
             String sdt = rs.getString("SDT");
             String email = rs.getString("Email");
             int maChucVu = rs.getInt("MaChucVu");
-            double luong = rs.getDouble("Luong");
+            Long luong = rs.getLong("Luong");
             String ghiChu = rs.getString("GhiChu");
 
             nhanVien.setID(id);
@@ -156,7 +156,7 @@ public class NhanVienDAO implements Idao<NhanVien> {
             String sdt = rs.getString("SDT");
             String email = rs.getString("Email");
             int maChucVu = rs.getInt("MaChucVu");
-            double luong = rs.getDouble("Luong");
+            Long luong = rs.getLong("Luong");
             String ghiChu = rs.getString("GhiChu");
 
             nhanVien.setID(ID);

@@ -19,6 +19,7 @@ import org.doancnpm.Models.NhanVien;
 import org.doancnpm.Models.PhieuXuat;
 import org.doancnpm.Ultilities.ChiTietPhieu.ChiTietPhieuXuatRow;
 import org.doancnpm.Ultilities.DayFormat;
+import org.doancnpm.Ultilities.MoneyFormatter;
 
 import java.net.URL;
 import java.sql.Date;
@@ -47,6 +48,7 @@ public class LapPhieuXuatDialogController implements Initializable {
         });
         themCTPX();
         initDaiLyComboBox();
+
     }
     private void initDaiLyComboBox() {
         try {
@@ -89,13 +91,13 @@ public class LapPhieuXuatDialogController implements Initializable {
         });
     }
     private void capNhatTongTien(){
-        double tt = 0;
+        Long tt = 0L;
         for(int i = 0; i< ctpxContainer.getChildren().size(); i++){
             if(ctpxContainer.getChildren().get(i) instanceof ChiTietPhieuXuatRow temp){
-                tt += temp.getThanhTienDouble();
+                tt += temp.getThanhTien();
             }
         }
-        tongTienText.setText(Double.toString(tt));
+        tongTienText.setText(MoneyFormatter.convertLongToString(tt));
     }
     public void setInitialValue(PhieuXuat phieuXuat, NhanVien nvLoggedIn) {
         if(phieuXuat==null){

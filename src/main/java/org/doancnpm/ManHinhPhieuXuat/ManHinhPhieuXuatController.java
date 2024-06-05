@@ -131,12 +131,13 @@ public class ManHinhPhieuXuatController implements Initializable {
                 mh = MatHangDAO.getInstance().QueryID(data.getValue().getMaMatHang());
             } catch (SQLException _) {}
             assert mh != null;
-            return new SimpleObjectProperty<>(MoneyFormatter.convertLongToString(mh.getDonGiaNhap()));
+            return new SimpleObjectProperty<>(MoneyFormatter.convertLongToString(mh.getDonGiaXuat()));
         });
 
-        TableColumn<MatHang, String> thanhTienCol = new TableColumn<>("Thành tiền");
-        thanhTienCol.setCellValueFactory(new PropertyValueFactory<>("thanhTien"));
-
+        TableColumn<ChiTietPhieuXuat, String> thanhTienCol = new TableColumn<>("Thành tiền ");
+        thanhTienCol.setCellValueFactory(data->{
+            return new SimpleStringProperty(MoneyFormatter.convertLongToString(data.getValue().getThanhTien()));
+        });
         detailTableView.getColumns().addAll(
                 mhCol,dvtCol,slCol,donGiaNhapCol,thanhTienCol
         );
@@ -204,8 +205,10 @@ public class ManHinhPhieuXuatController implements Initializable {
         TableColumn<PhieuXuat, Integer> nccCol = new TableColumn<>("Đại lý");
         nccCol.setCellValueFactory(new PropertyValueFactory<>("maDaiLy"));
 
-        TableColumn<PhieuXuat, Integer> tongTienCol = new TableColumn<>("Tổng tiền");
-        tongTienCol.setCellValueFactory(new PropertyValueFactory<>("tongTien"));
+        TableColumn<PhieuXuat, String> tongTienCol = new TableColumn<>("Tổng tiền");
+        tongTienCol.setCellValueFactory(data->{
+            return new SimpleStringProperty(MoneyFormatter.convertLongToString(data.getValue().getTongTien()));
+        });
 
         TableColumn<PhieuXuat, Boolean> selectedCol = new TableColumn<>("Selected");
         selectedCol.setCellValueFactory(new PropertyValueFactory<>("selected"));
@@ -298,7 +301,7 @@ public class ManHinhPhieuXuatController implements Initializable {
         }
         catch (SQLException _){}
         ngayLapPhieuText.setText(DayFormat.GetDayStringFormatted(phieuXuat.getNgayLapPhieu()));
-        tongTienText.setText(Double.toString(phieuXuat.getTongTien()));
+        tongTienText.setText(MoneyFormatter.convertLongToString(phieuXuat.getTongTien()));
 
         //item
         try{

@@ -1,5 +1,6 @@
 package org.doancnpm.ManHinhDaiLy;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
@@ -63,10 +64,14 @@ public class TiepNhanDaiLyDialog extends Dialog<DaiLy>  {
 
         //them vao cuoi cung
         final Button btnOk = (Button)this.getDialogPane().lookupButton(saveButtonType);
-        btnOk.setOnAction(ob -> {
-            //check validator
+        btnOk.addEventFilter(ActionEvent.ACTION, ob -> {
+            String error = c.getValidateData();
+            if(!error.isEmpty()){
+                PopDialog.popErrorDialog("Thêm mới đại lý thất bại",error);
+                ob.consume();
+                return;
+            }
             DaiLy dl = c.getDaiLy();
-            //them
             if(themHaySua){
                 try {
                     DaiLyDAO.getInstance().Insert(dl);
@@ -90,4 +95,5 @@ public class TiepNhanDaiLyDialog extends Dialog<DaiLy>  {
 
         //this.getDialogPane().lookupButton(saveButtonType).disableProperty().bind(c.validProperty().not());
     }
+
 }

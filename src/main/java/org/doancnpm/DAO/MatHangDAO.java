@@ -50,6 +50,7 @@ public class MatHangDAO implements Idao<MatHang> {
         pstmt.setInt(2, matHang.getMaDVT());
         pstmt.setDouble(3, matHang.getDonGiaNhap());
         pstmt.setString(4, matHang.getGhiChu());
+        pstmt.setInt(5, matHang.getID());
 
         int rowsAffected = pstmt.executeUpdate();
         if(rowsAffected>0){
