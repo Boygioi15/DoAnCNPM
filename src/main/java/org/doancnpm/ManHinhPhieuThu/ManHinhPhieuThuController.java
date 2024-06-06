@@ -29,6 +29,7 @@ import org.doancnpm.DAO.NhanVienDAO;
 import org.doancnpm.DAO.PhieuThuDAO;
 
 import org.doancnpm.Filters.PhieuThuFilter;
+import org.doancnpm.ManHinhPhieuXuat.LapPhieuXuatDialog;
 import org.doancnpm.Models.*;
 import org.doancnpm.Ultilities.DayFormat;
 import org.doancnpm.Ultilities.PopDialog;
@@ -191,16 +192,16 @@ public class ManHinhPhieuThuController implements Initializable {
         selectedCol.setCellValueFactory(new PropertyValueFactory<>("selected"));
         selectedCol.setCellFactory(tc -> new CheckBoxTableCell<>());
 
-        //action column
         TableColumn actionCol = new TableColumn("Action");
 
-        Callback<TableColumn<PhieuThu, String>, TableCell<PhieuThu, String>> cellFactory
+        Callback<TableColumn<PhieuXuat, String>, TableCell<PhieuXuat, String>> cellFactory
                 = //
                 new Callback<>() {
                     @Override
-                    public TableCell call(final TableColumn<PhieuThu, String> param) {
-                        final TableCell<PhieuThu, String> cell = new TableCell<PhieuThu, String>() {
-                            final Button suaBtn = new javafx.scene.control.Button("Sửa");
+                    public TableCell call(final TableColumn<PhieuXuat, String> param) {
+                        final TableCell<PhieuXuat, String> cell = new TableCell<PhieuXuat, String>() {
+                            final Button suaBtn = new Button("Sửa");
+                            final Button xuatBtn = new Button("Xuất");
 
                             @Override
                             public void updateItem(String item, boolean empty) {
@@ -211,24 +212,16 @@ public class ManHinhPhieuThuController implements Initializable {
                                 } else {
                                     suaBtn.setOnAction(_ -> {
                                         try {
-                                            PhieuThu phieuThu = getTableView().getItems().get(getIndex());
-                                            new LapPhieuThuDialog(phieuThu, nhanVienLoggedIn).showAndWait().ifPresent(_ -> {
-                                                try {
-                                                    PhieuThuDAO.getInstance().Update(phieuThu.getID(),phieuThu);
-                                                    PopDialog.popSuccessDialog("Cập nhật phiếu thu tiền "+phieuThu.getMaPhieuThu()+" thành công");
-                                                }
-                                                catch (SQLException e) {
-                                                    PopDialog.popErrorDialog("Cập nhật phiếu thu tiền "+phieuThu.getMaPhieuThu()+" thất bại",
-                                                            e.getMessage());
-                                                }
-                                                //mainTableView.getItems().set(selectedIndex, response);
-                                            });
+                                            PhieuXuat phieuXuat = getTableView().getItems().get(getIndex());
+                                            new LapPhieuXuatDialog(phieuXuat, nhanVienLoggedIn).showAndWait();
                                         } catch(IOException exc) {
                                             exc.printStackTrace();
                                         }
                                     });
+
+                                    xuatBtn.setOnAction(_ -> {});
                                     HBox hbox = new HBox();
-                                    hbox.getChildren().addAll(suaBtn);
+                                    hbox.getChildren().addAll(suaBtn,xuatBtn);
                                     hbox.setSpacing(5);
                                     hbox.setPrefWidth(USE_COMPUTED_SIZE);
                                     hbox.setPrefHeight(USE_COMPUTED_SIZE);

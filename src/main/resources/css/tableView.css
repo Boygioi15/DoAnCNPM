@@ -1,3 +1,72 @@
-.table-view .column-header .label {
-    -fx-alignment: CENTER_LEFT;
+.table-view {
+    -fx-background-color: transparent;
 }
+
+.table-view .column-header {
+    -fx-background-color: white;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: white;
+    -fx-border-color: gray;
+    -fx-border-width: 0 0 1.5 0;
+}
+
+.table-view .filler {
+    -fx-background-color: white;
+}
+.table-row-cell .label {
+    -fx-alignment: center;
+    -fx-border-color: transparent;
+    -fx-table-cell-border-color: transparent;
+}
+
+.table-view .table-cell{
+    -fx-alignment:center_left;
+    -fx-font-size: 13px;
+    -fx-font-family: Arial;
+    -fx-padding: 5;
+    -fx-border-width: 1 0 1 0;
+}
+
+/* Style for the selected column cells */
+.table-view .cell-center {
+    -fx-alignment: CENTER;
+}
+.table-view .column-header-left .label {
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 5;
+    -fx-font-size: 13;
+}
+.check-box{
+    -fx-background-color: transparent;
+}
+.check-box .box{
+    -fx-background-color: transparent;
+    -fx-border-color: gray;
+    -fx-border-radius: 2;
+    -fx-border-width: 1;
+    -fx-font-size: 10;
+}
+.check-box:selected .mark {
+    -fx-background-color: white;
+}
+
+.check-box:selected .box {
+    -fx-background-color: #4DB14E;
+}
+/* Align header label to the center */
+.table-view .column-header-center .label {
+    -fx-alignment: CENTER;
+    -fx-padding: 5;
+    -fx-font-size: 13;
+}
+
+/* Align header label to the right */
+.table-view .column-header-right .label {
+    -fx-alignment: CENTER_RIGHT;
+    -fx-padding: 5;
+    -fx-font-size: 13;
+}
+
+

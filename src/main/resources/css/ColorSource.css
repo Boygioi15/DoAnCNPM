@@ -1,0 +1,7 @@
+.root {
+    -fx-primary-color: #4DB14E ;
+    -fx-secondary-color: #B1D8B7;
+    -fx-complement-color: #2496EF;
+    -fx-on-primary-color: #ffffff;
+    -fx-surface-color: #F6F6F6;
+}

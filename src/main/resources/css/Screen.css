@@ -1,0 +1,119 @@
+@import url("ColorSource.css");
+
+.background {
+    -fx-background-color: #FFFFFF;
+}
+.title-text{
+    -fx-font-size: 24;
+    -fx-font-family: Arial;
+    -fx-font-weight: bold;
+}
+.header-text{
+    -fx-font-size: 16;
+    -fx-font-family: Arial;
+    -fx-font-weight: bold;
+}
+.body-text-header{
+    -fx-font-size: 13;
+    -fx-font-family: Arial;
+    -fx-font-weight: bold;
+}
+.body-text{
+    -fx-font-size: 13;
+    -fx-font-family: Arial;
+}
+
+.add-button{
+    -fx-background-color: #4DB14E;
+    -fx-font-family: Arial;
+    -fx-font-size: 14;
+    -fx-font-weight: bold;
+
+    -fx-min-height: 30;
+    -fx-max-height: 30;
+}
+.add-button .label {
+    -fx-text-fill: White;
+}
+
+.add-button .arrow {
+    -fx-background-color: transparent;
+    -fx-border-color: white;
+}
+.add-button:openvertically .arrow {
+    -fx-shape: "M0,0 L4,3 L8,0";
+}
+.add-button:showing .arrow {
+    -fx-shape: "M0,0 L4,-3 L8,0";
+}
+
+.action-button{
+    -fx-background-color: #2496EF;
+    -fx-font-family: Arial;
+    -fx-font-size: 14;
+    -fx-font-weight: bold;
+    -fx-text-fill: White;
+
+    -fx-min-height: 30;
+    -fx-max-height: 30;
+
+}
+.action-button .label {
+    -fx-text-fill: White;
+}
+.action-button .arrow {
+    -fx-background-color: transparent;
+    -fx-border-color: white;
+}
+.action-button:openvertically .arrow {
+    -fx-shape: "M0,0 L4,3 L8,0";
+}
+.action-button:showing .arrow {
+    -fx-shape: "M0,0 L4,-3 L8,0";
+}
+.filter-button{
+    -fx-background-color: #D4F1F4;
+
+    -fx-min-height: 30;
+    -fx-max-height: 30;
+
+    -fx-min-width: 30;
+    -fx-max-width: 30;
+}
+
+.detail-button{
+    -fx-background-color: #f0f0f0;
+    -fx-border-width: 0;
+    -fx-background-radius: 5;
+}
+.detail-surface: hover {
+    -fx-background-color: #e0e0e0;
+    -fx-background-radius: 5;
+}
+.detail-surface: click {
+    -fx-background-color: #e0e0e0;
+    -fx-background-radius: 5;
+}
+.detail-surface{
+    -fx-background-color: #d0d0d0;
+    -fx-background-radius: 5;
+}
+.filter-textField{
+    -fx-background-color: White;
+    -fx-font-size: 13;
+    -fx-border-color: lightGray;
+    -fx-border-radius: 2;
+
+    -fx-min-height: 30;
+    -fx-max-height: 30;
+}
+.filter-comboBox{
+    -fx-background-color: White;
+    -fx-font-size: 13;
+    -fx-border-color: lightGray;
+    -fx-border-radius: 2;
+
+
+    -fx-min-height: 30;
+    -fx-max-height: 30;
+}
