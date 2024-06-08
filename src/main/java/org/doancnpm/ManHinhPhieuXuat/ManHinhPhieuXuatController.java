@@ -510,6 +510,7 @@ public class ManHinhPhieuXuatController implements Initializable {
     public void OpenDirectAddDialog() {
         try {
             new LapPhieuXuatDialog(nhanVienLoggedIn).showAndWait();
+            updateListFromDatabase();
         }
         catch (IOException e) {
             e.printStackTrace();

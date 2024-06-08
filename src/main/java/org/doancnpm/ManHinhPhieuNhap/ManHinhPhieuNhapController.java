@@ -153,6 +153,7 @@ public class ManHinhPhieuNhapController implements Initializable {
     private void initEvent() {
         addDirectButton.setOnAction(_ -> {
             OpenDirectAddDialog();
+
         });
         refreshButton.setOnAction(_ -> {
             resetFilter();
@@ -508,6 +509,7 @@ public class ManHinhPhieuNhapController implements Initializable {
     public void OpenDirectAddDialog() {
         try {
             new LapPhieuNhapDialog(nhanVienLoggedIn).showAndWait();
+            updateListFromDatabase();
         }
         catch (IOException e) {
             e.printStackTrace();
