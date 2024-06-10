@@ -70,7 +70,7 @@
                   <RowConstraints minHeight="10.0" vgrow="ALWAYS" />
               </rowConstraints>
                <children>
-                  <HBox alignment="CENTER_LEFT" fillHeight="false" spacing="10.0" styleClass="block">
+                  <HBox fx:id="openMHDaiLy" alignment="CENTER_LEFT" fillHeight="false" spacing="10.0" styleClass="block">
                      <children>
                         <HBox styleClass="image-pane">
                            <children>
@@ -95,7 +95,7 @@
                         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                      </padding>
                   </HBox>
-                  <HBox alignment="CENTER_LEFT" fillHeight="false" spacing="10.0" styleClass="block" GridPane.columnIndex="1">
+                  <HBox fx:id="openMHNhanVien" alignment="CENTER_LEFT" fillHeight="false" spacing="10.0" styleClass="block" GridPane.columnIndex="1">
                      <children>
                         <HBox styleClass="image-pane">
                            <padding>
@@ -147,7 +147,7 @@
                   </HBox>
                </children>
             </GridPane>
-            <GridPane hgap="10.0" styleClass="block" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <GridPane fx:id="openKhoHang" hgap="10.0" styleClass="block" GridPane.columnIndex="1" GridPane.rowIndex="1">
               <columnConstraints>
                 <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
                 <ColumnConstraints hgrow="NEVER" minWidth="10.0" />

@@ -8,11 +8,15 @@ import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import org.doancnpm.Main.AdminController;
+import org.doancnpm.Main.ManHinh;
 import org.doancnpm.SQLUltilities.CalculateSQL;
 
 import java.net.URL;
@@ -25,6 +29,18 @@ import java.util.ResourceBundle;
 
 public class ManHinhDieuKhienController implements Initializable {
 
+
+
+    // switch man hinh
+    AdminController switchConller;
+
+    public void setSwitchConller(AdminController controller){
+        switchConller = controller;
+    }
+
+    public HBox openMHNhanVien;
+    public HBox openMHDaiLy;
+    public GridPane openKhoHang;
 
     @FXML
     private LineChart<String, Number> mixlineChart;
@@ -42,6 +58,19 @@ public class ManHinhDieuKhienController implements Initializable {
         initLineChart();
         initPieChart();
         initDataShow();
+        initEvent();
+    }
+
+    private void initEvent() {
+        openMHDaiLy.setOnMouseClicked(mouseEvent -> {
+            switchConller.SwitchScreen(ManHinh.DAI_LY);
+        });
+        openMHNhanVien.setOnMouseClicked(mouseEvent -> {
+            switchConller.SwitchScreen(ManHinh.NHAN_VIEN);
+        });
+        openKhoHang.setOnMouseClicked(mouseEvent -> {
+            switchConller.SwitchScreen(ManHinh.KHO_HANG);
+        });
     }
 
     private void initLineChart() {
