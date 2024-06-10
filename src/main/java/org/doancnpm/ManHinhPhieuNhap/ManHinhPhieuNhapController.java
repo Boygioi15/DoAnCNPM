@@ -230,8 +230,10 @@ public class ManHinhPhieuNhapController implements Initializable {
         TableColumn<PhieuNhap, Integer> nccCol = new TableColumn<>("Nhà cung cấp");
         nccCol.setCellValueFactory(new PropertyValueFactory<>("nhaCungCap"));
 
-        TableColumn<PhieuNhap, Integer> tongTienCol = new TableColumn<>("Tổng tiền");
-        tongTienCol.setCellValueFactory(new PropertyValueFactory<>("tongTien"));
+        TableColumn<PhieuNhap, String> tongTienCol = new TableColumn<>("Tổng tiền");
+        tongTienCol.setCellValueFactory(data->{
+            return new SimpleStringProperty(MoneyFormatter.convertLongToString(data.getValue().getTongTien()));
+        });
 
         TableColumn<PhieuNhap, Boolean> selectedCol = new TableColumn<>( );
         HBox headerBox = new HBox();

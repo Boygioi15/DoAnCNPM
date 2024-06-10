@@ -4,6 +4,7 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import org.doancnpm.Models.ChiTietPhieuXuat;
+import org.doancnpm.Models.DaiLy;
 import org.doancnpm.Models.DatabaseDriver;
 
 import java.sql.*;
@@ -43,6 +44,7 @@ public class CTPXDAO {
         if (rowsAffected > 0) {
             notifyChange();
             MatHangDAO.getInstance().notifyChange();
+            DaiLyDAO.getInstance().notifyChange();
         }
         pstmt.close();
         return rowsAffected;
