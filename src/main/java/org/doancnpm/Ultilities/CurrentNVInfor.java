@@ -10,7 +10,7 @@ public class CurrentNVInfor {
     private static CurrentNVInfor instance;
     private NhanVien loggedInNhanVien;
     private TaiKhoan taiKhoanOfNhanien;
-
+    private String password;
     public static synchronized CurrentNVInfor getInstance() {
         if (instance == null) {
             instance = new CurrentNVInfor();
@@ -37,5 +37,11 @@ public class CurrentNVInfor {
         this.loggedInNhanVien = loggedInNhanVien;
     }
 
+    public String getPassword() {
+        return password;
+    }
 
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

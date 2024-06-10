@@ -95,7 +95,6 @@ public class LoginController implements Initializable {
     public Button confirmButton;
 
     StringProperty currentScreenString = new SimpleStringProperty("");
-    private TaiKhoanDAO taiKhoanDAO = TaiKhoanDAO.getInstance();
 
 
     @Override
@@ -186,6 +185,7 @@ public class LoginController implements Initializable {
                         // Authorized
                         int maNhanVien = taiKhoan.getMaNhanVien();
                         CurrentNVInfor.getInstance().setTaiKhoanOfNhanien(taiKhoan);
+                        CurrentNVInfor.getInstance().setPassword(pass);
                         CurrentNVInfor.getInstance().setLoggedInNhanVien(NhanVienDAO.getInstance().QueryID(maNhanVien));
                         return NhanVienDAO.getInstance().QueryID(maNhanVien);
                     } else {

@@ -44,7 +44,7 @@ public class ManHinhTaiKhoanController implements Initializable {
         nameText.setText(CurrentNVInfor.getInstance().getLoggedInNhanVien().getHoTen());
         phonenumberText.setText(CurrentNVInfor.getInstance().getLoggedInNhanVien().getSDT());
         emailText.setText(CurrentNVInfor.getInstance().getLoggedInNhanVien().getEmail());
-        currentPasswordTextField.setText(CurrentNVInfor.getInstance().getTaiKhoanOfNhanien().getPassword());
+        currentPasswordTextField.setText(CurrentNVInfor.getInstance().getPassword());
         initEvent();
     }
     private void clearErrorBox(VBox errorBox) {
