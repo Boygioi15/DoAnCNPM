@@ -533,7 +533,7 @@ public class ManHinhKhoHangController implements Initializable {
                 matHang.setMaDVT(dvtID);
 
                 matHang.setTenMatHang(tenMatHangCell.getStringCellValue());
-                matHang.setDonGiaNhap(donGiaNhapCell.getNumericCellValue());
+                matHang.setDonGiaNhap((long)(donGiaNhapCell.getNumericCellValue()));
                 if (ghiChuCell != null) {
                     matHang.setGhiChu(ghiChuCell.getStringCellValue());
                 } else {

@@ -68,17 +68,23 @@ public class ManHinhPhieuThuController implements Initializable {
     @FXML private Button toggleFilterButton;
 
     @FXML private MenuItem addExcelButton;
+    @FXML private MenuItem exportExcelButton;
     @FXML private MenuItem addDirectButton;
 
-    @FXML
-    private MasterDetailPane masterDetailPane;
+    @FXML private Text maPhieuThuText;
+    @FXML private Text maDLText;
+    @FXML private Text tenDLText;
+    @FXML private Text maNVText;
+    @FXML private Text tenNVText;
+    @FXML private Text ngayLapPhieuText;
+    @FXML private Text soTienThuText;
+    @FXML private TextArea ghiChuTextArea;
 
-    @FXML
-    private Region masterPane;
-    @FXML
-    private Button toggleDetailButton;
-    @FXML
-    private Region detailPane;
+    @FXML private MasterDetailPane masterDetailPane;
+
+    @FXML private Region masterPane;
+    @FXML private Button toggleDetailButton;
+    @FXML private Region detailPane;
 
     @FXML private FlowPane emptySelectionPane;
 
@@ -149,13 +155,13 @@ public class ManHinhPhieuThuController implements Initializable {
                 OpenDetailPanel();
             }
         });
-        toggleFilterButton.setOnAction(ob ->{
-            if(filterPane.isVisible()){
+        toggleFilterButton.setOnAction(ob -> {
+            if (filterPane.isVisible()) {
                 CloseFilterPanel();
-            }
-            else{
+            } else {
                 OpenFilterPanel();
             }
+        });
         addExcelButton.setOnAction(_ -> {
             importDialog();
         });
@@ -633,10 +639,10 @@ public class ManHinhPhieuThuController implements Initializable {
     private static void addHeader(Document document, Font boldFont, Font contentFont, PhieuThu phieuThu) throws DocumentException {
         PdfPTable detailsTable = new PdfPTable(2);
         detailsTable.setWidthPercentage(100);
-        detailsTable.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+        detailsTable.getDefaultCell().setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
 
         PdfPCell brand = new PdfPCell();
-        brand.setBorder(Rectangle.NO_BORDER);
+        brand.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
         brand.setHorizontalAlignment(Element.ALIGN_CENTER);
         brand.setVerticalAlignment(Element.ALIGN_CENTER);
         brand.setPadding(5);
@@ -646,7 +652,7 @@ public class ManHinhPhieuThuController implements Initializable {
         brand.addElement(brandP);
 
         PdfPCell dateTime = new PdfPCell();
-        dateTime.setBorder(Rectangle.NO_BORDER);
+        dateTime.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
         dateTime.setHorizontalAlignment(Element.ALIGN_RIGHT);
         // Format date for "ngày ... tháng ... năm ..."
         SimpleDateFormat dateFormat = new SimpleDateFormat("'Ngày' dd 'tháng' MM 'năm' yyyy");

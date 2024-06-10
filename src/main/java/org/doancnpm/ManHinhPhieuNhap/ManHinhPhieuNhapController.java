@@ -220,13 +220,14 @@ public class ManHinhPhieuNhapController implements Initializable {
                 OpenDetailPanel();
             }
         });
-        toggleFilterButton.setOnAction(ob ->{
-            if(filterPane.isVisible()){
+        toggleFilterButton.setOnAction(ob -> {
+            if (filterPane.isVisible()) {
                 CloseFilterPanel();
-            }
-            else{
+            } else {
                 OpenFilterPanel();
             }
+        });
+
         addExcelButton.setOnAction(_ ->{
             importDialog();
         });
@@ -693,10 +694,10 @@ public class ManHinhPhieuNhapController implements Initializable {
     private static void addHeader(Document document, Font boldFont, Font contentFont, PhieuNhap phieuNhap) throws DocumentException {
         PdfPTable detailsTable = new PdfPTable(2);
         detailsTable.setWidthPercentage(100);
-        detailsTable.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+        detailsTable.getDefaultCell().setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
 
         PdfPCell brand = new PdfPCell();
-        brand.setBorder(Rectangle.NO_BORDER);
+        brand.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
         brand.setHorizontalAlignment(Element.ALIGN_CENTER);
         brand.setVerticalAlignment(Element.ALIGN_CENTER);
         brand.setPadding(5);
@@ -706,7 +707,7 @@ public class ManHinhPhieuNhapController implements Initializable {
         brand.addElement(brandP);
 
         PdfPCell dateTime = new PdfPCell();
-        dateTime.setBorder(Rectangle.NO_BORDER);
+        dateTime.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
         dateTime.setHorizontalAlignment(Element.ALIGN_RIGHT);
         // Format date for "ngày ... tháng ... năm ..."
         SimpleDateFormat dateFormat = new SimpleDateFormat("'Ngày' dd 'tháng' MM 'năm' yyyy");
@@ -784,7 +785,7 @@ public class ManHinhPhieuNhapController implements Initializable {
         return table;
     }
 
-    private static void addTotalRevenue(Document document, Double tongTien, Font boldFont) throws DocumentException {
+    private static void addTotalRevenue(Document document, Long tongTien, Font boldFont) throws DocumentException {
         DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
         symbols.setGroupingSeparator('.');
         DecimalFormat df = new DecimalFormat("#,##0", symbols);

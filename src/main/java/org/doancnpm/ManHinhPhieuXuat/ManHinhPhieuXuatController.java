@@ -14,23 +14,19 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.layout.Region;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -42,7 +38,9 @@ import org.doancnpm.Ultilities.DayFormat;
 import org.doancnpm.Ultilities.MoneyFormatter;
 import org.doancnpm.Ultilities.PopDialog;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -674,10 +672,10 @@ public class ManHinhPhieuXuatController implements Initializable {
     private static void addHeader(Document document, Font boldFont, Font contentFont, PhieuXuat phieuXuat) throws DocumentException {
         PdfPTable detailsTable = new PdfPTable(2);
         detailsTable.setWidthPercentage(100);
-        detailsTable.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+        detailsTable.getDefaultCell().setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
 
         PdfPCell brand = new PdfPCell();
-        brand.setBorder(Rectangle.NO_BORDER);
+        brand.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
         brand.setHorizontalAlignment(Element.ALIGN_CENTER);
         brand.setVerticalAlignment(Element.ALIGN_CENTER);
         brand.setPadding(5);
@@ -687,7 +685,7 @@ public class ManHinhPhieuXuatController implements Initializable {
         brand.addElement(brandP);
 
         PdfPCell dateTime = new PdfPCell();
-        dateTime.setBorder(Rectangle.NO_BORDER);
+        dateTime.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
         dateTime.setHorizontalAlignment(Element.ALIGN_RIGHT);
         // Format date for "ngày ... tháng ... năm ..."
         SimpleDateFormat dateFormat = new SimpleDateFormat("'Ngày' dd 'tháng' MM 'năm' yyyy");
@@ -774,7 +772,7 @@ public class ManHinhPhieuXuatController implements Initializable {
         return table;
     }
 
-    private static void addTotalRevenue(Document document, Double tongTien, Font boldFont) throws DocumentException {
+    private static void addTotalRevenue(Document document, Long tongTien, Font boldFont) throws DocumentException {
         DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
         symbols.setGroupingSeparator('.');
         DecimalFormat df = new DecimalFormat("#,##0", symbols);

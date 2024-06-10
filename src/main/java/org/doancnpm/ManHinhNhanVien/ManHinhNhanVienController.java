@@ -534,7 +534,7 @@ public class ManHinhNhanVienController implements Initializable {
                 }
                 nhanVien.setMaChucVu(chucVuID);
 
-                nhanVien.setLuong(luongCell.getNumericCellValue());
+                nhanVien.setLuong((long)luongCell.getNumericCellValue());
                 if (ghiChuCell != null) {
                     nhanVien.setGhiChu(ghiChuCell.getStringCellValue());
                 } else {

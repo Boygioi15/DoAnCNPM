@@ -269,7 +269,7 @@ public class LapPhieuXuatDialogController implements Initializable {
                     throw new RuntimeException(ex);
                 }
                 try {
-                    double thanhTien = sl * matHang.getDonGiaNhap();
+                    long thanhTien = sl * matHang.getDonGiaNhap();
                     chiTietPhieuXuat.setThanhTien(thanhTien);
                 } catch (Exception e) {
                     throw new RuntimeException(e);

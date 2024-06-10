@@ -87,13 +87,13 @@ public class LapPhieuNhapDialogController implements Initializable {
     }
 
     private void capNhatTongTien() {
-        double tt = 0;
+        long tt = 0;
         for (int i = 0; i < ctpnContainer.getChildren().size(); i++) {
             if (ctpnContainer.getChildren().get(i) instanceof ChiTietPhieuNhapRow temp) {
-                tt += temp.getThanhTienDouble();
+                tt += temp.getThanhTien();
             }
         }
-        tongTienText.setText(MoneyFormatter.convertLongToString( tt));
+        tongTienText.setText(MoneyFormatter.convertLongToString(tt));
     }
 
     public void setInitialValue(PhieuNhap phieuNhap, NhanVien nvLoggedIn) {
@@ -244,7 +244,7 @@ public class LapPhieuNhapDialogController implements Initializable {
                     throw new RuntimeException(ex);
                 }
                 try {
-                    double thanhTien = sl * matHang.getDonGiaNhap();
+                    long thanhTien = sl * matHang.getDonGiaNhap();
                     chiTietPhieuNhap.setThanhTien(thanhTien);
                 } catch (Exception e) {
                     throw new RuntimeException(e);

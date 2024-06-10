@@ -596,7 +596,7 @@ public class ManHinhDaiLyController implements Initializable {
                 ButtonType result = alert.showAndWait().orElse(ButtonType.CANCEL);
 
                 if (result == ButtonType.OK) {
-                    LoaiDaiLy loaiDaiLy = new LoaiDaiLy(null, null, 5000000, loaiDaiLyName, "");
+                    LoaiDaiLy loaiDaiLy = new LoaiDaiLy(null, null, 5000000l, loaiDaiLyName, "");
                     LoaiDaiLyDAO.getInstance().Insert(loaiDaiLy);
                     Alert infoAlert = new Alert(Alert.AlertType.INFORMATION);
                     infoAlert.setTitle("Thông báo");
