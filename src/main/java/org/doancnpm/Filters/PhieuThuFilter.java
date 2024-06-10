@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.doancnpm.Models.MatHang;
 import org.doancnpm.Models.PhieuThu;
+import org.doancnpm.Ultilities.CheckExist;
 
 public class PhieuThuFilter implements IFilter{
     ObservableList<PhieuThu> input;
@@ -24,7 +25,7 @@ public class PhieuThuFilter implements IFilter{
         for (PhieuThu phieuThu : input) {
             boolean matches = true;
 
-            if (maPhieuThu != null && !maPhieuThu.isEmpty() && !phieuThu.getMaPhieuThu().contains(maPhieuThu)) {
+            if (maPhieuThu != null && !maPhieuThu.isEmpty() && !CheckExist.normalize(phieuThu.getMaPhieuThu()).contains(CheckExist.normalize(maPhieuThu))) {
                 matches = false;
             }
             if (maDaiLy != null && !phieuThu.getMaDaiLy().equals(maDaiLy)) {

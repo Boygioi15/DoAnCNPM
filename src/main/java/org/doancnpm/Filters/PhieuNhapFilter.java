@@ -3,6 +3,7 @@ package org.doancnpm.Filters;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.doancnpm.Models.PhieuNhap;
+import org.doancnpm.Ultilities.CheckExist;
 
 public class PhieuNhapFilter implements IFilter{
     ObservableList<PhieuNhap> input;
@@ -24,10 +25,10 @@ public class PhieuNhapFilter implements IFilter{
 
         for (PhieuNhap phieuNhap : input) {
             boolean matches = true;
-            if (maPhieuNhap != null && !maPhieuNhap.isEmpty() && !phieuNhap.getMaPhieuNhap().contains(maPhieuNhap)) {
+            if (maPhieuNhap != null && !maPhieuNhap.isEmpty() && !CheckExist.normalize(phieuNhap.getMaPhieuNhap()).contains(CheckExist.normalize(maPhieuNhap))) {
                 matches = false;
             }
-            if (nhaCungCap != null && !nhaCungCap.isEmpty() && !phieuNhap.getNhaCungCap().contains(nhaCungCap)) {
+            if (nhaCungCap != null && !nhaCungCap.isEmpty() && !CheckExist.normalize(phieuNhap.getNhaCungCap()).contains(CheckExist.normalize(nhaCungCap))) {
                 matches = false;
             }
             if (maNhanVien != null && !phieuNhap.getMaNhanVien().equals(maNhanVien)) {

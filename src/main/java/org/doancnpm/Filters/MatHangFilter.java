@@ -3,6 +3,7 @@ package org.doancnpm.Filters;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.doancnpm.Models.MatHang;
+import org.doancnpm.Ultilities.CheckExist;
 
 public class MatHangFilter implements IFilter<MatHang> {
     ObservableList<MatHang> input;
@@ -22,11 +23,11 @@ public class MatHangFilter implements IFilter<MatHang> {
         }
         output.addAll(input);
         for (MatHang matHang : input) {
-            if (maMH != null && !maMH.isEmpty() && !matHang.getMaMatHang().contains(maMH)) {
+            if (maMH != null && !maMH.isEmpty() && !CheckExist.normalize(matHang.getMaMatHang()).contains(CheckExist.normalize(maMH))) {
                 output.remove(matHang);
                 continue;
             }
-            if (tenMH != null && !tenMH.isEmpty() && !matHang.getTenMatHang().contains(tenMH)) {
+            if (tenMH != null && !tenMH.isEmpty() && !CheckExist.normalize(matHang.getTenMatHang()).contains(CheckExist.normalize(tenMH))) {
                 output.remove(matHang);
                 continue;
             }
