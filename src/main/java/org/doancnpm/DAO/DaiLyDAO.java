@@ -5,6 +5,8 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import org.doancnpm.Models.DaiLy;
 import org.doancnpm.Models.DatabaseDriver;
+import org.doancnpm.Models.DonViTinh;
+import org.doancnpm.Ultilities.CheckExist;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -182,7 +184,22 @@ public class DaiLyDAO implements Idao<DaiLy> {
 
         return daiLyList;
     }
+    public DaiLy QueryName(String name) throws SQLException {
+        ArrayList<DaiLy> allDaiLy = DaiLyDAO.getInstance().QueryAll();
+        String normalizedDaiLyName = CheckExist.normalize(name);
 
+        // Duyệt qua danh sách tất cả các đại lý và kiểm tra xem đại lý đã tồn tại hay không
+        for (DaiLy dl : allDaiLy) {
+            // Chuẩn hóa tên đại lý từ danh sách (loại bỏ dấu và chuyển thành chữ thường)
+            String normalizedDaiLy = CheckExist.normalize(dl.getTenDaiLy());
+
+            if (normalizedDaiLy.equals(normalizedDaiLyName)) {
+                return dl;
+            }
+        }
+
+        return null;
+    }
     @Override
     public void AddDatabaseListener(InvalidationListener listener) {
         dailyDtbChanged.addListener(listener);

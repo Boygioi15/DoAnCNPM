@@ -5,6 +5,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import org.doancnpm.Models.DatabaseDriver;
 import org.doancnpm.Models.LoaiDaiLy;
+import org.doancnpm.Ultilities.CheckExist;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -99,6 +100,22 @@ public class LoaiDaiLyDAO implements Idao<LoaiDaiLy> {
             String ghiChu = rs.getString("GhiChu");
 
             return new LoaiDaiLy(id, maLoai, soNoToiDa, tenLoai, ghiChu);
+        }
+
+        return null;
+    }
+    public LoaiDaiLy QueryName(String name) throws SQLException {
+        ArrayList<LoaiDaiLy> allLoaiDaiLy = QueryAll();
+        String normalizedLoaiDaiLy = CheckExist.normalize(name);
+
+        // Duyệt qua danh sách tất cả các Loại Đại Lý và kiểm tra xem Loại Đại Lý đã tồn tại hay không
+        for (LoaiDaiLy loaiDaiLy : allLoaiDaiLy) {
+            // Chuẩn hóa tên Loại Đại Lý từ danh sách (loại bỏ dấu và chuyển thành chữ thường)
+            String normalizedLoaiDaiLyName = CheckExist.normalize(loaiDaiLy.getTenLoai());
+
+            if (normalizedLoaiDaiLyName.equals(normalizedLoaiDaiLy)) {
+                return loaiDaiLy;
+            }
         }
 
         return null;
