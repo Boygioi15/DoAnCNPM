@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import org.controlsfx.control.SearchableComboBox?>
+
+<VBox fx:id="TiepNhanDaiLyDialog" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="20.0" styleClass="background" stylesheets="@../../../css/addForm.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.doancnpm.ManHinhDaiLy.TiepNhanDaiLyDialogController">
+   <children>
+      <Label styleClass="title-text" text="Tiếp nhận đại lý" />
+      <HBox styleClass="separator">
+         <VBox.margin>
+            <Insets bottom="10.0" top="5.0" />
+         </VBox.margin>
+      </HBox>
+      <GridPane hgap="20.0" vgap="5.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
+          <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label styleClass="body-text-header" text="Quận:" />
+            <SearchableComboBox fx:id="quanComboBox" prefWidth="120.0" promptText="-Chọn quận-" styleClass="combobox" GridPane.rowIndex="1" />
+            <Label styleClass="body-text-header" text="Loại đại lý: " GridPane.columnIndex="1" />
+            <SearchableComboBox fx:id="loaiDaiLyComboBox" prefWidth="120.0" promptText="-Chọn loại-" styleClass="combobox" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+         </children>
+      </GridPane>
+      <VBox fillWidth="false" spacing="5.0">
+         <children>
+            <Label styleClass="body-text-header" text="Tên đại lý:" />
+            <TextField fx:id="tenDaiLyTextField" maxWidth="200.0" prefWidth="200.0" styleClass="body-text" />
+         </children>
+      </VBox>
+      <GridPane hgap="20.0" vgap="5.0">
+         <columnConstraints>
+            <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <children>
+            <Label styleClass="body-text-header" text="Địa chỉ:" GridPane.columnIndex="2" />
+            <TextField fx:id="diaChiTextField" prefWidth="220.0" styleClass="body-text" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+            <TextField fx:id="emailTextField" prefWidth="170.0" styleClass="body-text" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label styleClass="body-text-header" text="Điện thoại:" />
+            <TextField fx:id="dienThoaiTextField" prefWidth="120.0" styleClass="body-text" GridPane.rowIndex="1" />
+            <Label styleClass="body-text-header" text="Email:" GridPane.columnIndex="1" />
+         </children>
+      </GridPane>
+      <VBox spacing="5.0">
+         <children>
+            <Label styleClass="body-text-header" text="Ghi chú:" />
+            <TextArea fx:id="ghiChuTextArea" prefHeight="80.0" prefRowCount="5" styleClass="text-area" />
+         </children>
+      </VBox>
+   </children>
+   <padding>
+      <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+   </padding>
+</VBox>

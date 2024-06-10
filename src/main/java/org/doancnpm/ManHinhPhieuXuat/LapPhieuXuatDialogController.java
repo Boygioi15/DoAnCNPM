@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.StringConverter;
@@ -28,8 +29,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class LapPhieuXuatDialogController implements Initializable {
-    @FXML private MFXTextField ngayLapPhieuTextField;
-    @FXML private MFXTextField nhanVienTextField;
+    @FXML private TextField ngayLapPhieuTextField;
+    @FXML private TextField nhanVienTextField;
     @FXML private SearchableComboBox<DaiLy> dlComboBox;
     @FXML Text tongTienText;
 

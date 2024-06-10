@@ -7,20 +7,26 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 <?import org.controlsfx.control.MasterDetailPane?>
 
-<VBox fx:id="manHinhKhoHang" spacing="10.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.doancnpm.ManHinhKhoHang.ManHinhKhoHangController">
+<VBox fx:id="manHinhKhoHang" prefHeight="876.0" prefWidth="869.0" spacing="10.0" styleClass="background" stylesheets="@../../../css/Screen.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.doancnpm.ManHinhKhoHang.ManHinhKhoHangController">
    <children>
-      <Label text="Kho hàng">
+      <Label styleClass="title-text" text="Kho hàng">
          <font>
             <Font size="36.0" />
          </font>
@@ -28,9 +34,9 @@
             <Insets />
          </VBox.margin>
       </Label>
-      <HBox spacing="10.0">
+      <HBox alignment="CENTER_LEFT" spacing="10.0">
          <children>
-            <MenuButton mnemonicParsing="false" styleClass="action-menu-button" text="Thêm mặt hàng">
+            <MenuButton mnemonicParsing="false" styleClass="add-button" text="Thêm mới">
                <items>
                   <MenuItem fx:id="addDirectButton" mnemonicParsing="false" text="Thêm trực tiếp" />
                   <MenuItem fx:id="addExcelButton" mnemonicParsing="false" text="Thêm từ file excel" />
@@ -39,7 +45,7 @@
                   <Font size="18.0" />
                </font>
             </MenuButton>
-            <MenuButton mnemonicParsing="false" styleClass="action-menu-button" text="Thao tác">
+            <MenuButton mnemonicParsing="false" styleClass="action-button" text="Thao tác">
                <items>
                   <MenuItem fx:id="deleteSelectedButton" mnemonicParsing="false" text="Xóa các dòng đã chọn" />
                   <MenuItem fx:id="exportExcelButton" mnemonicParsing="false" text="Xuất file excel" />
@@ -48,72 +54,99 @@
                   <Font size="18.0" />
                </font>
             </MenuButton>
-         </children>
-      </HBox>
-      <HBox alignment="CENTER_LEFT" spacing="10.0">
-         <children>
-            <Button fx:id="refreshButton" mnemonicParsing="false" styleClass="action-button" text="Refresh">
-               <font>
-                  <Font size="18.0" />
-               </font>
+            <Button fx:id="toggleFilterButton" mnemonicParsing="false" styleClass="filter-button">
+               <graphic>
+                  <ImageView fitHeight="150.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../image/filter.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
             </Button>
-            <MFXTextField fx:id="maMHTextField" borderGap="6.0" floatMode="BORDER" floatingText="Mã" prefWidth="120.0" styleClass="body-label" />
-            <MFXTextField fx:id="tenMHTextField" borderGap="6.0" floatMode="BORDER" floatingText="Tên" prefWidth="120.0" styleClass="body-label" />
-            <MFXComboBox fx:id="dvtComboBox" floatingText="Đơn vị tính" />
-            <MFXComboBox fx:id="soLuongComboBox" floatingText="Tồn kho" />
-         </children>
-      </HBox>
-      <MasterDetailPane fx:id="masterDetailPane" VBox.vgrow="ALWAYS" />
-      <HBox fx:id="masterPane" spacing="1.0">
-         <children>
-            <TableView fx:id="mainTableView" HBox.hgrow="ALWAYS" />
-            <Button fx:id="toggleDetailButton" maxHeight="1000.0" mnemonicParsing="false" text="&gt;" />
-         </children>
-      </HBox>
-      <VBox fx:id="detailPane" spacing="5.0">
-         <children>
-            <Label text="Thông tin chi tiết" />
-            <GridPane hgap="15.0" vgap="10.0">
-               <columnConstraints>
-                  <ColumnConstraints halignment="LEFT" hgrow="NEVER" />
-                  <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" minWidth="10.0" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
-                  <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
-                  <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
-                  <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
-                  <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
-               </rowConstraints>
+            <AnchorPane fx:id="filterPaneContainer">
                <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Đơn giá nhập:" GridPane.rowIndex="3" />
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Đơn giá xuất:" GridPane.rowIndex="4" />
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Số lượng:" GridPane.rowIndex="5" />
-                  <Text fx:id="donGiaXuatText" strokeType="OUTSIDE" strokeWidth="0.0" text="Đơn giá xuất" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Đơn vị tính:" GridPane.rowIndex="2" />
-                  <Text fx:id="soLuongText" strokeType="OUTSIDE" strokeWidth="0.0" text="Số lượng" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Ghi chú:" GridPane.rowIndex="6" />
-                  <TextArea fx:id="ghiChuTextArea" editable="false" prefHeight="50.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Mặt hàng:" GridPane.rowIndex="1" />
-                  <HBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <HBox fx:id="filterPane" alignment="CENTER_LEFT" spacing="10.0" AnchorPane.leftAnchor="0.0">
                      <children>
-                        <Text fx:id="maMHText" strokeType="OUTSIDE" strokeWidth="0.0" text="Mã" />
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="-" />
-                        <Text fx:id="tenMHText" strokeType="OUTSIDE" strokeWidth="0.0" text="Tên" />
+                        <MFXTextField fx:id="maMHTextField" borderGap="6.0" floatMode="DISABLED" prefWidth="120.0" promptText="Mã" styleClass="filter-textField" />
+                        <MFXTextField fx:id="tenMHTextField" borderGap="6.0" floatMode="DISABLED" prefWidth="120.0" promptText="Tên" styleClass="filter-textField" />
+                        <MFXComboBox fx:id="dvtComboBox" floatMode="DISABLED" promptText="ĐVT" styleClass="filter-textField" />
+                        <MFXComboBox fx:id="soLuongComboBox" floatMode="DISABLED" promptText="Còn hàng" styleClass="filter-textField" />
                      </children>
                   </HBox>
-                  <Text fx:id="dvtText" strokeType="OUTSIDE" strokeWidth="0.0" text="Đơn vị tính" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <Text fx:id="donGiaNhapText" strokeType="OUTSIDE" strokeWidth="0.0" text="Đơn giá nhập" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                </children>
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-               <padding>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </padding>
-            </GridPane>
+            </AnchorPane>
+         </children>
+      </HBox>
+      <MasterDetailPane fx:id="masterDetailPane" stylesheets="@../../../css/masterDetailPane.css" VBox.vgrow="ALWAYS" />
+      <HBox fx:id="masterPane" spacing="1.0" styleClass="background" VBox.vgrow="ALWAYS">
+         <children>
+            <TableView fx:id="mainTableView" stylesheets="@../../../css/tableView.css" HBox.hgrow="ALWAYS" />
+            <Button fx:id="toggleDetailButton" maxHeight="1000.0" maxWidth="25.0" mnemonicParsing="false" styleClass="detail-button">
+               <graphic>
+                  <Pane maxHeight="200.0" maxWidth="5.0" minHeight="200.0" minWidth="5.0" prefHeight="40.0" prefWidth="5.0" styleClass="detail-surface" />
+               </graphic>
+            </Button>
+         </children>
+      </HBox>
+      <VBox fx:id="detailPane" maxHeight="1.7976931348623157E308" spacing="5.0" styleClass="detail-pane" VBox.vgrow="ALWAYS">
+         <children>
+            <Label styleClass="header-text" text="Thông tin chi tiết" />
+            <AnchorPane VBox.vgrow="ALWAYS">
+               <children>
+                  <ScrollPane fitToWidth="true" styleClass="background" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <content>
+                        <GridPane hgap="15.0" vgap="15.0">
+                           <columnConstraints>
+                              <ColumnConstraints halignment="LEFT" hgrow="NEVER" />
+                              <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" minWidth="10.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints />
+                              <RowConstraints maxHeight="1.7976931348623157E308" valignment="TOP" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="1.7976931348623157E308" valignment="TOP" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="1.7976931348623157E308" valignment="TOP" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="1.7976931348623157E308" valignment="TOP" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="1.7976931348623157E308" valignment="TOP" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="1.7976931348623157E308" valignment="TOP" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text-header" text="Đơn giá nhập:" GridPane.rowIndex="3" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text-header" text="Đơn giá xuất:" GridPane.rowIndex="4" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text-header" text="Số lượng:" GridPane.rowIndex="5" />
+                              <Text fx:id="donGiaXuatText" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text" text="Đơn giá xuất" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text-header" text="Đơn vị tính:" GridPane.rowIndex="2" />
+                              <Text fx:id="soLuongText" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text" text="Số lượng" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text-header" text="Ghi chú:" GridPane.rowIndex="6" />
+                              <TextArea fx:id="ghiChuTextArea" editable="false" prefHeight="50.0" styleClass="body-text" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text-header" text="Mặt hàng:" GridPane.rowIndex="1" />
+                              <Text fx:id="dvtText" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text" text="Đơn vị tính" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <Text fx:id="donGiaNhapText" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text" text="Đơn giá nhập" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              <HBox alignment="TOP_RIGHT" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                 <children>
+                                    <Text fx:id="maMHText" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text" text="Mã" />
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="-" />
+                                    <Text fx:id="tenMHText" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text" text="Tên" />
+                                 </children>
+                              </HBox>
+                           </children>
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" />
+                           </padding>
+                        </GridPane>
+                     </content>
+                  </ScrollPane>
+                  <FlowPane fx:id="emptySelectionPane" alignment="CENTER" columnHalignment="CENTER" style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../../image/eye.png" />
+                           </image>
+                        </ImageView>
+                        <Label maxWidth="170.0" styleClass="header-text" text="Vui lòng chọn mặt hàng để xem chi tiết" textAlignment="CENTER" wrapText="true" />
+                     </children>
+                  </FlowPane>
+               </children>
+            </AnchorPane>
          </children>
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -121,6 +154,6 @@
       </VBox>
    </children>
    <padding>
-      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+      <Insets bottom="10.0" left="10.0" right="10.0" />
    </padding>
 </VBox>

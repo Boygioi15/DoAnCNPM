@@ -1,7 +1,7 @@
 package org.doancnpm.ManHinhDaiLy;
 
 import io.github.palexdev.materialfx.controls.MFXComboBox;
-import io.github.palexdev.materialfx.controls.MFXTextField;
+import javafx.animation.TranslateTransition;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -10,9 +10,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.CheckBoxTableCell;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.apache.poi.ss.usermodel.Cell;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -47,21 +51,21 @@ public class ManHinhDaiLyController implements Initializable {
     @FXML private Button filterButton;
     @FXML private MenuItem addDirectButton;
     @FXML private MenuItem addExcelButton;
-    @FXML private Button lapPhieuThuTienButton;
     @FXML private MenuItem deleteSelectedButton;
     @FXML private MenuItem exportExcelButton;
 
     @FXML private TextField maDaiLyTextField;
     @FXML private TextField tenDaiLyTextField;
-    @FXML private ComboBox<Quan> quanComboBox;
-    @FXML private ComboBox<LoaiDaiLy> loaiDaiLyCombobox;
-
+    @FXML private MFXComboBox<Quan> quanComboBox;
+    @FXML private MFXComboBox<LoaiDaiLy> loaiDaiLyCombobox;
+    @FXML private Region filterPane;
+    @FXML private Region filterPaneContainer;
+    @FXML private Button toggleFilterButton;
 
     @FXML private TableView mainTableView;
 
     //MasterDetailPane
     @FXML private MasterDetailPane masterDetailPane;
-
     @FXML private Region masterPane;
     @FXML private Button toggleDetailButton;
     @FXML private Region detailPane;
@@ -75,9 +79,9 @@ public class ManHinhDaiLyController implements Initializable {
     @FXML private Text diaChiText;
     @FXML private Text ngayTiepNhanText;
     @FXML private Text noHienTaiText;
-
     @FXML private TextArea ghiChuTextArea;
 
+    @FXML private FlowPane emptySelectionPane;
     //model part
     private final ObservableList<DaiLy> dsDaiLy = FXCollections.observableArrayList();
     private final ObservableList<DaiLy> dsDaiLyFiltered = FXCollections.observableArrayList();
@@ -97,6 +101,7 @@ public class ManHinhDaiLyController implements Initializable {
         //init data
         updateListFromDatabase();
         initDetailPane();
+        initFilterPane();
     }
     public void setVisibility(boolean visibility){
         manHinhDaiLy.setVisible(visibility);
@@ -114,10 +119,25 @@ public class ManHinhDaiLyController implements Initializable {
         mainTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, daiLy) -> {
             UpdateDetailPane((DaiLy) daiLy);
         });
+        manHinhDaiLy.widthProperty().addListener(ob -> {
+            if(manHinhDaiLy.getWidth()>1030){
+                toggleDetailButton.setDisable(false);
+                OpenDetailPanel();
+            }else{
+                toggleDetailButton.setDisable(true);
+                CloseDetailPanel();
+            }
+        });
+    }
+    private void initFilterPane(){
+        Rectangle clip = new Rectangle();
+        clip.widthProperty().bind(filterPaneContainer.widthProperty());
+        clip.heightProperty().bind(filterPaneContainer.heightProperty());
+        filterPaneContainer.setClip(clip);
     }
     private void initTableView(){
         // Tạo các cột cho TableView
-        TableColumn<DaiLy, String> maDLCol = new TableColumn<>("Mã đại lý");
+        TableColumn<DaiLy, String> maDLCol = new TableColumn<>("Mã");
         maDLCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getMaDaiLy()));
 
 
@@ -186,7 +206,7 @@ public class ManHinhDaiLyController implements Initializable {
 
 
         //action column
-        TableColumn actionCol = new TableColumn("Action");
+        TableColumn actionCol = new TableColumn("Thao tác");
         //actionCol.setCellValueFactory(new PropertyValueFactory<>("DUMMY"));
 
         Callback<TableColumn<DaiLy, String>, TableCell<DaiLy, String>> cellFactory
@@ -195,8 +215,8 @@ public class ManHinhDaiLyController implements Initializable {
                     @Override
                     public TableCell call(final TableColumn<DaiLy, String> param) {
                         final TableCell<DaiLy, String> cell = new TableCell<DaiLy, String>() {
-                            final Button suaBtn = new javafx.scene.control.Button("Sửa");
-                            final Button xoaBtn = new javafx.scene.control.Button("Xóa");
+                            final Button suaBtn = new javafx.scene.control.Button();
+                            final Button xoaBtn = new javafx.scene.control.Button();
 
                             @Override
                             public void updateItem(String item, boolean empty) {
@@ -206,6 +226,19 @@ public class ManHinhDaiLyController implements Initializable {
                                     setText(null);
                                 }
                                 else {
+                                    Image trashCan = new Image(getClass().getResourceAsStream("/image/trash_can.png"));
+                                    ImageView trashImage = new ImageView(trashCan);
+                                    Image edit = new Image(getClass().getResourceAsStream("/image/edit.png"));
+                                    ImageView editImage = new ImageView(edit);
+                                    trashImage.setFitWidth(20);
+                                    trashImage.setFitHeight(20);
+
+                                    editImage.setFitWidth(20);
+                                    editImage.setFitHeight(20);
+
+                                    xoaBtn.setGraphic(trashImage);
+                                    suaBtn.setGraphic(editImage);
+
                                     xoaBtn.setOnAction(event -> {
                                         DaiLy dl = getTableView().getItems().get(getIndex());
                                         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -235,7 +268,6 @@ public class ManHinhDaiLyController implements Initializable {
                                     hbox.getChildren().addAll(suaBtn,xoaBtn);
                                     hbox.setAlignment(Pos.CENTER);
                                     hbox.setMaxHeight(1000);
-                                    hbox.setSpacing(5);
                                     setGraphic(hbox);
                                     setText(null);
                                 }
@@ -270,17 +302,16 @@ public class ManHinhDaiLyController implements Initializable {
         noHienTaiCol.getStyleClass().add("column-header-left");
         selectedCol.getStyleClass().add("column-header-center");
         actionCol.getStyleClass().add("column-header-center");
-
-
-        selectedCol.setPrefWidth(50);
-        maDLCol.setPrefWidth(80);
-        tenDLCol.setPrefWidth(150);
-
-        quanCol.setPrefWidth(80);
-        loaiDLCol.setPrefWidth(80);
-        noHienTaiCol.setPrefWidth(120);
-        actionCol.setPrefWidth(100);
-
+        mainTableView.widthProperty().addListener(ob -> {
+            double width = mainTableView.getWidth();
+            selectedCol.setPrefWidth(width*0.1);
+            maDLCol.setPrefWidth(width*0.12);
+            quanCol.setPrefWidth(width*0.12);
+            loaiDLCol.setPrefWidth(width*0.12);
+            tenDLCol.setPrefWidth(width*0.24);
+            noHienTaiCol.setPrefWidth(width*0.15);
+            actionCol.setPrefWidth(width*0.15);
+        });
         mainTableView.setEditable( true );
         mainTableView.setPrefWidth(1100);
     }
@@ -304,7 +335,16 @@ public class ManHinhDaiLyController implements Initializable {
                 OpenDetailPanel();
             }
         });
+        toggleFilterButton.setOnAction(ob ->{
+            if(filterPane.isVisible()){
+                CloseFilterPanel();
+            }
+            else{
+                OpenFilterPanel();
+            }
+        });
     }
+
     private void initDatabaseBinding(){
         DaiLyDAO.getInstance().AddDatabaseListener(_ -> updateListFromDatabase());
     }
@@ -385,13 +425,31 @@ public class ManHinhDaiLyController implements Initializable {
         }
     }
 
+    public void OpenFilterPanel(){
+        TranslateTransition tt = new TranslateTransition(Duration.seconds(0.2), filterPane);
+        tt.setToX(0);
+        tt.play();
+        filterPane.setVisible(true);
+        tt.setOnFinished(e -> {
+        });
+    }
+    public void CloseFilterPanel(){
+        TranslateTransition tt = new TranslateTransition(Duration.seconds(0.2), filterPane);
+        tt.setToX(-filterPane.getWidth());
+        tt.play();
+
+        tt.setOnFinished(e -> {
+            filterPane.setVisible(false);
+        });
+    }
     //detail pane
     public void UpdateDetailPane(DaiLy daiLy){
         if(daiLy==null){
-            CloseDetailPanel();
+            emptySelectionPane.setVisible(true);
             return;
         }
         try{
+            emptySelectionPane.setVisible(false);
             Quan quan = QuanDAO.getInstance().QueryID(daiLy.getMaQuan());
             LoaiDaiLy loaiDaiLy = LoaiDaiLyDAO.getInstance().QueryID(daiLy.getMaLoaiDaiLy());
 
@@ -410,13 +468,10 @@ public class ManHinhDaiLyController implements Initializable {
 
     }
     public void OpenDetailPanel(){
-        toggleDetailButton.setText(">");
         masterDetailPane.setShowDetailNode(true);
-
     }
     public void CloseDetailPanel(){
         masterDetailPane.setShowDetailNode(false);
-        toggleDetailButton.setText("<");
     }
 
 
@@ -616,15 +671,5 @@ public class ManHinhDaiLyController implements Initializable {
     private void filterList(){
         dsDaiLyFiltered.clear();
         dsDaiLyFiltered.addAll(filter.Filter());
-    }
-    private void resetFilter(){
-        quanComboBox.getSelectionModel().clearSelection();
-        quanComboBox.setValue(null);
-
-        maDaiLyTextField.clear();
-        tenDaiLyTextField.clear();
-
-        loaiDaiLyCombobox.getSelectionModel().clearSelection();
-        loaiDaiLyCombobox.setValue(null);
     }
 }

@@ -8,7 +8,7 @@
 <?import javafx.scene.text.Text?>
 <?import org.controlsfx.control.SearchableComboBox?>
 
-<GridPane fx:controller="org.doancnpm.ManHinhQuyDinh.ThemTKDialogController" hgap="10.0" minHeight="-Infinity" minWidth="-Infinity" vgap="10.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/21">
+<GridPane hgap="10.0" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../../../css/addForm.css" vgap="10.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.doancnpm.ManHinhQuyDinh.ThemTKDialogController">
   <columnConstraints>
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
     <ColumnConstraints minWidth="10.0" />
@@ -19,12 +19,12 @@
     <RowConstraints valignment="TOP" />
   </rowConstraints>
    <children>
-      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Tên đăng nhập: " />
-      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Mật khẩu:" GridPane.rowIndex="1" />
-      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Nhân viên:" GridPane.rowIndex="2" />
-      <TextField fx:id="username" GridPane.columnIndex="1" />
-      <TextField fx:id="password" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-      <SearchableComboBox fx:id="nhanVien" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text" text="Tên đăng nhập: " />
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text" text="Mật khẩu:" GridPane.rowIndex="1" />
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text" text="Nhân viên:" GridPane.rowIndex="2" />
+      <TextField fx:id="username" styleClass="body-text" GridPane.columnIndex="1" />
+      <TextField fx:id="password" styleClass="body-text" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      <SearchableComboBox fx:id="nhanVien" styleClass="combobox" GridPane.columnIndex="1" GridPane.rowIndex="2" />
    </children>
    <padding>
       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

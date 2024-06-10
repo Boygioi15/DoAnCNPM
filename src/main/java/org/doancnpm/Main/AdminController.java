@@ -1,5 +1,6 @@
 package org.doancnpm.Main;
 
+import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -42,7 +43,6 @@ public class AdminController implements Initializable {
     private @FXML Button openQuyDinhButton;
     public @FXML MenuItem openTaiKhoanButton;
     public @FXML MenuItem dangXuatButton;
-    private @FXML Label userNameLabel;
 
     private ManHinhDaiLyController manHinhDaiLyController;
     private ManHinhPhieuThuController manHinhPhieuThuController;
@@ -65,12 +65,13 @@ public class AdminController implements Initializable {
         initEvent();
         try {
             initScreens();
+            SwitchScreen(ManHinh.DAI_LY);
 
-        } catch (IOException e) {
+        } catch (Exception e){
             e.printStackTrace();
             PopDialog.popErrorDialog("Khởi tạo app thất bại",e.toString());
         }
-        SwitchScreen(ManHinh.DAI_LY);
+
     }
 
     private void initScreens() throws IOException {
@@ -127,9 +128,23 @@ public class AdminController implements Initializable {
             SwitchScreen(ManHinh.TAI_KHOAN);
         });
     }
-
+    final PseudoClass selectedButton = PseudoClass.getPseudoClass("selected");
     public void SwitchScreen(ManHinh manHinhCode){
         //toggle all off
+
+        openBangDieuKhienButton.pseudoClassStateChanged(selectedButton, false);
+
+        openDaiLyButton.pseudoClassStateChanged(selectedButton, false);
+        openPhieuThuButton.pseudoClassStateChanged(selectedButton, false);
+
+        openPhieuNhapButton.pseudoClassStateChanged(selectedButton, false);
+        openPhieuXuatButton.pseudoClassStateChanged(selectedButton, false);
+        openKhoHangButton.pseudoClassStateChanged(selectedButton, false);
+
+        openNhanVienButton.pseudoClassStateChanged(selectedButton, false);
+        openQuyDinhButton.pseudoClassStateChanged(selectedButton, false);
+        openBaoCaoButton.pseudoClassStateChanged(selectedButton, false);
+
         manHinhDaiLyController.setVisibility(false);
         manHinhPhieuThuController.setVisibility(false);
         manHinhKhoHangController.setVisibility(false);
@@ -140,20 +155,50 @@ public class AdminController implements Initializable {
         manHinhTaiKhoanController.setVisibility(false);
       
         manHinhDieuKhienController.setVisibility(false);
+
         manHinhBaoCaoController.setVisibility(false);
 
         switch (manHinhCode){
-            case DAI_LY -> manHinhDaiLyController.setVisibility(true);
-            case PHIEU_THU -> manHinhPhieuThuController.setVisibility(true);
-            case KHO_HANG -> manHinhKhoHangController.setVisibility(true);
-            case NHAP -> manHinhPhieuNhapController.setVisibility(true);
-            case XUAT -> manHinhPhieuXuatController.setVisibility(true);
-            case NHAN_VIEN -> manHinhNhanVienController.setVisibility(true);
-            case QUY_DINH -> manHinhQuyDinhController.setVisibility(true);
-            case TAI_KHOAN -> manHinhTaiKhoanController.setVisibility(true);
+            case DAI_LY -> {
+                manHinhDaiLyController.setVisibility(true);
+                openDaiLyButton.pseudoClassStateChanged(selectedButton, true);
+            }
+            case PHIEU_THU -> {
+                manHinhPhieuThuController.setVisibility(true);
+                openPhieuThuButton.pseudoClassStateChanged(selectedButton, true);
+            }
+            case KHO_HANG -> {
+                manHinhKhoHangController.setVisibility(true);
+                openKhoHangButton.pseudoClassStateChanged(selectedButton, true);
+            }
+            case NHAP -> {
+                manHinhPhieuNhapController.setVisibility(true);
+                openPhieuNhapButton.pseudoClassStateChanged(selectedButton, true);
+            }
+            case XUAT -> {
+                manHinhPhieuXuatController.setVisibility(true);
+                openPhieuXuatButton.pseudoClassStateChanged(selectedButton, true);
+            }
+            case NHAN_VIEN -> {
+                manHinhNhanVienController.setVisibility(true);
+                openNhanVienButton.pseudoClassStateChanged(selectedButton, true);
+            }
+            case QUY_DINH -> {
+                manHinhQuyDinhController.setVisibility(true);
+                openQuyDinhButton.pseudoClassStateChanged(selectedButton, true);
+            }
+            case TAI_KHOAN -> {
+                manHinhTaiKhoanController.setVisibility(true);
+            }
             
-            case DIEU_KHIEN -> manHinhDieuKhienController.setVisibility(true);
-            case BAO_CAO -> manHinhBaoCaoController.setVisibility(true);
+            case DIEU_KHIEN -> {
+                manHinhDieuKhienController.setVisibility(true);
+                openBangDieuKhienButton.pseudoClassStateChanged(selectedButton, true);
+            }
+            case BAO_CAO -> {
+                manHinhBaoCaoController.setVisibility(true);
+                openBaoCaoButton.pseudoClassStateChanged(selectedButton, true);
+            }
         }
         currentManHinh = manHinhCode;
     }
@@ -165,7 +210,6 @@ public class AdminController implements Initializable {
     }
     public void setNhanvienLoggedIn(NhanVien nhanVienLoggedIn) {
         this.nhanVienLoggedIn = nhanVienLoggedIn;
-        userNameLabel.setText(nhanVienLoggedIn.getHoTen());
 
         manHinhPhieuThuController.setNhanVienLoggedIn(nhanVienLoggedIn);
         manHinhPhieuNhapController.setNhanVienLoggedIn(nhanVienLoggedIn);

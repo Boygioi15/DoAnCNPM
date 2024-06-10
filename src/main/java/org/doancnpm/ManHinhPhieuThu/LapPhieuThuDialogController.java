@@ -26,8 +26,8 @@ import java.util.ResourceBundle;
 import static org.doancnpm.Ultilities.MoneyFormatter.getLongValueFromTextField;
 
 public class LapPhieuThuDialogController implements Initializable {
-    @FXML private MFXTextField ngayLapPhieuTextField;
-    @FXML private MFXTextField nhanVienTextField;
+    @FXML private TextField ngayLapPhieuTextField;
+    @FXML private TextField nhanVienTextField;
     @FXML private SearchableComboBox<DaiLy> dlComboBox;
     @FXML private TextArea ghiChuTextArea;
     @FXML private TextField soTienThuTextField;

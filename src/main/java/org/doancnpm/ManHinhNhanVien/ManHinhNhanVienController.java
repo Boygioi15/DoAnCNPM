@@ -2,20 +2,27 @@ package org.doancnpm.ManHinhNhanVien;
 
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import javafx.animation.TranslateTransition;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
+import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -27,6 +34,7 @@ import org.doancnpm.DAO.NhanVienDAO;
 import org.doancnpm.DAO.QuanDAO;
 import org.doancnpm.Filters.NhanVienFilter;
 import org.doancnpm.Models.ChucVu;
+import org.doancnpm.Models.DaiLy;
 import org.doancnpm.Models.NhanVien;
 import org.doancnpm.Models.Quan;
 import org.doancnpm.Ultilities.DayFormat;
@@ -45,7 +53,7 @@ import java.util.Set;
 public class ManHinhNhanVienController implements Initializable {
 
     @FXML private Region manHinhNhanVien;
-    @FXML private Button refreshButton;
+    @FXML private Button filterButton;
     @FXML private MenuItem addDirectButton;
     @FXML private MenuItem addExcelButton;
     @FXML private MenuItem deleteSelectedButton;
@@ -54,7 +62,9 @@ public class ManHinhNhanVienController implements Initializable {
     @FXML private MFXTextField maNVTextField;
     @FXML private MFXTextField tenNVTextField;
     @FXML private MFXComboBox<ChucVu> chucVuComboBox;
-
+    @FXML private Region filterPane;
+    @FXML private Region filterPaneContainer;
+    @FXML private Button toggleFilterButton;
 
     @FXML private TableView mainTableView;
 
@@ -75,6 +85,8 @@ public class ManHinhNhanVienController implements Initializable {
     @FXML private Text luongText;
     @FXML private TextArea ghiChuTextArea;
 
+    @FXML private FlowPane emptySelectionPane;
+
     //model part
     private final ObservableList<NhanVien> dsNhanVien = FXCollections.observableArrayList();
     private final ObservableList<NhanVien> dsNhanVienFiltered = FXCollections.observableArrayList();
@@ -94,6 +106,7 @@ public class ManHinhNhanVienController implements Initializable {
         //init data
         updateListFromDatabase();
         initDetailPane();
+        initFilterPane();
     }
     public void setVisibility(boolean visibility){
         manHinhNhanVien.setVisible(visibility);
@@ -110,6 +123,15 @@ public class ManHinhNhanVienController implements Initializable {
         });
         mainTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, nhanVien) -> {
             UpdateDetailPane((NhanVien) nhanVien);
+        });
+        manHinhNhanVien.widthProperty().addListener(ob -> {
+            if(manHinhNhanVien.getWidth()>1030){
+                toggleDetailButton.setDisable(false);
+                OpenDetailPanel();
+            }else{
+                toggleDetailButton.setDisable(true);
+                CloseDetailPanel();
+            }
         });
     }
     private void initTableView(){
@@ -135,9 +157,37 @@ public class ManHinhNhanVienController implements Initializable {
             return new SimpleObjectProperty<>(chucVu.getTenCV());
         });
         //selected collumn:
-        TableColumn<NhanVien, Boolean> selectedCol = new TableColumn<>( "Selected" );
+        TableColumn<NhanVien, Boolean> selectedCol = new TableColumn<>( );
+        HBox headerBox = new HBox();
+        CheckBox headerCheckBox = new CheckBox();
+        headerBox.getChildren().add(headerCheckBox);
+        headerBox.setAlignment(Pos.CENTER); // Center align the content
+        headerCheckBox.setDisable(true);
+        selectedCol.setGraphic(headerBox);
+        selectedCol.setSortable(false);
         selectedCol.setCellValueFactory( new PropertyValueFactory<>( "selected" ));
-        selectedCol.setCellFactory( tc -> new CheckBoxTableCell<>());
+        selectedCol.setCellFactory(new Callback<TableColumn<NhanVien, Boolean>, TableCell<NhanVien, Boolean>>() {
+            @Override
+            public TableCell<NhanVien, Boolean> call(TableColumn<NhanVien, Boolean> param) {
+                TableCell<NhanVien, Boolean> cell = new TableCell<NhanVien, Boolean>() {
+                    @Override
+                    protected void updateItem(Boolean item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty || item == null) {
+                            setGraphic(null);
+                        } else {
+                            CheckBox checkBox = new CheckBox();
+                            checkBox.selectedProperty().bindBidirectional(((NhanVien) getTableRow().getItem()).selectedProperty());
+                            checkBox.getStyleClass().add("cell-center");
+                            setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+                            setGraphic(checkBox);
+                        }
+                    }
+                };
+                cell.getStyleClass().add("cell-center");
+                return cell;
+            }
+        });
 
         //action column
         TableColumn actionCol = new TableColumn("Action");
@@ -148,8 +198,8 @@ public class ManHinhNhanVienController implements Initializable {
                     @Override
                     public TableCell call(final TableColumn<NhanVien, String> param) {
                         final TableCell<NhanVien, String> cell = new TableCell<NhanVien, String>() {
-                            final Button suaBtn = new Button("Sửa");
-                            final Button xoaBtn = new Button("Xóa");
+                            final Button suaBtn = new Button();
+                            final Button xoaBtn = new Button();
 
                             @Override
                             public void updateItem(String item, boolean empty) {
@@ -159,6 +209,19 @@ public class ManHinhNhanVienController implements Initializable {
                                     setText(null);
                                 }
                                 else {
+                                    Image trashCan = new Image(getClass().getResourceAsStream("/image/trash_can.png"));
+                                    ImageView trashImage = new ImageView(trashCan);
+                                    Image edit = new Image(getClass().getResourceAsStream("/image/edit.png"));
+                                    ImageView editImage = new ImageView(edit);
+                                    trashImage.setFitWidth(20);
+                                    trashImage.setFitHeight(20);
+
+                                    editImage.setFitWidth(20);
+                                    editImage.setFitHeight(20);
+
+                                    xoaBtn.setGraphic(trashImage);
+                                    suaBtn.setGraphic(editImage);
+
                                     xoaBtn.setOnAction(event -> {
                                         NhanVien nv = getTableView().getItems().get(getIndex());
                                         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -229,13 +292,22 @@ public class ManHinhNhanVienController implements Initializable {
         chucVuCol.setResizable(false);
         actionCol.setResizable(false);
 
+        maNVCol.getStyleClass().add("column-header-left");
+        tenNVCol.getStyleClass().add("column-header-left");
+        gioiTinhCol.getStyleClass().add("column-header-left");
+        luongCol.getStyleClass().add("column-header-left");
+        chucVuCol.getStyleClass().add("column-header-left");
+
+        selectedCol.getStyleClass().add("column-header-center");
+        actionCol.getStyleClass().add("column-header-center");
+
         mainTableView.widthProperty().addListener(ob -> {
             double width = mainTableView.getWidth();
             selectedCol.setPrefWidth(width*0.1);
-            maNVCol.setPrefWidth(width*0.1);
-            tenNVCol.setPrefWidth(width*0.3);
+            maNVCol.setPrefWidth(width*0.13);
+            tenNVCol.setPrefWidth(width*0.24);
             gioiTinhCol.setPrefWidth(width*0.1);
-            chucVuCol.setPrefWidth(width*0.1);
+            chucVuCol.setPrefWidth(width*0.13);
             luongCol.setPrefWidth(width*0.15);
             actionCol.setPrefWidth(width*0.15);
         });
@@ -245,9 +317,6 @@ public class ManHinhNhanVienController implements Initializable {
     private void initEvent(){
         addDirectButton.setOnAction(_ -> {
             OpenDirectAddDialog();
-        });
-        refreshButton.setOnAction(_ -> {
-            resetFilter();
         });
         deleteSelectedButton.setOnAction(_ -> DeleteSelectedRow());
 
@@ -263,6 +332,14 @@ public class ManHinhNhanVienController implements Initializable {
             }
             else{
                 OpenDetailPanel();
+            }
+        });
+        toggleFilterButton.setOnAction(ob ->{
+            if(filterPane.isVisible()){
+                CloseFilterPanel();
+            }
+            else{
+                OpenFilterPanel();
             }
         });
     }
@@ -320,14 +397,38 @@ public class ManHinhNhanVienController implements Initializable {
             PopDialog.popErrorDialog("Lấy dữ liệu chức vụ thất bại",e.getMessage());
         }
     }
+    private void initFilterPane(){
+        Rectangle clip = new Rectangle();
+        clip.widthProperty().bind(filterPaneContainer.widthProperty());
+        clip.heightProperty().bind(filterPaneContainer.heightProperty());
+        filterPaneContainer.setClip(clip);
+    }
+    public void OpenFilterPanel(){
+        TranslateTransition tt = new TranslateTransition(Duration.seconds(0.2), filterPane);
+        tt.setToX(0);
+        tt.play();
+        filterPane.setVisible(true);
+        tt.setOnFinished(e -> {
+        });
+    }
+    public void CloseFilterPanel(){
+        TranslateTransition tt = new TranslateTransition(Duration.seconds(0.2), filterPane);
+        tt.setToX(-filterPane.getWidth());
+        tt.play();
+
+        tt.setOnFinished(e -> {
+            filterPane.setVisible(false);
+        });
+    }
 
     //detail pane
     public void UpdateDetailPane(NhanVien nhanVien){
         if(nhanVien==null){
-            CloseDetailPanel();
+            emptySelectionPane.setVisible(true);
             return;
         }
         try{
+            emptySelectionPane.setVisible(false);
             ChucVu chucVu = ChucVuDAO.getInstance().QueryID(nhanVien.getMaChucVu());
 
             tenNVText.setText(nhanVien.getHoTen());
@@ -344,13 +445,11 @@ public class ManHinhNhanVienController implements Initializable {
 
     }
     public void OpenDetailPanel(){
-        toggleDetailButton.setText(">");
         masterDetailPane.setShowDetailNode(true);
 
     }
     public void CloseDetailPanel(){
         masterDetailPane.setShowDetailNode(false);
-        toggleDetailButton.setText("<");
     }
 
 

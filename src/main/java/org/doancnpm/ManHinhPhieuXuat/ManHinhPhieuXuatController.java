@@ -1,21 +1,28 @@
 package org.doancnpm.ManHinhPhieuXuat;
 
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import javafx.animation.TranslateTransition;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
+import javafx.util.Duration;
 import org.controlsfx.control.MasterDetailPane;
 import org.doancnpm.DAO.*;
 import org.doancnpm.Filters.PhieuXuatFilter;
@@ -32,13 +39,16 @@ import java.util.ResourceBundle;
 
 public class ManHinhPhieuXuatController implements Initializable {
 
-    @FXML private Node manHinhPhieuXuat;
+    @FXML private Region manHinhPhieuXuat;
     @FXML private TableView mainTableView;
     @FXML private TableView detailTableView;
-    @FXML private Button refreshButton;
+    @FXML private Button filterButton;
     @FXML private MFXTextField dlTextField;
     @FXML private MFXTextField maPXTextField;
     @FXML private MFXTextField nvTextField;
+    @FXML private Region filterPane;
+    @FXML private Region filterPaneContainer;
+    @FXML private Button toggleFilterButton;
 
     @FXML private MenuItem addExcelButton;
     @FXML private MenuItem addDirectButton;
@@ -55,6 +65,8 @@ public class ManHinhPhieuXuatController implements Initializable {
     @FXML private Region masterPane;
     @FXML private Button toggleDetailButton;
     @FXML private Region detailPane;
+
+    @FXML private FlowPane emptySelectionPane;
 
     private final ObservableList<PhieuXuat> dsPhieuXuat = FXCollections.observableArrayList();
     private final ObservableList<PhieuXuat> dsPhieuXuatFiltered = FXCollections.observableArrayList();
@@ -73,6 +85,8 @@ public class ManHinhPhieuXuatController implements Initializable {
 
         updateListFromDatabase();
         initDetailPane();
+        initFilterPane();
+
         //init data
     }
     public void setVisibility(boolean visibility) {
@@ -92,6 +106,15 @@ public class ManHinhPhieuXuatController implements Initializable {
         });
         mainTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, phieuXuat) -> {
             UpdateDetailPane((PhieuXuat) phieuXuat);
+        });
+        manHinhPhieuXuat.widthProperty().addListener(ob -> {
+            if(manHinhPhieuXuat.getWidth()>1030){
+                toggleDetailButton.setDisable(false);
+                OpenDetailPanel();
+            }else{
+                toggleDetailButton.setDisable(true);
+                CloseDetailPanel();
+            }
         });
     }
     private void initDetailTableView(){
@@ -153,9 +176,6 @@ public class ManHinhPhieuXuatController implements Initializable {
         addDirectButton.setOnAction(_ -> {
             OpenDirectAddDialog();
         });
-        refreshButton.setOnAction(_ -> {
-            resetFilter();
-        });
         addExcelButton.setOnAction(_ ->{
             exportDialog();
         });
@@ -165,6 +185,14 @@ public class ManHinhPhieuXuatController implements Initializable {
             }
             else{
                 OpenDetailPanel();
+            }
+        });
+        toggleFilterButton.setOnAction(ob ->{
+            if(filterPane.isVisible()){
+                CloseFilterPanel();
+            }
+            else{
+                OpenFilterPanel();
             }
         });
     }
@@ -193,21 +221,49 @@ public class ManHinhPhieuXuatController implements Initializable {
     }
     private void initMainTableView() {
         // Tạo các cột cho TableView
-        TableColumn<PhieuXuat, String> maPXCol = new TableColumn<>("Mã Phiếu Xuất");
+        TableColumn<PhieuXuat, String> maPXCol = new TableColumn<>("Mã");
         maPXCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getMaPhieuXuat()));
 
         TableColumn<PhieuXuat, String> maNVCol = new TableColumn<>("Nhân viên");
         maNVCol.setCellValueFactory(new PropertyValueFactory<>("maNhanVien"));
 
-        TableColumn<PhieuXuat, Integer> nccCol = new TableColumn<>("Đại lý");
-        nccCol.setCellValueFactory(new PropertyValueFactory<>("maDaiLy"));
+        TableColumn<PhieuXuat, Integer> dlCol = new TableColumn<>("Đại lý");
+        dlCol.setCellValueFactory(new PropertyValueFactory<>("maDaiLy"));
 
         TableColumn<PhieuXuat, Integer> tongTienCol = new TableColumn<>("Tổng tiền");
         tongTienCol.setCellValueFactory(new PropertyValueFactory<>("tongTien"));
 
-        TableColumn<PhieuXuat, Boolean> selectedCol = new TableColumn<>("Selected");
-        selectedCol.setCellValueFactory(new PropertyValueFactory<>("selected"));
-        selectedCol.setCellFactory(tc -> new CheckBoxTableCell<>());
+        TableColumn<PhieuXuat, Boolean> selectedCol = new TableColumn<>( );
+        HBox headerBox = new HBox();
+        CheckBox headerCheckBox = new CheckBox();
+        headerBox.getChildren().add(headerCheckBox);
+        headerBox.setAlignment(Pos.CENTER); // Center align the content
+        headerCheckBox.setDisable(true);
+        selectedCol.setGraphic(headerBox);
+        selectedCol.setSortable(false);
+        selectedCol.setCellValueFactory( new PropertyValueFactory<>( "selected" ));
+        selectedCol.setCellFactory(new Callback<TableColumn<PhieuXuat, Boolean>, TableCell<PhieuXuat, Boolean>>() {
+            @Override
+            public TableCell<PhieuXuat, Boolean> call(TableColumn<PhieuXuat, Boolean> param) {
+                TableCell<PhieuXuat, Boolean> cell = new TableCell<PhieuXuat, Boolean>() {
+                    @Override
+                    protected void updateItem(Boolean item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty || item == null) {
+                            setGraphic(null);
+                        } else {
+                            CheckBox checkBox = new CheckBox();
+                            checkBox.selectedProperty().bindBidirectional(((PhieuXuat) getTableRow().getItem()).selectedProperty());
+                            checkBox.getStyleClass().add("cell-center");
+                            setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+                            setGraphic(checkBox);
+                        }
+                    }
+                };
+                cell.getStyleClass().add("cell-center");
+                return cell;
+            }
+        });
 
         //action column
         TableColumn actionCol = new TableColumn("Action");
@@ -218,8 +274,8 @@ public class ManHinhPhieuXuatController implements Initializable {
                     @Override
                     public TableCell call(final TableColumn<PhieuXuat, String> param) {
                         final TableCell<PhieuXuat, String> cell = new TableCell<PhieuXuat, String>() {
-                            final Button suaBtn = new Button("Sửa");
-                            final Button xuatBtn = new Button("Xuất");
+                            final Button suaBtn = new Button();
+                            final Button xuatBtn = new Button();
 
                             @Override
                             public void updateItem(String item, boolean empty) {
@@ -228,6 +284,19 @@ public class ManHinhPhieuXuatController implements Initializable {
                                     setGraphic(null);
                                     setText(null);
                                 } else {
+                                    Image edit = new Image(getClass().getResourceAsStream("/image/edit.png"));
+                                    ImageView editImage = new ImageView(edit);
+                                    Image xuat = new Image(getClass().getResourceAsStream("/image/exportPDF.png"));
+                                    ImageView xuatImage = new ImageView(xuat);
+                                    editImage.setFitWidth(20);
+                                    editImage.setFitHeight(20);
+
+                                    xuatImage.setFitWidth(20);
+                                    xuatImage.setFitHeight(20);
+
+                                    suaBtn.setGraphic(editImage);
+                                    xuatBtn.setGraphic(xuatImage);
+
                                     suaBtn.setOnAction(_ -> {
                                         try {
                                             PhieuXuat phieuXuat = getTableView().getItems().get(getIndex());
@@ -254,36 +323,69 @@ public class ManHinhPhieuXuatController implements Initializable {
 
         actionCol.setCellFactory(cellFactory);
 
+
         // Thêm các cột vào TableView
         mainTableView.getColumns().addAll(
                 selectedCol,
                 maPXCol,
                 maNVCol,
-                nccCol,
+                dlCol,
                 tongTienCol,
                 actionCol
         );
+
+        maPXCol.getStyleClass().add("column-header-left");
+        maNVCol.getStyleClass().add("column-header-left");
+        dlCol.getStyleClass().add("column-header-left");
+        tongTienCol.getStyleClass().add("column-header-left");
+
+        selectedCol.getStyleClass().add("column-header-center");
+        actionCol.getStyleClass().add("column-header-center");
         mainTableView.setEditable(true);
         mainTableView.widthProperty().addListener(ob -> {
             double width = mainTableView.getWidth();
             selectedCol.setPrefWidth(width*0.1);
-            maPXCol.setPrefWidth(width*0.1);
-            maNVCol.setPrefWidth(width*0.1);
-            nccCol.setPrefWidth(width*0.3);
-            tongTienCol.setPrefWidth(width*0.2);
-            actionCol.setPrefWidth(width*0.2);
+            maPXCol.setPrefWidth(width*0.13);
+            maNVCol.setPrefWidth(width*0.13);
+            dlCol.setPrefWidth(width*0.24);
+            tongTienCol.setPrefWidth(width*0.25);
+            actionCol.setPrefWidth(width*0.15);
         });
         mainTableView.setEditable( true );
         mainTableView.setPrefWidth(1100);
 
     }
 
+    private void initFilterPane(){
+        Rectangle clip = new Rectangle();
+        clip.widthProperty().bind(filterPaneContainer.widthProperty());
+        clip.heightProperty().bind(filterPaneContainer.heightProperty());
+        filterPaneContainer.setClip(clip);
+    }
+    public void OpenFilterPanel(){
+        TranslateTransition tt = new TranslateTransition(Duration.seconds(0.2), filterPane);
+        tt.setToX(0);
+        tt.play();
+        filterPane.setVisible(true);
+        tt.setOnFinished(e -> {
+        });
+    }
+    public void CloseFilterPanel(){
+        TranslateTransition tt = new TranslateTransition(Duration.seconds(0.2), filterPane);
+        tt.setToX(-filterPane.getWidth());
+        tt.play();
+
+        tt.setOnFinished(e -> {
+            filterPane.setVisible(false);
+        });
+    }
     //detail pane
     public void UpdateDetailPane(PhieuXuat phieuXuat){
         if(phieuXuat==null){
-            CloseDetailPanel();
+            emptySelectionPane.setVisible(true);
             return;
         }
+        emptySelectionPane.setVisible(false);
         maPXText.setText(phieuXuat.getMaPhieuXuat());
         try{
             NhanVien nv = NhanVienDAO.getInstance().QueryID(phieuXuat.getMaNhanVien());
@@ -308,13 +410,11 @@ public class ManHinhPhieuXuatController implements Initializable {
         catch(SQLException _){}
     }
     public void OpenDetailPanel(){
-        toggleDetailButton.setText(">");
         masterDetailPane.setShowDetailNode(true);
 
     }
     public void CloseDetailPanel(){
         masterDetailPane.setShowDetailNode(false);
-        toggleDetailButton.setText("<");
     }
 
     //import - export

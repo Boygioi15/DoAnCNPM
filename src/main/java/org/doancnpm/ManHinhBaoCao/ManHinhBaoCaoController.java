@@ -8,6 +8,8 @@ import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import org.doancnpm.Models.BaoCaoCongNo;
@@ -23,13 +25,13 @@ public class ManHinhBaoCaoController implements Initializable {
     @FXML
     private LineChart<String, Number> mixlineChart;
     @FXML
-    private MFXComboBox<Integer> CbYear;
+    private ComboBox<Integer> CbYear;
     @FXML
-    private Accordion accorditionDoanhSo;
+    private VBox accorditionDoanhSo;
     @FXML
-    private Accordion accorditionCongNo;
+    private VBox accorditionCongNo;
     @FXML
-    Node manHinhBaoCao;
+    Region manHinhBaoCao;
     public void setVisibility(boolean visibility) {
         manHinhBaoCao.setVisible(visibility);
     }
@@ -57,7 +59,7 @@ public class ManHinhBaoCaoController implements Initializable {
             CbYear.getItems().add(year);
         }
 
-        CbYear.setText(String.valueOf(currentYear));
+        CbYear.setValue(currentYear);
 
         CbYear.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
@@ -70,10 +72,10 @@ public class ManHinhBaoCaoController implements Initializable {
     }
 
     private void initAccordion(int year) {
-        accorditionDoanhSo.getPanes().clear();
-        accorditionDoanhSo.getPanes().addAll(baoCaoDoanhSoController.createTitledPanesForMonths(year));
-        accorditionCongNo.getPanes().clear();
-        accorditionCongNo.getPanes().addAll(baoCaoCongNoController.createTitledPanesForMonths(year));
+        accorditionDoanhSo.getChildren().clear();
+        accorditionDoanhSo.getChildren().addAll(baoCaoDoanhSoController.createTitledPanesForMonths(year));
+        accorditionCongNo.getChildren().clear();
+        accorditionCongNo.getChildren().addAll(baoCaoCongNoController.createTitledPanesForMonths(year));
     }
 
 

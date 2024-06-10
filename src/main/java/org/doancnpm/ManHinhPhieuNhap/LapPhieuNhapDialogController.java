@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class LapPhieuNhapDialogController implements Initializable {
-    @FXML private MFXTextField ngayLapPhieuTextField;
-    @FXML private MFXTextField nhanVienTextField;
+    @FXML private TextField ngayLapPhieuTextField;
+    @FXML private TextField nhanVienTextField;
     @FXML private TextField nccTextField;
     @FXML Text tongTienText;
 

@@ -31,8 +31,6 @@ public class ManHinhDieuKhienController implements Initializable {
     @FXML
     private PieChart tonkhoPieChart;
     @FXML
-    private StackPane pieChartContainer; // Thêm StackPane để chứa PieChart và Circle
-    @FXML
     private Text nvText, dlText, tongGiaTriKhoHangText, slMatHangText, soLuongHangTonKhoText;
     @FXML
     Node manHinhDieuKhien;
@@ -130,6 +128,7 @@ public class ManHinhDieuKhienController implements Initializable {
         tonkhoPieChart.setTitle("Kho hàng");
         tonkhoPieChart.setLabelsVisible(false);
 
+        /*
         // Thêm hình tròn vào giữa PieChart để tạo DonutChart
         Circle innerCircle = new Circle();
         innerCircle.setFill(Color.WHITE); // Màu trắng cho hình tròn bên trong
@@ -137,6 +136,7 @@ public class ManHinhDieuKhienController implements Initializable {
 
         // Thêm PieChart và hình tròn vào StackPane
         pieChartContainer.getChildren().addAll(innerCircle);
+         */
     }
 
     public void initDataShow() {

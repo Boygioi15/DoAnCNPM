@@ -25,7 +25,6 @@ public class TiepNhanDaiLyDialogController implements Initializable {
 
     @FXML private SearchableComboBox<Quan> quanComboBox;
     @FXML private SearchableComboBox<LoaiDaiLy> loaiDaiLyComboBox;
-    @FXML private TextField ngayTiepNhanTextField;
     @FXML private TextField tenDaiLyTextField;
     @FXML private TextField diaChiTextField;
     @FXML private TextField dienThoaiTextField;
@@ -36,13 +35,8 @@ public class TiepNhanDaiLyDialogController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         displayDataInCb();
-        initDate();
     }
 
-    private void initDate() {
-        Date ngayTiepNhan = new Date(System.currentTimeMillis());
-        ngayTiepNhanTextField.setText(DayFormat.GetDayStringFormatted(ngayTiepNhan));
-    }
     public void setInitialValue(DaiLy daiLy){
         if(daiLy==null){
             return;
@@ -61,7 +55,6 @@ public class TiepNhanDaiLyDialogController implements Initializable {
         dienThoaiTextField.setText(daiLy.getDienThoai());
         emailTextField.setText(daiLy.getEmail());
         ghiChuTextArea.setText(daiLy.getGhiChu());
-        ngayTiepNhanTextField.setText(DayFormat.GetDayStringFormatted(daiLy.getNgayTiepNhan()));
     }
     private void displayDataInCb() {
         try {

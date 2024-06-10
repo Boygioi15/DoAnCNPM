@@ -31,7 +31,7 @@ public class TiepNhanNhanVienDialog extends Dialog<NhanVien>  {
     public TiepNhanNhanVienDialog(NhanVien initialValue) throws IOException {
         super();
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/Main/ManHinhNhanVien/TiepNhanNhanVien.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/Main/ManHinhNhanVien/TiepNhanNhanVien2.fxml"));
 
         ButtonType saveButtonType;
         if(initialValue==null){

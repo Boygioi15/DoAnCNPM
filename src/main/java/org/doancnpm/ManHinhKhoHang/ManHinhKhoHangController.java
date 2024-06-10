@@ -2,6 +2,7 @@ package org.doancnpm.ManHinhKhoHang;
 
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import javafx.animation.TranslateTransition;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -9,16 +10,22 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 
 import javafx.scene.layout.Region;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
 
+import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -46,12 +53,16 @@ import java.util.ResourceBundle;
 
 public class ManHinhKhoHangController implements Initializable {
     @FXML private Region manHinhKhoHang;
+    @FXML private Button filterButton;
+
     @FXML private TableView mainTableView;
-    @FXML private Button refreshButton;
     @FXML private MFXTextField maMHTextField;
     @FXML private MFXTextField tenMHTextField;
     @FXML private MFXComboBox<DonViTinh> dvtComboBox;
     @FXML private MFXComboBox<String> soLuongComboBox;
+    @FXML private Region filterPane;
+    @FXML private Region filterPaneContainer;
+    @FXML private Button toggleFilterButton;
 
     @FXML private MenuItem addDirectButton;
     @FXML private MenuItem addExcelButton;
@@ -63,6 +74,8 @@ public class ManHinhKhoHangController implements Initializable {
     @FXML private Text donGiaXuatText;
     @FXML private Text soLuongText;
     @FXML private TextArea ghiChuTextArea;
+
+    @FXML private FlowPane emptySelectionPane;
 
     @FXML private MasterDetailPane masterDetailPane;
 
@@ -87,6 +100,8 @@ public class ManHinhKhoHangController implements Initializable {
 
         updateListFromDatabase();
         initDetailPane();
+
+        initFilterPane();
         //init data
     }
     public void setVisibility(boolean visibility) {
@@ -107,14 +122,22 @@ public class ManHinhKhoHangController implements Initializable {
         mainTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, matHang) -> {
             UpdateDetailPane((MatHang) matHang);
         });
+
+        manHinhKhoHang.widthProperty().addListener(ob -> {
+            if(manHinhKhoHang.getWidth()>1030){
+                toggleDetailButton.setDisable(false);
+                OpenDetailPanel();
+            }else{
+                toggleDetailButton.setDisable(true);
+                CloseDetailPanel();
+            }
+        });
     }
     private void initEvent() {
         addDirectButton.setOnAction(_ -> {
             OpenDirectAddDialog();
         });
-        refreshButton.setOnAction(_ -> {
-            resetFilter();
-        });
+
         addExcelButton.setOnAction(_ ->{
             exportDialog();
         });
@@ -124,6 +147,14 @@ public class ManHinhKhoHangController implements Initializable {
             }
             else{
                 OpenDetailPanel();
+            }
+        });
+        toggleFilterButton.setOnAction(ob ->{
+            if(filterPane.isVisible()){
+                CloseFilterPanel();
+            }
+            else{
+                OpenFilterPanel();
             }
         });
     }
@@ -196,12 +227,18 @@ public class ManHinhKhoHangController implements Initializable {
         }
         soLuongComboBox.getItems().addAll("Hết hàng", "Còn hàng");
     }
+    private void initFilterPane(){
+        Rectangle clip = new Rectangle();
+        clip.widthProperty().bind(filterPaneContainer.widthProperty());
+        clip.heightProperty().bind(filterPaneContainer.heightProperty());
+        filterPaneContainer.setClip(clip);
+    }
     private void initTableView() {
         // Tạo các cột cho TableView
-        TableColumn<MatHang, String> maMHCol = new TableColumn<>("Mã mặt hàng");
+        TableColumn<MatHang, String> maMHCol = new TableColumn<>("Mã");
         maMHCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getMaMatHang()));
 
-        TableColumn<MatHang, String> tenMHCol = new TableColumn<>("Mã mặt hàng");
+        TableColumn<MatHang, String> tenMHCol = new TableColumn<>("Tên mặt hàng");
         tenMHCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getTenMatHang()));
 
         TableColumn<MatHang, String> dvtCol = new TableColumn<>("Đơn vị tính");
@@ -219,9 +256,37 @@ public class ManHinhKhoHangController implements Initializable {
         TableColumn<MatHang, Integer> soLuongCol = new TableColumn<>("Số lượng");
         soLuongCol.setCellValueFactory(new PropertyValueFactory<>("soLuong"));
 
-        TableColumn<PhieuThu, Boolean> selectedCol = new TableColumn<>("Selected");
-        selectedCol.setCellValueFactory(new PropertyValueFactory<>("selected"));
-        selectedCol.setCellFactory(tc -> new CheckBoxTableCell<>());
+        TableColumn<MatHang, Boolean> selectedCol = new TableColumn<>( );
+        HBox headerBox = new HBox();
+        CheckBox headerCheckBox = new CheckBox();
+        headerBox.getChildren().add(headerCheckBox);
+        headerBox.setAlignment(Pos.CENTER); // Center align the content
+        headerCheckBox.setDisable(true);
+        selectedCol.setGraphic(headerBox);
+        selectedCol.setSortable(false);
+        selectedCol.setCellValueFactory( new PropertyValueFactory<>( "selected" ));
+        selectedCol.setCellFactory(new Callback<TableColumn<MatHang, Boolean>, TableCell<MatHang, Boolean>>() {
+            @Override
+            public TableCell<MatHang, Boolean> call(TableColumn<MatHang, Boolean> param) {
+                TableCell<MatHang, Boolean> cell = new TableCell<MatHang, Boolean>() {
+                    @Override
+                    protected void updateItem(Boolean item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty || item == null) {
+                            setGraphic(null);
+                        } else {
+                            CheckBox checkBox = new CheckBox();
+                            checkBox.selectedProperty().bindBidirectional(((MatHang) getTableRow().getItem()).selectedProperty());
+                            checkBox.getStyleClass().add("cell-center");
+                            setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+                            setGraphic(checkBox);
+                        }
+                    }
+                };
+                cell.getStyleClass().add("cell-center");
+                return cell;
+            }
+        });
 
         //action column
         TableColumn actionCol = new TableColumn("Action");
@@ -232,8 +297,8 @@ public class ManHinhKhoHangController implements Initializable {
                     @Override
                     public TableCell call(final TableColumn<MatHang, String> param) {
                         final TableCell<MatHang, String> cell = new TableCell<MatHang, String>() {
-                            final Button suaBtn = new javafx.scene.control.Button("Sửa");
-                            final Button xoaBtn = new javafx.scene.control.Button("Xóa");
+                            final Button suaBtn = new javafx.scene.control.Button();
+                            final Button xoaBtn = new javafx.scene.control.Button();
 
                             @Override
                             public void updateItem(String item, boolean empty) {
@@ -243,6 +308,19 @@ public class ManHinhKhoHangController implements Initializable {
                                     setText(null);
                                 }
                                 else {
+                                    Image trashCan = new Image(getClass().getResourceAsStream("/image/trash_can.png"));
+                                    ImageView trashImage = new ImageView(trashCan);
+                                    Image edit = new Image(getClass().getResourceAsStream("/image/edit.png"));
+                                    ImageView editImage = new ImageView(edit);
+                                    trashImage.setFitWidth(20);
+                                    trashImage.setFitHeight(20);
+
+                                    editImage.setFitWidth(20);
+                                    editImage.setFitHeight(20);
+
+                                    xoaBtn.setGraphic(trashImage);
+                                    suaBtn.setGraphic(editImage);
+
                                     xoaBtn.setOnAction(event -> {
                                         MatHang mh = getTableView().getItems().get(getIndex());
                                         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -256,7 +334,7 @@ public class ManHinhKhoHangController implements Initializable {
                                                 PopDialog.popSuccessDialog("Xóa mặt hàng "+ mh.getTenMatHang() + " thành công");
                                             }
                                             catch (SQLException e) {
-                                                PopDialog.popErrorDialog("Xóa mặt hàng "+ mh.getTenMatHang() + " thành công",e.getMessage());
+                                                PopDialog.popErrorDialog("Xóa mặt hàng "+ mh.getTenMatHang() + " thất bại",e.getMessage());
                                             }
                                         }
                                     });
@@ -307,15 +385,25 @@ public class ManHinhKhoHangController implements Initializable {
                 soLuongCol,
                 actionCol
         );
+
+        maMHCol.getStyleClass().add("column-header-left");
+        tenMHCol.getStyleClass().add("column-header-left");
+        dvtCol.getStyleClass().add("column-header-left");
+        donGiaNhapCol.getStyleClass().add("column-header-left");
+        soLuongCol.getStyleClass().add("column-header-left");
+
+        selectedCol.getStyleClass().add("column-header-center");
+        actionCol.getStyleClass().add("column-header-center");
+
         mainTableView.setEditable(true);
         mainTableView.widthProperty().addListener(ob -> {
             double width = mainTableView.getWidth();
             selectedCol.setPrefWidth(width*0.1);
-            maMHCol.setPrefWidth(width*0.1);
-            dvtCol.setPrefWidth(width*0.1);
-            tenMHCol.setPrefWidth(width*0.3);
+            maMHCol.setPrefWidth(width*0.12);
+            dvtCol.setPrefWidth(width*0.12);
+            tenMHCol.setPrefWidth(width*0.24);
             donGiaNhapCol.setPrefWidth(width*0.15);
-            soLuongCol.setPrefWidth(width*0.1);
+            soLuongCol.setPrefWidth(width*0.12);
             actionCol.setPrefWidth(width*0.15);
         });
         mainTableView.setEditable( true );
@@ -326,9 +414,10 @@ public class ManHinhKhoHangController implements Initializable {
     //detail pane
     public void UpdateDetailPane(MatHang matHang){
         if(matHang==null){
-            CloseDetailPanel();
+            emptySelectionPane.setVisible(true);
             return;
         }
+        emptySelectionPane.setVisible(false);
         maMHText.setText(matHang.getMaMatHang());
         tenMHText.setText(matHang.getTenMatHang());
         try{
@@ -342,13 +431,29 @@ public class ManHinhKhoHangController implements Initializable {
         catch (SQLException _){}
     }
     public void OpenDetailPanel(){
-        toggleDetailButton.setText(">");
         masterDetailPane.setShowDetailNode(true);
 
     }
     public void CloseDetailPanel(){
         masterDetailPane.setShowDetailNode(false);
-        toggleDetailButton.setText("<");
+    }
+
+    public void OpenFilterPanel(){
+        TranslateTransition tt = new TranslateTransition(Duration.seconds(0.2), filterPane);
+        tt.setToX(0);
+        tt.play();
+        filterPane.setVisible(true);
+        tt.setOnFinished(e -> {
+        });
+    }
+    public void CloseFilterPanel(){
+        TranslateTransition tt = new TranslateTransition(Duration.seconds(0.2), filterPane);
+        tt.setToX(-filterPane.getWidth());
+        tt.play();
+
+        tt.setOnFinished(e -> {
+            filterPane.setVisible(false);
+        });
     }
 
     //import - export

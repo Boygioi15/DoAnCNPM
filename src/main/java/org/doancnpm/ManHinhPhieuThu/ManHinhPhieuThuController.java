@@ -1,22 +1,29 @@
 package org.doancnpm.ManHinhPhieuThu;
 
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import javafx.animation.TranslateTransition;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 
 import javafx.scene.layout.Region;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
 
+import javafx.util.Duration;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -46,12 +53,16 @@ import java.util.Set;
 
 public class ManHinhPhieuThuController implements Initializable {
 
-    @FXML private Node manHinhPhieuThu;
+    @FXML private Region manHinhPhieuThu;
     @FXML private TableView mainTableView;
-    @FXML private Button refreshButton;
+
     @FXML private MFXTextField maPhieuThuTextField;
     @FXML private MFXTextField maDaiLyTextField;
     @FXML private MFXTextField maNhanVienTextField;
+
+    @FXML private Region filterPane;
+    @FXML private Region filterPaneContainer;
+    @FXML private Button toggleFilterButton;
 
     @FXML private MenuItem addExcelButton;
     @FXML private MenuItem addDirectButton;
@@ -71,6 +82,8 @@ public class ManHinhPhieuThuController implements Initializable {
     @FXML private Button toggleDetailButton;
     @FXML private Region detailPane;
 
+    @FXML private FlowPane emptySelectionPane;
+
     private final ObservableList<PhieuThu> dsPhieuThu = FXCollections.observableArrayList();
     private final ObservableList<PhieuThu> dsPhieuThuFiltered = FXCollections.observableArrayList();
     private final PhieuThuFilter filter = new PhieuThuFilter();
@@ -88,6 +101,7 @@ public class ManHinhPhieuThuController implements Initializable {
         updateListFromDatabase();
         initDetailPane();
         //init data
+        initFilterPane();
     }
     public void setVisibility(boolean visibility) {
         manHinhPhieuThu.setVisible(visibility);
@@ -107,13 +121,20 @@ public class ManHinhPhieuThuController implements Initializable {
         mainTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, phieuThu) -> {
             UpdateDetailPane((PhieuThu) phieuThu);
         });
+
+        manHinhPhieuThu.widthProperty().addListener(ob -> {
+            if(manHinhPhieuThu.getWidth()>1030){
+                toggleDetailButton.setDisable(false);
+                OpenDetailPanel();
+            }else{
+                toggleDetailButton.setDisable(true);
+                CloseDetailPanel();
+            }
+        });
     }
     private void initEvent() {
         addDirectButton.setOnAction(_ -> {
             OpenDirectAddDialog();
-        });
-        refreshButton.setOnAction(_ -> {
-            resetFilter();
         });
         addExcelButton.setOnAction(_ ->{
             exportDialog();
@@ -124,6 +145,14 @@ public class ManHinhPhieuThuController implements Initializable {
             }
             else{
                 OpenDetailPanel();
+            }
+        });
+        toggleFilterButton.setOnAction(ob ->{
+            if(filterPane.isVisible()){
+                CloseFilterPanel();
+            }
+            else{
+                OpenFilterPanel();
             }
         });
     }
@@ -162,7 +191,7 @@ public class ManHinhPhieuThuController implements Initializable {
     }
     private void initTableView() {
         // Tạo các cột cho TableView
-        TableColumn<PhieuThu, String> maPTCol = new TableColumn<>("Mã Phiếu Thu");
+        TableColumn<PhieuThu, String> maPTCol = new TableColumn<>("Mã");
         maPTCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getMaPhieuThu()));
 
         TableColumn<PhieuThu, String> maDLCol = new TableColumn<>("Đại lý");
@@ -176,7 +205,7 @@ public class ManHinhPhieuThuController implements Initializable {
         });
 
 
-        TableColumn<PhieuThu, String> maNVCol = new TableColumn<>("Nhân Viên");
+        TableColumn<PhieuThu, String> maNVCol = new TableColumn<>("Nhân viên");
         maNVCol.setCellValueFactory(data -> {
             NhanVien nhanVien = null;
             try{
@@ -188,9 +217,37 @@ public class ManHinhPhieuThuController implements Initializable {
         TableColumn<PhieuThu, Integer> tongTienThuCol = new TableColumn<>("Tổng tiền thu");
         tongTienThuCol.setCellValueFactory(new PropertyValueFactory<>("SoTienThu"));
 
-        TableColumn<PhieuThu, Boolean> selectedCol = new TableColumn<>("Selected");
-        selectedCol.setCellValueFactory(new PropertyValueFactory<>("selected"));
-        selectedCol.setCellFactory(tc -> new CheckBoxTableCell<>());
+        TableColumn<PhieuThu, Boolean> selectedCol = new TableColumn<>( );
+        HBox headerBox = new HBox();
+        CheckBox headerCheckBox = new CheckBox();
+        headerBox.getChildren().add(headerCheckBox);
+        headerBox.setAlignment(Pos.CENTER); // Center align the content
+        headerCheckBox.setDisable(true);
+        selectedCol.setGraphic(headerBox);
+        selectedCol.setSortable(false);
+        selectedCol.setCellValueFactory( new PropertyValueFactory<>( "selected" ));
+        selectedCol.setCellFactory(new Callback<TableColumn<PhieuThu, Boolean>, TableCell<PhieuThu, Boolean>>() {
+            @Override
+            public TableCell<PhieuThu, Boolean> call(TableColumn<PhieuThu, Boolean> param) {
+                TableCell<PhieuThu, Boolean> cell = new TableCell<PhieuThu, Boolean>() {
+                    @Override
+                    protected void updateItem(Boolean item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty || item == null) {
+                            setGraphic(null);
+                        } else {
+                            CheckBox checkBox = new CheckBox();
+                            checkBox.selectedProperty().bindBidirectional(((PhieuThu) getTableRow().getItem()).selectedProperty());
+                            checkBox.getStyleClass().add("cell-center");
+                            setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+                            setGraphic(checkBox);
+                        }
+                    }
+                };
+                cell.getStyleClass().add("cell-center");
+                return cell;
+            }
+        });
 
         TableColumn actionCol = new TableColumn("Action");
 
@@ -200,8 +257,8 @@ public class ManHinhPhieuThuController implements Initializable {
                     @Override
                     public TableCell call(final TableColumn<PhieuXuat, String> param) {
                         final TableCell<PhieuXuat, String> cell = new TableCell<PhieuXuat, String>() {
-                            final Button suaBtn = new Button("Sửa");
-                            final Button xuatBtn = new Button("Xuất");
+                            final Button suaBtn = new Button();
+                            final Button xuatBtn = new Button();
 
                             @Override
                             public void updateItem(String item, boolean empty) {
@@ -210,6 +267,19 @@ public class ManHinhPhieuThuController implements Initializable {
                                     setGraphic(null);
                                     setText(null);
                                 } else {
+                                    Image edit = new Image(getClass().getResourceAsStream("/image/edit.png"));
+                                    ImageView editImage = new ImageView(edit);
+                                    Image xuat = new Image(getClass().getResourceAsStream("/image/exportPDF.png"));
+                                    ImageView xuatImage = new ImageView(xuat);
+                                    editImage.setFitWidth(20);
+                                    editImage.setFitHeight(20);
+
+                                    xuatImage.setFitWidth(20);
+                                    xuatImage.setFitHeight(20);
+
+                                    suaBtn.setGraphic(editImage);
+                                    xuatBtn.setGraphic(xuatImage);
+
                                     suaBtn.setOnAction(_ -> {
                                         try {
                                             PhieuXuat phieuXuat = getTableView().getItems().get(getIndex());
@@ -245,29 +315,61 @@ public class ManHinhPhieuThuController implements Initializable {
                 tongTienThuCol,
                 actionCol
         );
+        maPTCol.getStyleClass().add("column-header-left");
+        maDLCol.getStyleClass().add("column-header-left");
+        maNVCol.getStyleClass().add("column-header-left");
+        tongTienThuCol.getStyleClass().add("column-header-left");
+        selectedCol.getStyleClass().add("column-header-center");
+        actionCol.getStyleClass().add("column-header-center");
+
         mainTableView.setEditable(true);
         mainTableView.widthProperty().addListener(ob -> {
             double width = mainTableView.getWidth();
             selectedCol.setPrefWidth(width*0.1);
-            maPTCol.setPrefWidth(width*0.1);
-            maDLCol.setPrefWidth(width*0.1);
-            maNVCol.setPrefWidth(width*0.1);
-            tongTienThuCol.setPrefWidth(width*0.45);
+            maPTCol.setPrefWidth(width*0.15);
+            maDLCol.setPrefWidth(width*0.15);
+            maNVCol.setPrefWidth(width*0.15);
+            tongTienThuCol.setPrefWidth(width*0.30);
             actionCol.setPrefWidth(width*0.15);
         });
+
         mainTableView.setEditable( true );
         mainTableView.setPrefWidth(1100);
 
+    }
+    private void initFilterPane(){
+        Rectangle clip = new Rectangle();
+        clip.widthProperty().bind(filterPaneContainer.widthProperty());
+        clip.heightProperty().bind(filterPaneContainer.heightProperty());
+        filterPaneContainer.setClip(clip);
+    }
+
+    public void OpenFilterPanel(){
+        TranslateTransition tt = new TranslateTransition(Duration.seconds(0.2), filterPane);
+        tt.setToX(0);
+        tt.play();
+        filterPane.setVisible(true);
+        tt.setOnFinished(e -> {
+        });
+    }
+    public void CloseFilterPanel(){
+        TranslateTransition tt = new TranslateTransition(Duration.seconds(0.2), filterPane);
+        tt.setToX(-filterPane.getWidth());
+        tt.play();
+
+        tt.setOnFinished(e -> {
+            filterPane.setVisible(false);
+        });
     }
 
     //detail pane
     public void UpdateDetailPane(PhieuThu phieuThu){
         if(phieuThu==null){
-            CloseDetailPanel();
+            emptySelectionPane.setVisible(true);
             return;
         }
+        emptySelectionPane.setVisible(false);
         maPhieuThuText.setText(phieuThu.getMaPhieuThu());
-
         try{
             DaiLy dl = DaiLyDAO.getInstance().QueryID(phieuThu.getMaDaiLy());
             NhanVien nv = NhanVienDAO.getInstance().QueryID(phieuThu.getMaNhanVien());
@@ -283,13 +385,11 @@ public class ManHinhPhieuThuController implements Initializable {
         catch (SQLException _){}
     }
     public void OpenDetailPanel(){
-        toggleDetailButton.setText(">");
         masterDetailPane.setShowDetailNode(true);
 
     }
     public void CloseDetailPanel(){
         masterDetailPane.setShowDetailNode(false);
-        toggleDetailButton.setText("<");
     }
 
     //import - export
@@ -509,10 +609,5 @@ public class ManHinhPhieuThuController implements Initializable {
     private void filterList(){
         dsPhieuThuFiltered.clear();
         dsPhieuThuFiltered.addAll(filter.Filter());
-    }
-    private void resetFilter(){
-        maPhieuThuTextField.clear();
-        maDaiLyTextField.clear();
-        maNhanVienTextField.clear();
     }
 }

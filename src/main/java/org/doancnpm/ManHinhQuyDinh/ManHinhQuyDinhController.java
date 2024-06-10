@@ -13,6 +13,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.util.Callback;
 import org.doancnpm.DAO.*;
 import org.doancnpm.ManHinhDaiLy.TiepNhanDaiLyDialog;
@@ -27,7 +28,7 @@ import java.util.ResourceBundle;
 
 public class ManHinhQuyDinhController implements Initializable {
 
-    @FXML private Node manHinhQuyDinh;
+    @FXML private Region manHinhQuyDinh;
 
     @FXML TableView quanTableView;
     @FXML Button quanThemMoiBtn;

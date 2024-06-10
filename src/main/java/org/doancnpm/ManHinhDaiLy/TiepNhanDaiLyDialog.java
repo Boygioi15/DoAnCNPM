@@ -35,7 +35,7 @@ public class TiepNhanDaiLyDialog extends Dialog<DaiLy>  {
     public TiepNhanDaiLyDialog(DaiLy initialValue) throws IOException {
         super();
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/Main/ManHinhDaiLy/TiepNhanDaiLyUI.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/Main/ManHinhDaiLy/TiepNhanDaiLyUI2.fxml"));
 
         ButtonType saveButtonType;
         if(initialValue==null){

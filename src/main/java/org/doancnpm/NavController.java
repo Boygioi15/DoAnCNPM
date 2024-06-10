@@ -15,9 +15,10 @@ import java.util.logging.Logger;
 /** Manages control flow for logins */
 public class NavController {
     private Scene scene;
-
-    public NavController(Scene scene) {
+    private Stage stage;
+    public NavController(Scene scene, Stage stage) {
         this.scene = scene;
+        this.stage = stage;
     }
 
     /**
@@ -39,7 +40,7 @@ public class NavController {
         Stage stage = new Stage();
         Scene loginScene = new Scene(new Parent() {  });
 
-        NavController navController = new NavController(loginScene);
+        NavController navController = new NavController(loginScene,stage);
         navController.showLoginScreen();
 
         stage.setScene(loginScene);
@@ -75,7 +76,8 @@ public class NavController {
             }
 
             scene.setRoot(objectGraph);
-            scene.getWindow().sizeToScene();
+            stage.setMinWidth(1300);
+            stage.setMinHeight(700);
             scene.getWindow().centerOnScreen();
         } catch (IOException ex) {
             Logger.getLogger(NavController.class.getName()).log(Level.SEVERE, null, ex);
