@@ -473,7 +473,7 @@ public class ManHinhPhieuXuatController implements Initializable {
 
         // Tạo hàng đầu tiên với các tiêu đề cột
         Row headerRow = sheet.createRow(0);
-        String[] columnTitles = {"Mã phiếu xuất","Mã nhân viên","Mã đại lý","Ngày lập phiếu" ,"Tổng tiền","Ghi chú"};
+        String[] columnTitles = {"Mã phiếu xuất","Nhân viên","Đại lý","Ngày lập phiếu" ,"Tổng tiền","Ghi chú"};
         int cellnum = 0;
         for (String title : columnTitles) {
             Cell cell = headerRow.createCell(cellnum++);
@@ -490,7 +490,7 @@ public class ManHinhPhieuXuatController implements Initializable {
                 nhanVien = NhanVienDAO.getInstance().QueryID(phieuXuat.getMaNhanVien());
             } catch (SQLException _) {}
             if (nhanVien != null) {
-                row.createCell(cellnum++).setCellValue(nhanVien.getMaNhanVien());
+                row.createCell(cellnum++).setCellValue(nhanVien.getHoTen());
             } else {
                 row.createCell(cellnum++).setCellValue("???"); // Or handle the null case appropriately
             }
@@ -500,7 +500,7 @@ public class ManHinhPhieuXuatController implements Initializable {
                 daiLy = DaiLyDAO.getInstance().QueryID(phieuXuat.getMaDaiLy());
             } catch (SQLException _) {}
             if (daiLy != null) {
-                row.createCell(cellnum++).setCellValue(daiLy.getMaDaiLy());
+                row.createCell(cellnum++).setCellValue(daiLy.getTenDaiLy());
             } else {
                 row.createCell(cellnum++).setCellValue("???"); // Or handle the null case appropriately
             }

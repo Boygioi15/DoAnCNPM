@@ -23,8 +23,6 @@ import javafx.stage.FileChooser;
 import javafx.util.Callback;
 
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -32,8 +30,8 @@ import org.controlsfx.control.MasterDetailPane;
 import org.doancnpm.DAO.*;
 
 import org.doancnpm.Filters.PhieuThuFilter;
-import org.doancnpm.ManHinhPhieuXuat.LapPhieuXuatDialog;
 import org.doancnpm.Models.*;
+import org.doancnpm.Ultilities.CheckExist;
 import org.doancnpm.Ultilities.DayFormat;
 import org.doancnpm.Ultilities.PopDialog;
 import javafx.scene.text.Text;
@@ -46,40 +44,61 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.List;
 
 public class ManHinhPhieuThuController implements Initializable {
 
-    @FXML private Node manHinhPhieuThu;
-    @FXML private TableView mainTableView;
-    @FXML private Button refreshButton;
-    @FXML private MFXTextField maPhieuThuTextField;
-    @FXML private MFXTextField maDaiLyTextField;
-    @FXML private MFXTextField maNhanVienTextField;
+    @FXML
+    private Node manHinhPhieuThu;
+    @FXML
+    private TableView mainTableView;
+    @FXML
+    private Button refreshButton;
+    @FXML
+    private MFXTextField maPhieuThuTextField;
+    @FXML
+    private MFXTextField maDaiLyTextField;
+    @FXML
+    private MFXTextField maNhanVienTextField;
 
-    @FXML private MenuItem addExcelButton;
-    @FXML private MenuItem addDirectButton;
-    @FXML private MenuItem exportExcelButton;
-    @FXML private Text maPhieuThuText;
-    @FXML private Text maDLText;
-    @FXML private Text tenDLText;
-    @FXML private Text maNVText;
-    @FXML private Text tenNVText;
-    @FXML private Text ngayLapPhieuText;
-    @FXML private Text soTienThuText;
-    @FXML private TextArea ghiChuTextArea;
+    @FXML
+    private MenuItem addExcelButton;
+    @FXML
+    private MenuItem addDirectButton;
+    @FXML
+    private MenuItem exportExcelButton;
+    @FXML
+    private Text maPhieuThuText;
+    @FXML
+    private Text maDLText;
+    @FXML
+    private Text tenDLText;
+    @FXML
+    private Text maNVText;
+    @FXML
+    private Text tenNVText;
+    @FXML
+    private Text ngayLapPhieuText;
+    @FXML
+    private Text soTienThuText;
+    @FXML
+    private TextArea ghiChuTextArea;
 
-    @FXML private MasterDetailPane masterDetailPane;
+    @FXML
+    private MasterDetailPane masterDetailPane;
 
-    @FXML private Region masterPane;
-    @FXML private Button toggleDetailButton;
-    @FXML private Region detailPane;
+    @FXML
+    private Region masterPane;
+    @FXML
+    private Button toggleDetailButton;
+    @FXML
+    private Region detailPane;
 
     private final ObservableList<PhieuThu> dsPhieuThu = FXCollections.observableArrayList();
     private final ObservableList<PhieuThu> dsPhieuThuFiltered = FXCollections.observableArrayList();
     private final PhieuThuFilter filter = new PhieuThuFilter();
 
     NhanVien nhanVienLoggedIn = null;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initTableView();
@@ -93,25 +112,29 @@ public class ManHinhPhieuThuController implements Initializable {
         initDetailPane();
         //init data
     }
+
     public void setVisibility(boolean visibility) {
         manHinhPhieuThu.setVisible(visibility);
     }
+
     public void setNhanVienLoggedIn(NhanVien nhanVienLoggedIn) {
         this.nhanVienLoggedIn = nhanVienLoggedIn;
     }
+
     //init
-    private void initDetailPane(){
+    private void initDetailPane() {
         masterDetailPane.setDetailNode(detailPane);
         masterDetailPane.setMasterNode(masterPane);
 
-        masterDetailPane.widthProperty().addListener(ob ->{
-            detailPane.setMinWidth(masterDetailPane.getWidth()*0.3);
-            detailPane.setMaxWidth(masterDetailPane.getWidth()*0.3);
+        masterDetailPane.widthProperty().addListener(ob -> {
+            detailPane.setMinWidth(masterDetailPane.getWidth() * 0.3);
+            detailPane.setMaxWidth(masterDetailPane.getWidth() * 0.3);
         });
         mainTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, phieuThu) -> {
             UpdateDetailPane((PhieuThu) phieuThu);
         });
     }
+
     private void initEvent() {
         addDirectButton.setOnAction(_ -> {
             OpenDirectAddDialog();
@@ -119,29 +142,31 @@ public class ManHinhPhieuThuController implements Initializable {
         refreshButton.setOnAction(_ -> {
             resetFilter();
         });
-        exportExcelButton.setOnAction(_ ->{
+        exportExcelButton.setOnAction(_ -> {
             exportDialog();
         });
-        toggleDetailButton.setOnAction(ob ->{
-            if(masterDetailPane.isShowDetailNode()){
+        toggleDetailButton.setOnAction(ob -> {
+            if (masterDetailPane.isShowDetailNode()) {
                 CloseDetailPanel();
-            }
-            else{
+            } else {
                 OpenDetailPanel();
             }
         });
-        addExcelButton.setOnAction(_ ->{
+        addExcelButton.setOnAction(_ -> {
             importDialog();
         });
     }
+
     private void initDatabaseBinding() {
         PhieuThuDAO.getInstance().AddDatabaseListener(_ -> updateListFromDatabase());
 
     }
+
     private void initUIDataBinding() {
         mainTableView.setItems(dsPhieuThuFiltered);
     }
-    private void initFilterBinding(){
+
+    private void initFilterBinding() {
         filter.setInput(dsPhieuThu);
 
         maPhieuThuTextField.textProperty().addListener(_ -> {
@@ -149,24 +174,23 @@ public class ManHinhPhieuThuController implements Initializable {
             filterList();
         });
         maDaiLyTextField.textProperty().addListener(_ -> {
-            try{
+            try {
                 filter.setMaDaiLy(Integer.parseInt(maDaiLyTextField.getText()));
-            }
-            catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 filter.setMaDaiLy(null);
             }
             filterList();
         });
         maNhanVienTextField.textProperty().addListener(_ -> {
-            try{
+            try {
                 filter.setMaNhanVien(Integer.parseInt(maNhanVienTextField.getText()));
-            }
-            catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 filter.setMaNhanVien(null);
             }
             filterList();
         });
     }
+
     private void initTableView() {
         // Tạo các cột cho TableView
         TableColumn<PhieuThu, String> maPTCol = new TableColumn<>("Mã Phiếu Thu");
@@ -177,8 +201,8 @@ public class ManHinhPhieuThuController implements Initializable {
             DaiLy daiLy = null;
             try {
                 daiLy = DaiLyDAO.getInstance().QueryID(data.getValue().getMaDaiLy());
+            } catch (SQLException _) {
             }
-            catch (SQLException _){}
             return new SimpleObjectProperty<>(daiLy.getMaDaiLy());
         });
 
@@ -186,9 +210,10 @@ public class ManHinhPhieuThuController implements Initializable {
         TableColumn<PhieuThu, String> maNVCol = new TableColumn<>("Nhân Viên");
         maNVCol.setCellValueFactory(data -> {
             NhanVien nhanVien = null;
-            try{
+            try {
                 nhanVien = NhanVienDAO.getInstance().QueryID(data.getValue().getMaNhanVien());
-            } catch(SQLException _){}
+            } catch (SQLException _) {
+            }
             return new SimpleObjectProperty<>(nhanVien.getMaNhanVien());
         });
 
@@ -221,7 +246,7 @@ public class ManHinhPhieuThuController implements Initializable {
                                         try {
                                             PhieuThu phieuThu = getTableView().getItems().get(getIndex());
                                             new LapPhieuThuDialog(phieuThu, nhanVienLoggedIn).showAndWait();
-                                        } catch(IOException exc) {
+                                        } catch (IOException exc) {
                                             exc.printStackTrace();
                                         }
                                     });
@@ -231,7 +256,7 @@ public class ManHinhPhieuThuController implements Initializable {
                                         exportToPDF(phieuThu);
                                     });
                                     HBox hbox = new HBox();
-                                    hbox.getChildren().addAll(suaBtn,xuatBtn);
+                                    hbox.getChildren().addAll(suaBtn, xuatBtn);
                                     hbox.setSpacing(5);
                                     hbox.setPrefWidth(USE_COMPUTED_SIZE);
                                     hbox.setPrefHeight(USE_COMPUTED_SIZE);
@@ -258,27 +283,27 @@ public class ManHinhPhieuThuController implements Initializable {
         mainTableView.setEditable(true);
         mainTableView.widthProperty().addListener(ob -> {
             double width = mainTableView.getWidth();
-            selectedCol.setPrefWidth(width*0.1);
-            maPTCol.setPrefWidth(width*0.1);
-            maDLCol.setPrefWidth(width*0.1);
-            maNVCol.setPrefWidth(width*0.1);
-            tongTienThuCol.setPrefWidth(width*0.45);
-            actionCol.setPrefWidth(width*0.15);
+            selectedCol.setPrefWidth(width * 0.1);
+            maPTCol.setPrefWidth(width * 0.1);
+            maDLCol.setPrefWidth(width * 0.1);
+            maNVCol.setPrefWidth(width * 0.1);
+            tongTienThuCol.setPrefWidth(width * 0.45);
+            actionCol.setPrefWidth(width * 0.15);
         });
-        mainTableView.setEditable( true );
+        mainTableView.setEditable(true);
         mainTableView.setPrefWidth(1100);
 
     }
 
     //detail pane
-    public void UpdateDetailPane(PhieuThu phieuThu){
-        if(phieuThu==null){
+    public void UpdateDetailPane(PhieuThu phieuThu) {
+        if (phieuThu == null) {
             CloseDetailPanel();
             return;
         }
         maPhieuThuText.setText(phieuThu.getMaPhieuThu());
 
-        try{
+        try {
             DaiLy dl = DaiLyDAO.getInstance().QueryID(phieuThu.getMaDaiLy());
             NhanVien nv = NhanVienDAO.getInstance().QueryID(phieuThu.getMaNhanVien());
             maDLText.setText(dl.getMaDaiLy());
@@ -289,15 +314,17 @@ public class ManHinhPhieuThuController implements Initializable {
             ngayLapPhieuText.setText(DayFormat.GetDayStringFormatted(phieuThu.getNgayLap()));
             soTienThuText.setText(Double.toString(phieuThu.getSoTienThu()));
             ghiChuTextArea.setText(phieuThu.getGhiChu());
+        } catch (SQLException _) {
         }
-        catch (SQLException _){}
     }
-    public void OpenDetailPanel(){
+
+    public void OpenDetailPanel() {
         toggleDetailButton.setText(">");
         masterDetailPane.setShowDetailNode(true);
 
     }
-    public void CloseDetailPanel(){
+
+    public void CloseDetailPanel() {
         masterDetailPane.setShowDetailNode(false);
         toggleDetailButton.setText("<");
     }
@@ -317,13 +344,13 @@ public class ManHinhPhieuThuController implements Initializable {
             importFromExcel(selectedFile.getAbsolutePath());
         }
     }
-    public void importFromExcel(String filePath)  {
+
+    public void importFromExcel(String filePath) {
         File file = new File(filePath);
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(file);
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             PopDialog.popErrorDialog("Không thể mở file excel");
             return;
         }
@@ -331,8 +358,7 @@ public class ManHinhPhieuThuController implements Initializable {
         XSSFWorkbook workbook = null;
         try {
             workbook = new XSSFWorkbook(fis);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             PopDialog.popErrorDialog("Có lỗi trong quá trình thực hiện", e.getMessage());
             return;
         }
@@ -340,44 +366,39 @@ public class ManHinhPhieuThuController implements Initializable {
 
         Date ngayLapPhieu = new Date(System.currentTimeMillis());
 
-        for (int i = 1; i <= sheet.getLastRowNum()-1; i++) {
+        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
             if (row != null) { // Kiểm tra xem dòng có tồn tại hay không
-                Cell maDaiLyCell = row.getCell(0);
-                Cell maNhanVienCell = row.getCell(1);
-                Cell tienThuCell = row.getCell(2);
-                Cell ghiChuCell = row.getCell(3);
+                Cell tenDaiLyCell = row.getCell(0);
+                Cell soTienThuCell = row.getCell(1);
+                Cell ghiChuCell = row.getCell(2);
 
                 PhieuThu phieuThu = new PhieuThu();
-                String maDaiLy = maDaiLyCell.getStringCellValue();
-                String maNhanVien = maNhanVienCell.getStringCellValue();
-                int idDL, idNV;
-
-                try{
-                    idNV = Integer.parseInt(maNhanVien.substring(2));
-                }
-                catch (NumberFormatException e){
-                    PopDialog.popErrorDialog("Định dạng mã nhân viên không đúng");
-                    return;
+                String tenDaiLyName = tenDaiLyCell.getStringCellValue().trim();
+                try {
+                    if (!CheckExist.checkDaiLy(tenDaiLyName)) {
+                        PopDialog.popErrorDialog("Không tồn tại đại lý " + tenDaiLyName);
+                        return;
+                    }
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
                 try{
-                    idDL = Integer.parseInt(maDaiLy.substring(2));
+                    phieuThu.setMaDaiLy(DaiLyDAO.getInstance().QueryName(tenDaiLyName).getID());
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
-                catch (NumberFormatException e){
-                    PopDialog.popErrorDialog("Định dạng mã đại lý không đúng");
-                    return;
-                }
-
-                phieuThu.setMaDaiLy(idDL);
-                phieuThu.setMaNhanVien(idNV);
-                //phieuThu.setSoTienThu((int) tienThuCell.getNumericCellValue());
-                phieuThu.setGhiChu(ghiChuCell.getStringCellValue());
-
+                phieuThu.setSoTienThu((long) soTienThuCell.getNumericCellValue());
                 phieuThu.setNgayLap(ngayLapPhieu);
+                if (ghiChuCell != null) {
+                    phieuThu.setGhiChu(ghiChuCell.getStringCellValue());
+                } else {
+                    phieuThu.setGhiChu(null);
+                }
+                phieuThu.setMaNhanVien(nhanVienLoggedIn.getID());
                 try {
                     PhieuThuDAO.getInstance().Insert(phieuThu); // Thêm đối tượng vào cơ sở dữ liệu
-                }
-                catch (SQLException e) {
+                } catch (SQLException e) {
                     PopDialog.popErrorDialog("Thêm mới phiếu thu thất bại", e.getMessage());
                     return;
                 }
@@ -388,8 +409,7 @@ public class ManHinhPhieuThuController implements Initializable {
             workbook.close();
             fis.close();
             PopDialog.popSuccessDialog("Thêm danh sách phiếu thu từ file excel thành công");
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             PopDialog.popErrorDialog("Có lỗi trong quá trình thực hiện", e.getMessage());
         }
 
@@ -421,6 +441,7 @@ public class ManHinhPhieuThuController implements Initializable {
         }
 
     }
+
     public void exportToExcel(String filePath) {
         // Tạo hoặc mở tệp Excel
         XSSFWorkbook workbook = new XSSFWorkbook();
@@ -428,7 +449,7 @@ public class ManHinhPhieuThuController implements Initializable {
 
         // Tạo hàng đầu tiên với các tiêu đề cột
         Row headerRow = sheet.createRow(0);
-        String[] columnTitles = {"Mã phiếu thu", "Mã đại lý", "Mã nhân viên","Ngày lập phiếu","Số tiền thu","Ghi chú"};
+        String[] columnTitles = {"Mã phiếu thu", "Đại lý", "Nhân viên", "Ngày lập phiếu", "Số tiền thu", "Ghi chú"};
         int cellnum = 0;
         for (String title : columnTitles) {
             Cell cell = headerRow.createCell(cellnum++);
@@ -445,9 +466,10 @@ public class ManHinhPhieuThuController implements Initializable {
             DaiLy daiLy = null;
             try {
                 daiLy = DaiLyDAO.getInstance().QueryID(phieuThu.getMaDaiLy());
-            } catch (SQLException _) {}
+            } catch (SQLException _) {
+            }
             if (daiLy != null) {
-                row.createCell(cellnum++).setCellValue(daiLy.getMaDaiLy());
+                row.createCell(cellnum++).setCellValue(daiLy.getTenDaiLy());
             } else {
                 row.createCell(cellnum++).setCellValue("???"); // Or handle the null case appropriately
             }
@@ -455,9 +477,10 @@ public class ManHinhPhieuThuController implements Initializable {
             NhanVien nhanVien = null;
             try {
                 nhanVien = NhanVienDAO.getInstance().QueryID(phieuThu.getMaNhanVien());
-            } catch (SQLException _) {}
+            } catch (SQLException _) {
+            }
             if (nhanVien != null) {
-                row.createCell(cellnum++).setCellValue(nhanVien.getMaNhanVien());
+                row.createCell(cellnum++).setCellValue(nhanVien.getHoTen());
             } else {
                 row.createCell(cellnum++).setCellValue("???"); // Or handle the null case appropriately
             }
@@ -479,12 +502,13 @@ public class ManHinhPhieuThuController implements Initializable {
             PopDialog.popErrorDialog("Xuất file excel thất bại", e.getMessage());
         }
     }
+
     public void exportToPDF(PhieuThu phieuThu) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Lưu phiếu thu");
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
-        fileChooser.setInitialFileName("PhieuThu_"+phieuThu.getMaPhieuThu()+".pdf");
+        fileChooser.setInitialFileName("PhieuThu_" + phieuThu.getMaPhieuThu() + ".pdf");
 
         File selectedFile = fileChooser.showSaveDialog(null);
 
@@ -506,14 +530,14 @@ public class ManHinhPhieuThuController implements Initializable {
                 document.add(new Paragraph("\n"));
                 document.add(new Paragraph("\n"));
                 document.add(new Paragraph("\n"));
-                addTittle(document,titleFont,DaiLyFont,contentFont,phieuThu);
+                addTittle(document, titleFont, DaiLyFont, contentFont, phieuThu);
                 document.add(Chunk.NEWLINE);
                 document.add(new Paragraph("\n"));
 
                 // Add detail
-                addDetail(document,contentTienThu,phieuThu);
+                addDetail(document, contentTienThu, phieuThu);
                 // Add footer
-                addFooter(document, contentFont,phieuThu);
+                addFooter(document, contentFont, phieuThu);
 
                 document.close();
             } catch (Exception e) {
@@ -556,27 +580,28 @@ public class ManHinhPhieuThuController implements Initializable {
         document.add(Chunk.NEWLINE);
     }
 
-    private void addTittle(Document document, Font titleFont,Font DaiLyFont,Font contentFont, PhieuThu phieuThu) throws DocumentException {
+    private void addTittle(Document document, Font titleFont, Font DaiLyFont, Font contentFont, PhieuThu phieuThu) throws DocumentException {
         document.add(Chunk.NEWLINE);
         Paragraph tittle = new Paragraph();
         tittle.setFont(contentFont);
         tittle.add(new Phrase("PHIẾU THU\n", titleFont));
-        tittle.add(new Phrase("\n",titleFont));
+        tittle.add(new Phrase("\n", titleFont));
         tittle.add(Chunk.NEWLINE);
         DaiLy daiLy = null;
         try {
             daiLy = DaiLyDAO.getInstance().QueryID(phieuThu.getMaDaiLy());
         } catch (SQLException _) {
         }
-        tittle.add(new Phrase(daiLy.getTenDaiLy()+"\n", DaiLyFont));
-        tittle.add(new Phrase("Điện thoại: "+daiLy.getDienThoai()+"\n", contentFont));
-        tittle.add(new Phrase("Địa chỉ: "+daiLy.getDiaChi()+"\n", contentFont));
-        tittle.add(new Phrase("Email: "+daiLy.getEmail()+"\n", contentFont));
+        tittle.add(new Phrase(daiLy.getTenDaiLy() + "\n", DaiLyFont));
+        tittle.add(new Phrase("Điện thoại: " + daiLy.getDienThoai() + "\n", contentFont));
+        tittle.add(new Phrase("Địa chỉ: " + daiLy.getDiaChi() + "\n", contentFont));
+        tittle.add(new Phrase("Email: " + daiLy.getEmail() + "\n", contentFont));
         tittle.setAlignment(Element.ALIGN_LEFT);
         document.add(tittle);
         document.add(Chunk.NEWLINE);
     }
-    private void addDetail(Document document,Font contentTienThu, PhieuThu phieuThu) throws DocumentException {
+
+    private void addDetail(Document document, Font contentTienThu, PhieuThu phieuThu) throws DocumentException {
         document.add(Chunk.NEWLINE);
         Paragraph detail = new Paragraph();
         detail.setFont(contentTienThu);
@@ -584,14 +609,14 @@ public class ManHinhPhieuThuController implements Initializable {
         symbols.setGroupingSeparator('.');
         DecimalFormat df = new DecimalFormat("#,##0", symbols);
         df.setMaximumFractionDigits(8);
-        detail.add(new Phrase("Số tiền thu: "+df.format(phieuThu.getSoTienThu())+" VNĐ\n", contentTienThu));
+        detail.add(new Phrase("Số tiền thu: " + df.format(phieuThu.getSoTienThu()) + " VNĐ\n", contentTienThu));
         detail.setAlignment(Element.ALIGN_LEFT);
         document.add(detail);
         document.add(Chunk.NEWLINE);
     }
 
-    private static void addFooter(Document document, Font contentFont,PhieuThu phieuThu) throws DocumentException {
-        if(phieuThu.getGhiChu()!= null) {
+    private static void addFooter(Document document, Font contentFont, PhieuThu phieuThu) throws DocumentException {
+        if (phieuThu.getGhiChu() != null) {
             Paragraph footer = new Paragraph();
             footer.setFont(contentFont);
             footer.add(new Phrase("Ghi chú: \n", contentFont));
@@ -599,6 +624,7 @@ public class ManHinhPhieuThuController implements Initializable {
             document.add(footer);
         }
     }
+
     //functionalities
     public void OpenDirectAddDialog() {
         try {
@@ -607,14 +633,12 @@ public class ManHinhPhieuThuController implements Initializable {
                         try {
                             PhieuThuDAO.getInstance().Insert(phieuThuAdded);
                             PopDialog.popSuccessDialog("Thêm mới phiếu thu thành công");
-                        }
-                        catch (SQLException e) {
+                        } catch (SQLException e) {
                             PopDialog.popErrorDialog("Thêm mới phiếu thu thất bại", e.toString());
                         }
                     }
             );
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             PopDialog.popErrorDialog("Không thể mở dialog thêm phiếu thu", e.toString());
         }
@@ -629,11 +653,13 @@ public class ManHinhPhieuThuController implements Initializable {
             throw new RuntimeException(e);
         }
     }
-    private void filterList(){
+
+    private void filterList() {
         dsPhieuThuFiltered.clear();
         dsPhieuThuFiltered.addAll(filter.Filter());
     }
-    private void resetFilter(){
+
+    private void resetFilter() {
         maPhieuThuTextField.clear();
         maDaiLyTextField.clear();
         maNhanVienTextField.clear();

@@ -508,7 +508,7 @@ public class ManHinhPhieuNhapController implements Initializable {
 
         // Tạo hàng đầu tiên với các tiêu đề cột
         Row headerRow = sheet.createRow(0);
-        String[] columnTitles = {"Mã phiếu nhập","Mã nhân viên", "Nhà cung cấp","Ngày lập phiếu","Tổng tiền","Ghi chú"};
+        String[] columnTitles = {"Mã phiếu nhập","Nhân viên", "Nhà cung cấp","Ngày lập phiếu","Tổng tiền","Ghi chú"};
         int cellnum = 0;
         for (String title : columnTitles) {
             Cell cell = headerRow.createCell(cellnum++);
@@ -526,7 +526,7 @@ public class ManHinhPhieuNhapController implements Initializable {
                 nhanVien = NhanVienDAO.getInstance().QueryID(phieuNhap.getMaNhanVien());
             } catch (SQLException _) {}
             if (nhanVien != null) {
-                row.createCell(cellnum++).setCellValue(nhanVien.getMaNhanVien());
+                row.createCell(cellnum++).setCellValue(nhanVien.getHoTen());
             } else {
                 row.createCell(cellnum++).setCellValue("???"); // Or handle the null case appropriately
             }

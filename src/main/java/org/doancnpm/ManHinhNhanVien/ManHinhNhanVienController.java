@@ -23,12 +23,15 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.controlsfx.control.MasterDetailPane;
 import org.doancnpm.DAO.ChucVuDAO;
+import org.doancnpm.DAO.DonViTinhDAO;
 import org.doancnpm.DAO.NhanVienDAO;
 import org.doancnpm.DAO.QuanDAO;
 import org.doancnpm.Filters.NhanVienFilter;
 import org.doancnpm.Models.ChucVu;
+import org.doancnpm.Models.DonViTinh;
 import org.doancnpm.Models.NhanVien;
 import org.doancnpm.Models.Quan;
+import org.doancnpm.Ultilities.CheckExist;
 import org.doancnpm.Ultilities.DayFormat;
 import org.doancnpm.Ultilities.PopDialog;
 
@@ -36,6 +39,7 @@ import java.io.*;
 import java.net.URL;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.Optional;
@@ -371,7 +375,6 @@ public class ManHinhNhanVienController implements Initializable {
         }
     }
     private void importFromExcel(String filePath)  {
-        /*
         File file = new File(filePath);
         FileInputStream fis = null;
         try {
@@ -393,28 +396,57 @@ public class ManHinhNhanVienController implements Initializable {
         XSSFSheet sheet = workbook.getSheetAt(0); // Assuming data is in the first sheet
 
 
-        Date ngayTiepNhan = new Date(System.currentTimeMillis());
-
-        for (int i = 1; i <= sheet.getLastRowNum()-1; i++) {
+        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
             if (row != null) { // Kiểm tra xem dòng có tồn tại hay không
-                Cell quanCell = row.getCell(0);
-                Cell loaiNhanVienCell = row.getCell(1);
-                Cell tenNhanVienCell = row.getCell(2);
-                Cell dienThoaiCell = row.getCell(3);
+                Cell hoTenCell = row.getCell(0);
+                Cell gioiTinhCell = row.getCell(1);
+                Cell ngaySinhCell = row.getCell(2);
+                Cell SDTCell = row.getCell(3);
                 Cell emailCell = row.getCell(4);
-                Cell diaChiCell = row.getCell(5);
-                Cell ghiChuCell = row.getCell(6);
+                Cell chucVuCell = row.getCell(5);
+                Cell luongCell = row.getCell(6);
+                Cell ghiChuCell = row.getCell(7);
 
                 NhanVien nhanVien = new NhanVien();
-                nhanVien.setMaQuan((int) quanCell.getNumericCellValue());
-                nhanVien.setMaLoaiNhanVien((int) loaiNhanVienCell.getNumericCellValue());
-                nhanVien.setTenNhanVien(tenNhanVienCell.getStringCellValue());
-                nhanVien.setDienThoai(dienThoaiCell.getStringCellValue());
+                nhanVien.setHoTen(hoTenCell.getStringCellValue());
+                nhanVien.setGioiTinh(gioiTinhCell.getStringCellValue());
+                // Assuming ngaySinhCell is already defined and contains a date string
+                String ngaySinh = ngaySinhCell.getStringCellValue();
+
+                // Define the date format according to the format in the Excel file
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");// Adjust format as needed
+
+                try {
+                    // Parse the string into a java.util.Date object
+                    java.util.Date utilDate = dateFormat.parse(ngaySinh);
+
+                    // Convert the java.util.Date object into a java.sql.Date object
+                    java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+
+                    // Set the date to the nhanVien object
+                    nhanVien.setNgaySinh(sqlDate);
+
+                } catch (ParseException e) {
+                    // Handle the exception if the date format is incorrect
+                    e.printStackTrace();
+                }
+                nhanVien.setSDT(SDTCell.getStringCellValue());
                 nhanVien.setEmail(emailCell.getStringCellValue());
-                nhanVien.setDiaChi(diaChiCell.getStringCellValue());
-                nhanVien.setGhiChu(ghiChuCell.getStringCellValue());
-                nhanVien.setNgayTiepNhan(ngayTiepNhan);
+
+                String chucVuName = chucVuCell.getStringCellValue().trim();
+                Integer chucVuID = handleChucVu(chucVuName);
+                if (chucVuID == null) {
+                    return;
+                }
+                nhanVien.setMaChucVu(chucVuID);
+
+                nhanVien.setLuong(luongCell.getNumericCellValue());
+                if (ghiChuCell != null) {
+                    nhanVien.setGhiChu(ghiChuCell.getStringCellValue());
+                } else {
+                    nhanVien.setGhiChu(null);
+                }
                 try {
                     NhanVienDAO.getInstance().Insert(nhanVien); // Thêm đối tượng vào cơ sở dữ liệu
                 }
@@ -424,7 +456,6 @@ public class ManHinhNhanVienController implements Initializable {
                 }
             }
         }
-
         try {
             workbook.close();
             fis.close();
@@ -433,10 +464,39 @@ public class ManHinhNhanVienController implements Initializable {
         catch (IOException e) {
             PopDialog.popErrorDialog("Có lỗi trong quá trình thực hiện", e.getMessage());
         }
-
-         */
     }
+    private Integer handleChucVu(String chucVuName) {
+        try {
+            if (!CheckExist.checkChucVu(chucVuName)) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Xác nhận");
+                alert.setHeaderText(null);
+                alert.setContentText("Chức vụ '"+chucVuName + "' không tồn tại. Bạn có muốn thêm chức vụ mới không?");
 
+                ButtonType result = alert.showAndWait().orElse(ButtonType.CANCEL);
+
+                if (result == ButtonType.OK) {
+                    ChucVu CV = new ChucVu();
+                    CV.setTenCV(chucVuName);// Tạo một đối tượng mới cho đơn vị tính
+                    ChucVuDAO.getInstance().Insert(CV); // Thêm đơn vị tính mới vào cơ sở dữ liệu
+                    Alert infoAlert = new Alert(Alert.AlertType.INFORMATION);
+                    infoAlert.setTitle("Thông báo");
+                    infoAlert.setHeaderText(null);
+                    infoAlert.setContentText("Chức vụ '" + chucVuName + "' đã được thêm thành công!");
+                    infoAlert.showAndWait();
+                    return ChucVuDAO.getInstance().QueryMostRecent().getId(); // Trả về ID của đơn vị tính mới
+                } else {
+                    PopDialog.popErrorDialog("Chức vụ '" + chucVuName + "' không tồn tại");
+                    return null;
+                }
+            } else {
+                return ChucVuDAO.getInstance().QueryName(chucVuName).getId(); // Trả về ID của đơn vị tính đã tồn tại
+            }
+        } catch (SQLException e) {
+            PopDialog.popErrorDialog("Có lỗi trong quá trình xử lý chức vụ", e.getMessage());
+            return null;
+        }
+    }
     public void OpenExportDialog() {
         // Hiển thị hộp thoại lưu tệp Excel
         FileChooser fileChooser = new FileChooser();
@@ -489,7 +549,7 @@ public class ManHinhNhanVienController implements Initializable {
             row.createCell(cellnum++).setCellValue(dateFormat.format(nhanVien.getNgaySinh()));
             row.createCell(cellnum++).setCellValue(nhanVien.getSDT());
             row.createCell(cellnum++).setCellValue(nhanVien.getEmail());
-            ChucVu chucVu = new ChucVu();
+            ChucVu chucVu;
             try{
                 chucVu=ChucVuDAO.getInstance().QueryID(nhanVien.getMaChucVu());
             } catch (SQLException e) {
