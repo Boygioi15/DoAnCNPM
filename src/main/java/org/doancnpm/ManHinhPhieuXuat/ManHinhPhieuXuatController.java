@@ -197,10 +197,22 @@ public class ManHinhPhieuXuatController implements Initializable {
         maPXCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getMaPhieuXuat()));
 
         TableColumn<PhieuXuat, String> maNVCol = new TableColumn<>("Nhân viên");
-        maNVCol.setCellValueFactory(new PropertyValueFactory<>("maNhanVien"));
+        maNVCol.setCellValueFactory(data->{
+            NhanVien nhanVien = null;
+            try{
+                nhanVien = NhanVienDAO.getInstance().QueryID(data.getValue().getMaNhanVien());
+            } catch (SQLException _) {}
+            return new SimpleObjectProperty<>(nhanVien.getMaNhanVien()+" - "+nhanVien.getHoTen());
+        });
 
-        TableColumn<PhieuXuat, Integer> nccCol = new TableColumn<>("Đại lý");
-        nccCol.setCellValueFactory(new PropertyValueFactory<>("maDaiLy"));
+        TableColumn<PhieuXuat, String> daiLyCol = new TableColumn<>("Đại lý");
+        daiLyCol.setCellValueFactory(data->{
+            DaiLy daiLy = null;
+            try{
+                daiLy = DaiLyDAO.getInstance().QueryID(data.getValue().getMaDaiLy());
+            } catch (SQLException e) {}
+            return new SimpleObjectProperty<>(daiLy.getMaDaiLy()+" - "+daiLy.getTenDaiLy());
+        });
 
         TableColumn<PhieuXuat, Integer> tongTienCol = new TableColumn<>("Tổng tiền");
         tongTienCol.setCellValueFactory(new PropertyValueFactory<>("tongTien"));
@@ -269,7 +281,7 @@ public class ManHinhPhieuXuatController implements Initializable {
                 selectedCol,
                 maPXCol,
                 maNVCol,
-                nccCol,
+                daiLyCol,
                 tongTienCol,
                 actionCol
         );
@@ -279,7 +291,7 @@ public class ManHinhPhieuXuatController implements Initializable {
             selectedCol.setPrefWidth(width*0.1);
             maPXCol.setPrefWidth(width*0.1);
             maNVCol.setPrefWidth(width*0.1);
-            nccCol.setPrefWidth(width*0.3);
+            daiLyCol.setPrefWidth(width*0.3);
             tongTienCol.setPrefWidth(width*0.2);
             actionCol.setPrefWidth(width*0.2);
         });

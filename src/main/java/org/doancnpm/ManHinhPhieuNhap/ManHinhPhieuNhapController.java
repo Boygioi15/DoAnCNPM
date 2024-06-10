@@ -19,7 +19,6 @@ import javafx.util.Callback;
 import org.controlsfx.control.MasterDetailPane;
 import org.doancnpm.DAO.*;
 import org.doancnpm.Filters.PhieuNhapFilter;
-import org.doancnpm.ManHinhPhieuThu.LapPhieuThuDialog;
 import org.doancnpm.Models.*;
 import org.doancnpm.Ultilities.DayFormat;
 import org.doancnpm.Ultilities.PopDialog;
@@ -33,35 +32,55 @@ import java.util.ResourceBundle;
 
 public class ManHinhPhieuNhapController implements Initializable {
 
-    @FXML private Node manHinhPhieuNhap;
-    @FXML private TableView mainTableView;
-    @FXML private TableView detailTableView;
-    @FXML private Button refreshButton;
-    @FXML private MFXTextField nccTextField;
-    @FXML private MFXTextField maPNTextField;
-    @FXML private MFXTextField nvTextField;
+    @FXML
+    private Node manHinhPhieuNhap;
+    @FXML
+    private TableView mainTableView;
+    @FXML
+    private TableView detailTableView;
+    @FXML
+    private Button refreshButton;
+    @FXML
+    private MFXTextField nccTextField;
+    @FXML
+    private MFXTextField maPNTextField;
+    @FXML
+    private MFXTextField nvTextField;
 
-    @FXML private MenuItem addExcelButton;
-    @FXML private MenuItem addDirectButton;
+    @FXML
+    private MenuItem addExcelButton;
+    @FXML
+    private MenuItem addDirectButton;
 
-    @FXML private Text maPNText;
-    @FXML private Text maNVText;
-    @FXML private Text tenNVText;
-    @FXML private Text nccText;
-    @FXML private Text ngayLapPhieuText;
-    @FXML private Text tongTienText;
+    @FXML
+    private Text maPNText;
+    @FXML
+    private Text maNVText;
+    @FXML
+    private Text tenNVText;
+    @FXML
+    private Text nccText;
+    @FXML
+    private Text ngayLapPhieuText;
+    @FXML
+    private Text tongTienText;
 
-    @FXML private MasterDetailPane masterDetailPane;
+    @FXML
+    private MasterDetailPane masterDetailPane;
 
-    @FXML private Region masterPane;
-    @FXML private Button toggleDetailButton;
-    @FXML private Region detailPane;
+    @FXML
+    private Region masterPane;
+    @FXML
+    private Button toggleDetailButton;
+    @FXML
+    private Region detailPane;
 
     private final ObservableList<PhieuNhap> dsPhieuNhap = FXCollections.observableArrayList();
     private final ObservableList<PhieuNhap> dsPhieuNhapFiltered = FXCollections.observableArrayList();
     private final PhieuNhapFilter filter = new PhieuNhapFilter();
 
     NhanVien nhanVienLoggedIn = null;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initMainTableView();
@@ -76,26 +95,30 @@ public class ManHinhPhieuNhapController implements Initializable {
         initDetailPane();
         //init data
     }
+
     public void setVisibility(boolean visibility) {
         manHinhPhieuNhap.setVisible(visibility);
     }
+
     public void setNhanVienLoggedIn(NhanVien nhanVienLoggedIn) {
         this.nhanVienLoggedIn = nhanVienLoggedIn;
     }
+
     //init
-    private void initDetailPane(){
+    private void initDetailPane() {
         masterDetailPane.setDetailNode(detailPane);
         masterDetailPane.setMasterNode(masterPane);
 
-        masterDetailPane.widthProperty().addListener(ob ->{
-            detailPane.setMinWidth(masterDetailPane.getWidth()*0.3);
-            detailPane.setMaxWidth(masterDetailPane.getWidth()*0.3);
+        masterDetailPane.widthProperty().addListener(ob -> {
+            detailPane.setMinWidth(masterDetailPane.getWidth() * 0.3);
+            detailPane.setMaxWidth(masterDetailPane.getWidth() * 0.3);
         });
         mainTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, phieuNhap) -> {
             UpdateDetailPane((PhieuNhap) phieuNhap);
         });
     }
-    private void initDetailTableView(){
+
+    private void initDetailTableView() {
         // Tạo các cột cho TableView
 
         TableColumn<ChiTietPhieuNhap, String> mhCol = new TableColumn<>("Mặt hàng");
@@ -103,8 +126,9 @@ public class ManHinhPhieuNhapController implements Initializable {
             MatHang mh = null;
             try {
                 mh = MatHangDAO.getInstance().QueryID(data.getValue().getMaMatHang());
-            } catch (SQLException _) {}
-            return new SimpleObjectProperty<>(mh.getMaMatHang()+ " - "+mh.getTenMatHang());
+            } catch (SQLException _) {
+            }
+            return new SimpleObjectProperty<>(mh.getMaMatHang() + " - " + mh.getTenMatHang());
         });
 
         TableColumn<ChiTietPhieuNhap, String> dvtCol = new TableColumn<>("Đơn vị tính");
@@ -112,24 +136,27 @@ public class ManHinhPhieuNhapController implements Initializable {
             MatHang mh = null;
             try {
                 mh = MatHangDAO.getInstance().QueryID(data.getValue().getMaMatHang());
-            } catch (SQLException _) {}
+            } catch (SQLException _) {
+            }
 
             DonViTinh dvt = null;
             try {
                 dvt = DonViTinhDAO.getInstance().QueryID(mh.getMaDVT());
-            } catch (SQLException _) {}
+            } catch (SQLException _) {
+            }
             return new SimpleObjectProperty<>(dvt.getTenDVT());
         });
 
         TableColumn<ChiTietPhieuNhap, Integer> slCol = new TableColumn<>("Số lượng");
-        slCol.setCellValueFactory( new PropertyValueFactory<>("soLuong"));
+        slCol.setCellValueFactory(new PropertyValueFactory<>("soLuong"));
 
         TableColumn<ChiTietPhieuNhap, Double> donGiaNhapCol = new TableColumn<>("Đơn giá");
         donGiaNhapCol.setCellValueFactory(data -> {
             MatHang mh = null;
             try {
                 mh = MatHangDAO.getInstance().QueryID(data.getValue().getMaMatHang());
-            } catch (SQLException _) {}
+            } catch (SQLException _) {
+            }
             return new SimpleObjectProperty<>(mh.getDonGiaNhap());
         });
 
@@ -137,19 +164,20 @@ public class ManHinhPhieuNhapController implements Initializable {
         thanhTienCol.setCellValueFactory(new PropertyValueFactory<>("thanhTien"));
 
         detailTableView.getColumns().addAll(
-                mhCol,dvtCol,slCol,donGiaNhapCol,thanhTienCol
+                mhCol, dvtCol, slCol, donGiaNhapCol, thanhTienCol
         );
         detailTableView.setEditable(true);
         detailTableView.widthProperty().addListener(ob -> {
             double width = detailTableView.getWidth();
-            mhCol.setPrefWidth(width*0.3);
-            dvtCol.setPrefWidth(width*0.15);
-            slCol.setPrefWidth(width*0.15);
-            donGiaNhapCol.setPrefWidth(width*0.2);
-            thanhTienCol.setPrefWidth(width*0.2);
+            mhCol.setPrefWidth(width * 0.3);
+            dvtCol.setPrefWidth(width * 0.15);
+            slCol.setPrefWidth(width * 0.15);
+            donGiaNhapCol.setPrefWidth(width * 0.2);
+            thanhTienCol.setPrefWidth(width * 0.2);
         });
-        detailTableView.setEditable( true );
+        detailTableView.setEditable(true);
     }
+
     private void initEvent() {
         addDirectButton.setOnAction(_ -> {
             OpenDirectAddDialog();
@@ -157,26 +185,28 @@ public class ManHinhPhieuNhapController implements Initializable {
         refreshButton.setOnAction(_ -> {
             resetFilter();
         });
-        addExcelButton.setOnAction(_ ->{
+        addExcelButton.setOnAction(_ -> {
             exportDialog();
         });
-        toggleDetailButton.setOnAction(ob ->{
-            if(masterDetailPane.isShowDetailNode()){
+        toggleDetailButton.setOnAction(ob -> {
+            if (masterDetailPane.isShowDetailNode()) {
                 CloseDetailPanel();
-            }
-            else{
+            } else {
                 OpenDetailPanel();
             }
         });
     }
+
     private void initDatabaseBinding() {
         PhieuNhapDAO.getInstance().AddDatabaseListener(_ -> updateListFromDatabase());
 
     }
+
     private void initUIDataBinding() {
         mainTableView.setItems(dsPhieuNhapFiltered);
     }
-    private void initFilterBinding(){
+
+    private void initFilterBinding() {
         filter.setInput(dsPhieuNhap);
 
         maPNTextField.textProperty().addListener(_ -> {
@@ -192,14 +222,20 @@ public class ManHinhPhieuNhapController implements Initializable {
             filterList();
         });
     }
+
     private void initMainTableView() {
         // Tạo các cột cho TableView
         TableColumn<PhieuNhap, String> maPNCol = new TableColumn<>("Mã Phiếu Nhập");
         maPNCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getMaPhieuNhap()));
 
         TableColumn<PhieuNhap, String> maNVCol = new TableColumn<>("Nhân viên");
-        maNVCol.setCellValueFactory(new PropertyValueFactory<>("maNhanVien"));
-
+        maNVCol.setCellValueFactory(data -> {
+            NhanVien nhanVien = null;
+            try{
+                nhanVien = NhanVienDAO.getInstance().QueryID(data.getValue().getMaNhanVien());
+            } catch (SQLException _) {}
+            return new SimpleObjectProperty<>(nhanVien.getMaNhanVien()+" - "+nhanVien.getHoTen());
+        });
         TableColumn<PhieuNhap, Integer> nccCol = new TableColumn<>("Nhà cung cấp");
         nccCol.setCellValueFactory(new PropertyValueFactory<>("nhaCungCap"));
 
@@ -234,21 +270,21 @@ public class ManHinhPhieuNhapController implements Initializable {
                                             PhieuNhap phieuNhap = getTableView().getItems().get(getIndex());
                                             new LapPhieuNhapDialog(phieuNhap, nhanVienLoggedIn).showAndWait().ifPresent(_ -> {
                                                 try {
-                                                    PhieuNhapDAO.getInstance().Update(phieuNhap.getID(),phieuNhap);
-                                                    PopDialog.popSuccessDialog("Cập nhật phiếu nhập hàng "+phieuNhap.getMaPhieuNhap()+" thành công");
-                                                }
-                                                catch (SQLException e) {
-                                                    PopDialog.popErrorDialog("Cập nhật phiếu nhập hàng "+phieuNhap.getMaPhieuNhap()+" thất bại",
+                                                    PhieuNhapDAO.getInstance().Update(phieuNhap.getID(), phieuNhap);
+                                                    PopDialog.popSuccessDialog("Cập nhật phiếu nhập hàng " + phieuNhap.getMaPhieuNhap() + " thành công");
+                                                } catch (SQLException e) {
+                                                    PopDialog.popErrorDialog("Cập nhật phiếu nhập hàng " + phieuNhap.getMaPhieuNhap() + " thất bại",
                                                             e.getMessage());
                                                 }
                                                 //mainTableView.getItems().set(selectedIndex, response);
                                             });
-                                        } catch(IOException exc) {
+                                        } catch (IOException exc) {
                                             exc.printStackTrace();
                                         }
                                     });
 
-                                    xuatBtn.setOnAction(_ -> {});
+                                    xuatBtn.setOnAction(_ -> {
+                                    });
                                     HBox hbox = new HBox();
                                     hbox.getChildren().addAll(xuatBtn);
                                     hbox.setSpacing(5);
@@ -277,50 +313,52 @@ public class ManHinhPhieuNhapController implements Initializable {
         mainTableView.setEditable(true);
         mainTableView.widthProperty().addListener(ob -> {
             double width = mainTableView.getWidth();
-            selectedCol.setPrefWidth(width*0.1);
-            maPNCol.setPrefWidth(width*0.1);
-            maNVCol.setPrefWidth(width*0.1);
-            nccCol.setPrefWidth(width*0.3);
-            tongTienCol.setPrefWidth(width*0.2);
-            actionCol.setPrefWidth(width*0.2);
+            selectedCol.setPrefWidth(width * 0.1);
+            maPNCol.setPrefWidth(width * 0.1);
+            maNVCol.setPrefWidth(width * 0.1);
+            nccCol.setPrefWidth(width * 0.3);
+            tongTienCol.setPrefWidth(width * 0.2);
+            actionCol.setPrefWidth(width * 0.2);
         });
-        mainTableView.setEditable( true );
+        mainTableView.setEditable(true);
         mainTableView.setPrefWidth(1100);
 
     }
 
     //detail pane
-    public void UpdateDetailPane(PhieuNhap phieuNhap){
-        if(phieuNhap==null){
+    public void UpdateDetailPane(PhieuNhap phieuNhap) {
+        if (phieuNhap == null) {
             CloseDetailPanel();
             return;
         }
         maPNText.setText(phieuNhap.getMaPhieuNhap());
-        try{
+        try {
             NhanVien nv = NhanVienDAO.getInstance().QueryID(phieuNhap.getMaNhanVien());
             maNVText.setText(nv.getMaNhanVien());
             tenNVText.setText(nv.getHoTen());
+        } catch (SQLException _) {
         }
-        catch (SQLException _){}
         nccText.setText(phieuNhap.getNhaCungCap());
         ngayLapPhieuText.setText(DayFormat.GetDayStringFormatted(phieuNhap.getNgayLapPhieu()));
         tongTienText.setText(Double.toString(phieuNhap.getTongTien()));
 
         //item
-        try{
+        try {
             List<ChiTietPhieuNhap> chiTietPhieuNhapList = CTPNDAO.getInstance().QueryByPhieuNhapID(phieuNhap.getID());
             detailTableView.getItems().clear();
             ObservableList<ChiTietPhieuNhap> observableChiTietPhieuNhapList = FXCollections.observableArrayList(chiTietPhieuNhapList);
             detailTableView.setItems(observableChiTietPhieuNhapList);
+        } catch (SQLException _) {
         }
-        catch(SQLException _){}
     }
-    public void OpenDetailPanel(){
+
+    public void OpenDetailPanel() {
         toggleDetailButton.setText(">");
         masterDetailPane.setShowDetailNode(true);
 
     }
-    public void CloseDetailPanel(){
+
+    public void CloseDetailPanel() {
         masterDetailPane.setShowDetailNode(false);
         toggleDetailButton.setText("<");
     }
@@ -340,7 +378,8 @@ public class ManHinhPhieuNhapController implements Initializable {
             importFromExcel(selectedFile.getAbsolutePath());
         }
     }
-    public void importFromExcel(String filePath)  {
+
+    public void importFromExcel(String filePath) {
         /*
         File file = new File(filePath);
         FileInputStream fis = null;
@@ -445,6 +484,7 @@ public class ManHinhPhieuNhapController implements Initializable {
         }
 
     }
+
     public void exportToExcel(String filePath) {
         /*
         // Tạo hoặc mở tệp Excel
@@ -518,8 +558,7 @@ public class ManHinhPhieuNhapController implements Initializable {
     public void OpenDirectAddDialog() {
         try {
             new LapPhieuNhapDialog(nhanVienLoggedIn).showAndWait();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             PopDialog.popErrorDialog("Không thể mở dialog thêm phiếu nhập", e.getMessage());
         }
@@ -534,11 +573,13 @@ public class ManHinhPhieuNhapController implements Initializable {
             throw new RuntimeException(e);
         }
     }
-    private void filterList(){
+
+    private void filterList() {
         dsPhieuNhapFiltered.clear();
         dsPhieuNhapFiltered.addAll(filter.Filter());
     }
-    private void resetFilter(){
+
+    private void resetFilter() {
         maPNTextField.clear();
         nvTextField.clear();
     }

@@ -201,7 +201,7 @@ public class ManHinhKhoHangController implements Initializable {
         TableColumn<MatHang, String> maMHCol = new TableColumn<>("Mã mặt hàng");
         maMHCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getMaMatHang()));
 
-        TableColumn<MatHang, String> tenMHCol = new TableColumn<>("Mã mặt hàng");
+        TableColumn<MatHang, String> tenMHCol = new TableColumn<>("Tên mặt hàng");
         tenMHCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getTenMatHang()));
 
         TableColumn<MatHang, String> dvtCol = new TableColumn<>("Đơn vị tính");
