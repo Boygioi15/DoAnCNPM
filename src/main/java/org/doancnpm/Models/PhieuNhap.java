@@ -64,6 +64,7 @@ public class PhieuNhap {
         this.ghiChu = ghiChu;
     }
 
+
     Integer ID;
     String maPhieuNhap;
     String nhaCungCap;
@@ -71,7 +72,7 @@ public class PhieuNhap {
     Date ngayLapPhieu;
     Long tongTien;
     String ghiChu;
-
+ 
     public boolean isSelected() {
         return selected.get();
     }

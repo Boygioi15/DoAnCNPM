@@ -126,12 +126,7 @@ public class ManHinhPhieuXuatController implements Initializable {
 
         TableColumn<ChiTietPhieuXuat, String> donGiaNhapCol = new TableColumn<>("Đơn giá");
         donGiaNhapCol.setCellValueFactory(data -> {
-            MatHang mh = null;
-            try {
-                mh = MatHangDAO.getInstance().QueryID(data.getValue().getMaMatHang());
-            } catch (SQLException _) {}
-            assert mh != null;
-            return new SimpleObjectProperty<>(MoneyFormatter.convertLongToString(mh.getDonGiaXuat()));
+            return new SimpleObjectProperty<>(MoneyFormatter.convertLongToString(data.getValue().getDonGiaXuat()));
         });
 
         TableColumn<ChiTietPhieuXuat, String> thanhTienCol = new TableColumn<>("Thành tiền ");
@@ -515,6 +510,7 @@ public class ManHinhPhieuXuatController implements Initializable {
     public void OpenDirectAddDialog() {
         try {
             new LapPhieuXuatDialog(nhanVienLoggedIn).showAndWait();
+            updateListFromDatabase();
         }
         catch (IOException e) {
             e.printStackTrace();

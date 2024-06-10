@@ -58,7 +58,6 @@ public class LapPhieuNhapDialog extends Dialog<PhieuNhap> {
                     List<ChiTietPhieuNhap> ctpns = c.getChiTietPhieuNhap();
                     try{
                         PhieuNhapDAO.getInstance().Insert(phieuNhap);
-                        //turn back to get ID
                         phieuNhap = PhieuNhapDAO.getInstance().QueryMostRecent();
                         for(ChiTietPhieuNhap ctpn: ctpns){
                             ctpn.setMaPhieuNhap(phieuNhap.getID());

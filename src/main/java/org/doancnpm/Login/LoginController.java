@@ -11,6 +11,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
@@ -107,6 +108,11 @@ public class LoginController implements Initializable {
         initializeEmailInputPane();
         initializeVerifyOtpPane();
         initializeResetPasswordPane();
+        initEvent();
+    }
+
+    private void initEvent() {
+
     }
 
 
@@ -133,7 +139,7 @@ public class LoginController implements Initializable {
 
     // main login pane
     private void initializeMainLoginPane() {
-      //  loginButton.setOnAction(_ -> handleLogin(null));
+        //  loginButton.setOnAction(_ -> handleLogin(null));
         forgotPasswordLabel.setOnMouseClicked(mouseEvent -> {
             currentScreenString.setValue("EMAIL_INPUT_PANE");
         });
@@ -141,6 +147,11 @@ public class LoginController implements Initializable {
 
     public void initManager(final NavController loginManager) {
         loginButton.setOnAction(_ -> handleLogin(loginManager));
+        password.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.ENTER) {
+                    handleLogin(loginManager);
+            }
+        });
     }
 
     public void handleLogin(NavController loginManager) {
@@ -163,8 +174,8 @@ public class LoginController implements Initializable {
     }
 
     private NhanVien authorize() {
-        String userName = user.getText();
-        String pass = password.getText();
+        String userName = user.getText().trim();
+        String pass = password.getText().trim();
         try {
             ArrayList<TaiKhoan> taiKhoanList = TaiKhoanDAO.getInstance().QueryAll();
             boolean userFound = false;
@@ -327,7 +338,7 @@ public class LoginController implements Initializable {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 handleSendOtp();
-                startCountdown(reSendOtpLabel,OTP_VALIDITY_SECONDS);
+                startCountdown(reSendOtpLabel, OTP_VALIDITY_SECONDS);
             }
         });
     }
@@ -397,19 +408,18 @@ public class LoginController implements Initializable {
         });
 
     }
-    private void handleConfirm(){
+
+    private void handleConfirm() {
         clearErrorBox(errorConfirmPasswordBox);
         clearErrorBox(errorPasswordBox);
-        if(!validatePassword()){
+        if (!validatePassword()) {
             return;
         }
-        try{
-            NhanVienDAO.getInstance().updatePasswordByEmail(emailText.getText(),enterPasswordText.getText());
+        try {
+            NhanVienDAO.getInstance().updatePasswordByEmail(emailText.getText(), enterPasswordText.getText());
             PopDialog.popSuccessDialog("Đổi mật khẩu thành công");
             currentScreenString.setValue("");
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             PopDialog.popSuccessDialog("Đổi mật khẩu that bai");
         }
 

@@ -129,11 +129,8 @@ public class ManHinhPhieuNhapController implements Initializable {
 
         TableColumn<ChiTietPhieuNhap, String> donGiaNhapCol = new TableColumn<>("Đơn giá");
         donGiaNhapCol.setCellValueFactory(data -> {
-            MatHang mh = null;
-            try {
-                mh = MatHangDAO.getInstance().QueryID(data.getValue().getMaMatHang());
-            } catch (SQLException _) {}
-            return new SimpleObjectProperty<>(MoneyFormatter.convertLongToString(mh.getDonGiaNhap()));
+            System.out.println("data.getValue().getDonGiaNhap() " + data.getValue().getDonGiaNhap());
+            return new SimpleObjectProperty<>(MoneyFormatter.convertLongToString(data.getValue().getDonGiaNhap()));
         });
 
         TableColumn<ChiTietPhieuNhap, String> thanhTienCol = new TableColumn<>("Thành tiền ");
@@ -514,6 +511,7 @@ public class ManHinhPhieuNhapController implements Initializable {
     public void OpenDirectAddDialog() {
         try {
             new LapPhieuNhapDialog(nhanVienLoggedIn).showAndWait();
+            updateListFromDatabase();
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -522,6 +520,7 @@ public class ManHinhPhieuNhapController implements Initializable {
     }
 
     private void updateListFromDatabase() {
+
         dsPhieuNhap.clear();
         try {
             dsPhieuNhap.addAll(PhieuNhapDAO.getInstance().QueryAll());

@@ -43,6 +43,7 @@ public class PhieuNhapDAO implements Idao<PhieuNhap> {
         if (rowsAffected > 0) {
             notifyChange();
         }
+        notifyChange();
         pstmt.close();
         return rowsAffected;
     }

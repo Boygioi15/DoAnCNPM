@@ -15,6 +15,7 @@ public class PhieuXuat {
     Long tongTien;
     String ghiChu;
 
+
     public Integer getID() {
         return ID;
     }

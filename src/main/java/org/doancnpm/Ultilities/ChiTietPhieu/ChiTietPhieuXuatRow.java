@@ -135,6 +135,7 @@ public class ChiTietPhieuXuatRow extends HBox {
         ChiTietPhieuXuat chiTietPhieuXuat = new ChiTietPhieuXuat();
         chiTietPhieuXuat.setMaMatHang(mhComboBox.getValue().getID());
         chiTietPhieuXuat.setSoLuong(Integer.parseInt(slTextField.getText()));
+        chiTietPhieuXuat.setDonGiaXuat(mhComboBox.getValue().getDonGiaXuat());
         return chiTietPhieuXuat;
     }
 

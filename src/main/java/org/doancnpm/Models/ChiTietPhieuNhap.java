@@ -5,6 +5,15 @@ public class ChiTietPhieuNhap {
     Integer maMatHang;
     Integer soLuong;
     Long thanhTien;
+    Long donGiaNhap;
+
+    public Long getDonGiaNhap() {
+        return donGiaNhap;
+    }
+
+    public void setDonGiaNhap(Long donGiaNhap) {
+        this.donGiaNhap = donGiaNhap;
+    }
 
     public Integer getMaPhieuNhap() {
         return maPhieuNhap;

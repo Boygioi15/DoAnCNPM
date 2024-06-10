@@ -42,6 +42,7 @@ import java.io.*;
 import java.net.URL;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -130,7 +131,6 @@ public class ManHinhKhoHangController implements Initializable {
     }
     private void initDatabaseBinding() {
         MatHangDAO.getInstance().AddDatabaseListener(_ -> updateListFromDatabase());
-
     }
     private void initUIDataBinding() {
         mainTableView.setItems(dsMatHangFiltered);
@@ -224,7 +224,9 @@ public class ManHinhKhoHangController implements Initializable {
         });
 
         TableColumn<MatHang, Integer> soLuongCol = new TableColumn<>("Số lượng");
-        soLuongCol.setCellValueFactory(new PropertyValueFactory<>("soLuong"));
+        soLuongCol.setCellValueFactory(data ->{
+            return new SimpleObjectProperty<>(data.getValue().getSoLuong());
+        });
 
         TableColumn<PhieuThu, Boolean> selectedCol = new TableColumn<>("Selected");
         selectedCol.setCellValueFactory(new PropertyValueFactory<>("selected"));
@@ -380,7 +382,7 @@ public class ManHinhKhoHangController implements Initializable {
             PopDialog.popErrorDialog("Có lỗi trong quá trình thực hiện", e.getMessage());
             return;
         }
-        XSSFSheet sheet = workbook.getSheetAt(0); // Assuming data is in the first sheet
+        XSSFSheet sheet = workbook.getSheetAt(0);
 
         Date ngayLapPhieu = new Date(System.currentTimeMillis());
 

@@ -81,7 +81,8 @@ public class MatHangDAO implements Idao<MatHang> {
     public void AddDatabaseListener(InvalidationListener listener) {
         matHangDtbChanged.addListener(listener);
     }
-    private void notifyChange(){
+    public void notifyChange(){
+
         matHangDtbChanged.set(!matHangDtbChanged.get());
     }
     @Override
