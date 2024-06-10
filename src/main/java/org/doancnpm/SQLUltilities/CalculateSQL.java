@@ -1,5 +1,6 @@
 package org.doancnpm.SQLUltilities;
 
+import javafx.util.Pair;
 import org.doancnpm.DAO.DaiLyDAO;
 import org.doancnpm.Models.DaiLy;
 import org.doancnpm.Models.DatabaseDriver;
@@ -111,10 +112,10 @@ public class CalculateSQL {
         for (int yearTest = currentYear; yearTest >= year; yearTest--) {
             // Xác định tháng bắt đầu dựa trên năm
             int startMonthOfYear = (yearTest == currentYear) ? currentMonth : 12;
-            int endMonth ;
-            if(year==currentYear || yearTest == year){
+            int endMonth;
+            if (year == currentYear || yearTest == year) {
                 endMonth = 2;
-            }else{
+            } else {
                 endMonth = 1;
             }
 
@@ -421,8 +422,8 @@ public class CalculateSQL {
         return totalValueExports;
     }
 
-    public Map<Integer, Map<String, Map<Double, Double>>> calculateDebtUntilMonthWithDaiLy(int year) throws SQLException {
-        Map<Integer, Map<String, Map<Double, Double>>> totalDebts = new HashMap<>();
+    public Map<Integer, Map<String, Pair<Double, Double>>> calculateDebtUntilMonthWithDaiLy(int year) throws SQLException {
+        Map<Integer, Map<String, Pair<Double, Double>>> totalDebts = new HashMap<>();
         ArrayList<DaiLy> daiLyArrayList = DaiLyDAO.getInstance().QueryAll();
 
         int currentMonth = LocalDate.now().getMonthValue();
@@ -430,7 +431,7 @@ public class CalculateSQL {
 
         for (DaiLy daiLy : daiLyArrayList) {
             int daiLyID = daiLy.getID();
-            Map<String, Map<Double, Double>> debtForDaiLy = new HashMap<>();
+            Map<String, Pair<Double, Double>> debtForDaiLy = new HashMap<>();
             double noCuoi = daiLy.getNoHienTai();
             double noDau = noCuoi;
 
@@ -439,16 +440,15 @@ public class CalculateSQL {
                 int endMonth = (yearTest == year) ? 1 : 1; // always 1 since we need to process January of each year
 
                 for (int month = startMonthOfYear; month >= endMonth; month--) {
-                    Map<Double, Double> debt = new HashMap<>();
                     // Handling the case when month is January and we need to switch to the previous year
                     if (month == 1 && yearTest != year) {
                         noDau += calculateReceiptsForMonthWithDaiLy(month, yearTest, daiLyID) - calculateValueExportsForMonthWithDaiLy(month, yearTest, daiLyID);
-                        debt.put(noDau, noCuoi);
-                        debtForDaiLy.put((yearTest - 1) + "-12", debt); // for the December of the previous year
+                        Pair<Double, Double> debtPair = new Pair<>(noDau, noCuoi);
+                        debtForDaiLy.put((yearTest - 1) + "-12", debtPair); // for the December of the previous year
                     } else {
                         noDau += calculateReceiptsForMonthWithDaiLy(month, yearTest, daiLyID) - calculateValueExportsForMonthWithDaiLy(month, yearTest, daiLyID);
-                        debt.put(noDau, noCuoi);
-                        debtForDaiLy.put(yearTest + "-" + month, debt);
+                        Pair<Double, Double> debtPair = new Pair<>(noDau, noCuoi);
+                        debtForDaiLy.put(yearTest + "-" + month, debtPair);
                     }
                     noCuoi = noDau;
                 }
@@ -457,6 +457,7 @@ public class CalculateSQL {
         }
         return totalDebts;
     }
+
 
     public Set<Integer> filterDaiLyIDs(int month, int year) throws SQLException {
         Set<Integer> daiLyIDs = new HashSet<>();
@@ -532,6 +533,43 @@ public class CalculateSQL {
 
         return activeMonths;
     }
+
+    public Set<Integer> filterDaiLyIDsNam(int year) throws SQLException {
+        Set<Integer> daiLyIDs = new HashSet<>();
+        Connection conn = DatabaseDriver.getConnect();
+        if (conn != null) {
+            try {
+                // Lọc các đại lý có phiếu xuất trong năm chỉ định
+                String sqlXuat = "SELECT DISTINCT MaDaiLy FROM PHIEUXUATHANG WHERE YEAR(NgayLapPhieu) = ?";
+                PreparedStatement pstmtXuat = conn.prepareStatement(sqlXuat);
+                pstmtXuat.setInt(1, year);
+                ResultSet rsXuat = pstmtXuat.executeQuery();
+                while (rsXuat.next()) {
+                    daiLyIDs.add(rsXuat.getInt("MaDaiLy"));
+                }
+                rsXuat.close();
+                pstmtXuat.close();
+
+                // Lọc các đại lý có phiếu thu trong năm chỉ định
+                String sqlThu = "SELECT DISTINCT MaDaiLy FROM PHIEUTHUTIEN WHERE YEAR(NgayLapPhieu) = ?";
+                PreparedStatement pstmtThu = conn.prepareStatement(sqlThu);
+                pstmtThu.setInt(1, year);
+                ResultSet rsThu = pstmtThu.executeQuery();
+                while (rsThu.next()) {
+                    daiLyIDs.add(rsThu.getInt("MaDaiLy"));
+                }
+                rsThu.close();
+                pstmtThu.close();
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Không thể kết nối đến cơ sở dữ liệu.");
+        }
+        return daiLyIDs;
+    }
+
     public double calculateTotalValueReceiptsForMonth(int month, int year) {
         Connection conn = DatabaseDriver.getConnect();
         double totalValueReceipts = 0;
