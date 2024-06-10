@@ -462,7 +462,7 @@ public class ManHinhDaiLyController implements Initializable {
         XSSFSheet sheet = workbook.getSheetAt(0); // Assuming data is in the first sheet
 
         Date ngayTiepNhan = new Date(System.currentTimeMillis());
-
+        boolean hasError = true; // Biến để theo dõi nếu có lỗi xảy ra
         for (int i = 1; i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
             if (row != null) { // Kiểm tra xem dòng có tồn tại hay không
@@ -479,12 +479,17 @@ public class ManHinhDaiLyController implements Initializable {
 
                 Integer loaiDaiLyID = handleLoaiDaiLy(loaiDaiLyName);
                 if (loaiDaiLyID == null) {
-                    return;
+                    continue;
+                }else{
+                    hasError =false;
                 }
 
                 Integer quanID = handleQuan(quanName);
                 if (quanID == null) {
-                    return;
+                    continue;
+                }
+                else{
+                    hasError =false;
                 }
 
                 DaiLy daiLy = new DaiLy();
@@ -514,7 +519,12 @@ public class ManHinhDaiLyController implements Initializable {
         try {
             workbook.close();
             fis.close();
-            PopDialog.popSuccessDialog("Thêm danh sách đại lý từ file excel thành công");
+            if (!hasError) { // Chỉ hiển thị dialog thành công nếu không có lỗi nào
+                PopDialog.popSuccessDialog("Thêm danh sách đại lý từ file excel thành công");
+            }
+            else{
+                PopDialog.popErrorDialog("Thêm danh sách đại lý từ file excel không thành công");
+            }
         } catch (IOException e) {
             PopDialog.popErrorDialog("Có lỗi trong quá trình thực hiện", e.getMessage());
         }

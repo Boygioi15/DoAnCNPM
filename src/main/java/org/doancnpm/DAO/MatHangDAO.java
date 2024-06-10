@@ -5,6 +5,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import org.doancnpm.Models.DatabaseDriver;
 import org.doancnpm.Models.MatHang;
+import org.doancnpm.Ultilities.CheckExist;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -158,4 +159,20 @@ public class MatHangDAO implements Idao<MatHang> {
 
         return matHang;
     }
+    public MatHang QueryName(String name) throws SQLException {
+        ArrayList<MatHang> allMatHang = QueryAll();
+        String normalizedMatHang = CheckExist.normalize(name);
+
+        // Iterate through the list of all MatHang objects and check if the name exists
+        for (MatHang matHang : allMatHang) {
+            // Normalize the MatHang name from the list
+            String normalizedMatHangName = CheckExist.normalize(matHang.getTenMatHang());
+
+            if (normalizedMatHangName.equals(normalizedMatHang)) {
+                return matHang;
+            }
+        }
+        return null;
+    }
+
 }

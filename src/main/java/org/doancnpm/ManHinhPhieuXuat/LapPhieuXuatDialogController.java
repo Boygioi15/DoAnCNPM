@@ -9,17 +9,27 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.controlsfx.control.SearchableComboBox;
 import org.doancnpm.DAO.DaiLyDAO;
+import org.doancnpm.DAO.MatHangDAO;
 import org.doancnpm.DAO.NhanVienDAO;
-import org.doancnpm.Models.ChiTietPhieuXuat;
-import org.doancnpm.Models.DaiLy;
-import org.doancnpm.Models.NhanVien;
-import org.doancnpm.Models.PhieuXuat;
+import org.doancnpm.Models.*;
+import org.doancnpm.Ultilities.CheckExist;
+import org.doancnpm.Ultilities.ChiTietPhieu.ChiTietPhieuNhapRow;
 import org.doancnpm.Ultilities.ChiTietPhieu.ChiTietPhieuXuatRow;
 import org.doancnpm.Ultilities.DayFormat;
+import org.doancnpm.Ultilities.PopDialog;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -50,6 +60,13 @@ public class LapPhieuXuatDialogController implements Initializable {
         });
         themCTPX();
         initDaiLyComboBox();
+        loadExcelBtn.setOnAction(ob ->{
+            try {
+                OpenImportDialog();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
     private void initDaiLyComboBox() {
         try {
@@ -168,5 +185,113 @@ public class LapPhieuXuatDialogController implements Initializable {
             }
         }
         return validRows;
+    }
+    public void OpenImportDialog() throws SQLException {
+        // Hiển thị hộp thoại chọn tệp Excel
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Excel Files", "*.xlsx", "*.xls")
+        );
+        File selectedFile = fileChooser.showOpenDialog(null);
+        // Kiểm tra nếu người dùng đã chọn một tệp Excel
+        if (selectedFile != null) {
+            // Gọi hàm importFromExcel và truyền đường dẫn tệp Excel đã chọn
+            importFromExcel(selectedFile.getAbsolutePath());
+        }
+    }
+
+    public void themCTPXExcel(ChiTietPhieuXuat chiTietPhieuXuat) {
+        ChiTietPhieuXuatRow temp = new ChiTietPhieuXuatRow(ctpxContainer);
+        temp.loadFromChiTietPhieuXuat(chiTietPhieuXuat);
+        ctpxContainer.getChildren().add(ctpxContainer.getChildren().size() - 2, temp);
+        temp.SetOnXoa(event -> {
+            if (ctpxContainer.getChildren().size() <= 3) {
+                event.consume();
+            } else {
+                ctpxContainer.getChildren().remove(temp);
+            }
+        });
+    }
+
+    private void importFromExcel(String filePath) {
+        File file = new File(filePath);
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+            PopDialog.popErrorDialog("Không tìm thấy file excel");
+            return;
+        }
+
+        XSSFWorkbook workbook = null;
+        try {
+            workbook = new XSSFWorkbook(fis);
+        } catch (IOException e) {
+            PopDialog.popErrorDialog("Có lỗi trong quá trình thực hiện", e.getMessage());
+            return;
+        }
+        XSSFSheet sheet = workbook.getSheetAt(0); // Giả sử dữ liệu ở sheet đầu tiên
+
+        boolean hasError = true; // Biến để theo dõi nếu có lỗi xảy ra
+
+        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+            Row row = sheet.getRow(i);
+            if (row != null) { // Kiểm tra xem dòng có tồn tại hay không
+                Cell matHangCell = row.getCell(0);
+                Cell soLuongCell = row.getCell(1);
+
+                ChiTietPhieuXuat chiTietPhieuXuat = new ChiTietPhieuXuat();
+                String maMatHang = matHangCell.getStringCellValue().trim();
+                String numericalPart = null;
+                int maMatHangID = 0;
+                try {
+                    if (!CheckExist.checkMatHang(maMatHang)) {
+                        PopDialog.popErrorDialog("Không tồn tại mặt hàng " + maMatHang);
+                        continue;
+                    } else {
+                        hasError = false;
+                        // Tách phần số từ maMatHang
+                        numericalPart = maMatHang.replaceAll("[^0-9]", "");
+                        maMatHangID = Integer.parseInt(numericalPart);
+                        chiTietPhieuXuat.setMaMatHang(maMatHangID);
+                    }
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                Integer sl = (int) soLuongCell.getNumericCellValue();
+                chiTietPhieuXuat.setSoLuong(sl);
+                MatHang matHang;
+                try {
+                    matHang = MatHangDAO.getInstance().QueryID(maMatHangID);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+                try {
+                    double thanhTien = sl * matHang.getDonGiaNhap();
+                    chiTietPhieuXuat.setThanhTien(thanhTien);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                themCTPXExcel(chiTietPhieuXuat);
+            }
+        }
+        capNhatTongTien();
+        // Xóa hàng đầu tiên sau khi nhập
+        if (!hasError) {
+            ctpxContainer.getChildren().remove(0);
+        }
+
+        try {
+            workbook.close();
+            fis.close();
+            if (!hasError) { // Chỉ hiển thị dialog thành công nếu không có lỗi nào
+                PopDialog.popSuccessDialog("Thêm danh sách mặt hàng từ file excel thành công");
+            }
+            else{
+                PopDialog.popErrorDialog("Thêm danh sách mặt hàng từ file excel không thành công");
+            }
+        } catch (IOException e) {
+            PopDialog.popErrorDialog("Có lỗi trong quá trình thực hiện", e.getMessage());
+        }
     }
 }

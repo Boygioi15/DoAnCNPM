@@ -419,7 +419,7 @@ public class ManHinhKhoHangController implements Initializable {
             return;
         }
         XSSFSheet sheet = workbook.getSheetAt(0); // Assuming data is in the first sheet
-
+        boolean hasError = true; // Biến để theo dõi nếu có lỗi xảy ra
         for (int i = 1; i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
             if (row != null) { // Kiểm tra xem dòng có tồn tại hay không
@@ -433,7 +433,10 @@ public class ManHinhKhoHangController implements Initializable {
 
                 Integer dvtID = handleDVT(donViTinh);
                 if (dvtID == null) {
-                    return;
+                   continue;
+                }
+                else{
+                    hasError = false;
                 }
                 matHang.setMaDVT(dvtID);
 
@@ -448,7 +451,7 @@ public class ManHinhKhoHangController implements Initializable {
                 try {
                     MatHangDAO.getInstance().Insert(matHang); // Thêm đối tượng vào cơ sở dữ liệu
                 } catch (SQLException e) {
-                    PopDialog.popErrorDialog("Thêm mới đại lý thất bại", e.getMessage());
+                    PopDialog.popErrorDialog("Thêm mới mặt hàng thất bại", e.getMessage());
                     return;
                 }
             }
@@ -457,7 +460,12 @@ public class ManHinhKhoHangController implements Initializable {
         try {
             workbook.close();
             fis.close();
-            PopDialog.popSuccessDialog("Thêm danh sách phiếu thu từ file excel thành công");
+            if (!hasError) { // Chỉ hiển thị dialog thành công nếu không có lỗi nào
+                PopDialog.popSuccessDialog("Thêm danh sách mặt hàng từ file excel thành công");
+            }
+            else{
+                PopDialog.popErrorDialog("Thêm danh sách mặt hàng từ file excel không thành công");
+            }
         } catch (IOException e) {
             PopDialog.popErrorDialog("Có lỗi trong quá trình thực hiện", e.getMessage());
         }

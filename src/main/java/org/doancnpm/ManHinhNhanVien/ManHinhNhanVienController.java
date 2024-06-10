@@ -395,7 +395,7 @@ public class ManHinhNhanVienController implements Initializable {
         }
         XSSFSheet sheet = workbook.getSheetAt(0); // Assuming data is in the first sheet
 
-
+        boolean hasError = true; // Biến để theo dõi nếu có lỗi xảy ra
         for (int i = 1; i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
             if (row != null) { // Kiểm tra xem dòng có tồn tại hay không
@@ -437,7 +437,10 @@ public class ManHinhNhanVienController implements Initializable {
                 String chucVuName = chucVuCell.getStringCellValue().trim();
                 Integer chucVuID = handleChucVu(chucVuName);
                 if (chucVuID == null) {
-                    return;
+                    continue;
+                }
+                else{
+                    hasError = false;
                 }
                 nhanVien.setMaChucVu(chucVuID);
 
@@ -459,7 +462,12 @@ public class ManHinhNhanVienController implements Initializable {
         try {
             workbook.close();
             fis.close();
-            PopDialog.popSuccessDialog("Thêm danh sách nhân viên từ file excel thành công");
+            if (!hasError) { // Chỉ hiển thị dialog thành công nếu không có lỗi nào
+                PopDialog.popSuccessDialog("Thêm danh sách nhân viên từ file excel thành công");
+            }
+            else{
+                PopDialog.popErrorDialog("Thêm danh sách nhân viên từ file excel không thành công");
+            }
         }
         catch (IOException e) {
             PopDialog.popErrorDialog("Có lỗi trong quá trình thực hiện", e.getMessage());

@@ -365,26 +365,30 @@ public class ManHinhPhieuThuController implements Initializable {
         XSSFSheet sheet = workbook.getSheetAt(0); // Assuming data is in the first sheet
 
         Date ngayLapPhieu = new Date(System.currentTimeMillis());
-
+        boolean hasError = true; // Biến để theo dõi nếu có lỗi xảy ra
         for (int i = 1; i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
             if (row != null) { // Kiểm tra xem dòng có tồn tại hay không
-                Cell tenDaiLyCell = row.getCell(0);
+                Cell maDaiLyCell = row.getCell(0);
                 Cell soTienThuCell = row.getCell(1);
                 Cell ghiChuCell = row.getCell(2);
 
                 PhieuThu phieuThu = new PhieuThu();
-                String tenDaiLyName = tenDaiLyCell.getStringCellValue().trim();
+                String maDaiLy = maDaiLyCell.getStringCellValue().trim();
+                String numericalPart = null;
+                int maDaiLyID = 0;
                 try {
-                    if (!CheckExist.checkDaiLy(tenDaiLyName)) {
-                        PopDialog.popErrorDialog("Không tồn tại đại lý " + tenDaiLyName);
-                        return;
+                    if (!CheckExist.checkDaiLy(maDaiLy)) {
+                        PopDialog.popErrorDialog("Không tồn tại đại lý " + maDaiLy);
+                        continue;
                     }
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-                try{
-                    phieuThu.setMaDaiLy(DaiLyDAO.getInstance().QueryName(tenDaiLyName).getID());
+                    else{
+                        hasError = false;
+                        // Tách phần số từ maMatHang
+                        numericalPart = maDaiLy.replaceAll("[^0-9]", "");
+                        maDaiLyID = Integer.parseInt(numericalPart);
+                        phieuThu.setMaDaiLy(maDaiLyID);
+                    }
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
@@ -404,11 +408,15 @@ public class ManHinhPhieuThuController implements Initializable {
                 }
             }
         }
-
         try {
             workbook.close();
             fis.close();
-            PopDialog.popSuccessDialog("Thêm danh sách phiếu thu từ file excel thành công");
+            if (!hasError) { // Chỉ hiển thị dialog thành công nếu không có lỗi nào
+                PopDialog.popSuccessDialog("Thêm danh sách phiếu thu từ file excel thành công");
+            }
+            else{
+                PopDialog.popErrorDialog("Thêm danh sách phiếu thu từ file excel không thành công");
+            }
         } catch (IOException e) {
             PopDialog.popErrorDialog("Có lỗi trong quá trình thực hiện", e.getMessage());
         }

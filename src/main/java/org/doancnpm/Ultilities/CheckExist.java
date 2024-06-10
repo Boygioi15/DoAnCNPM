@@ -85,24 +85,29 @@ public class CheckExist {
         }
         return false;
     }
-    public static boolean checkDaiLy(String daiLyName) throws SQLException {
+    public static boolean checkDaiLy(String madaiLy) throws SQLException {
         // Fetch all DaiLy objects
         ArrayList<DaiLy> allDaiLy = DaiLyDAO.getInstance().QueryAll();
 
-        // Normalize the input DaiLy name
-        String normalizedDaiLy = normalize(daiLyName);
-
         // Iterate through the list of all DaiLy objects and check if the name exists
         for (DaiLy dl : allDaiLy) {
-            // Normalize the DaiLy name from the list
-            String normalizedDaiLyName = normalize(dl.getTenDaiLy());
-
-            if (normalizedDaiLyName.equals(normalizedDaiLy)) {
+            if (dl.getMaDaiLy().equals(madaiLy)) {
                 return true;
             }
         }
         return false;
     }
+    public static boolean checkMatHang(String maHang) throws SQLException {
+        // Fetch all MatHang objects
+        ArrayList<MatHang> allMatHang = MatHangDAO.getInstance().QueryAll();
 
+        for (MatHang mh : allMatHang) {
+            // Directly compare the MatHang name from the list with the provided name
+            if (mh.getMaMatHang().equals(maHang)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }
