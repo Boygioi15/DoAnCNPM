@@ -16,9 +16,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.controlsfx.control.SearchableComboBox;
-import org.doancnpm.DAO.DaiLyDAO;
-import org.doancnpm.DAO.MatHangDAO;
-import org.doancnpm.DAO.NhanVienDAO;
+import org.doancnpm.DAO.*;
 import org.doancnpm.Models.*;
 import org.doancnpm.Ultilities.CheckExist;
 import org.doancnpm.Ultilities.ChiTietPhieu.ChiTietPhieuNhapRow;
@@ -26,13 +24,11 @@ import org.doancnpm.Ultilities.ChiTietPhieu.ChiTietPhieuXuatRow;
 import org.doancnpm.Ultilities.DayFormat;
 import org.doancnpm.Ultilities.PopDialog;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -66,6 +62,9 @@ public class LapPhieuXuatDialogController implements Initializable {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
+        });
+        xuatExcelBtn.setOnAction(ob->{
+            OpenExportDialog();
         });
     }
     private void initDaiLyComboBox() {
@@ -292,6 +291,88 @@ public class LapPhieuXuatDialogController implements Initializable {
             }
         } catch (IOException e) {
             PopDialog.popErrorDialog("Có lỗi trong quá trình thực hiện", e.getMessage());
+        }
+    }
+    public void OpenExportDialog() {
+        // Hiển thị hộp thoại lưu tệp Excel
+        if (phieuXuatGoc == null) {
+            PopDialog.popErrorDialog("Không có phiếu xuất để xuất Excel");
+            return;
+        }
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Excel Files", "*.xlsx"));
+
+        // Tạo tên file với định dạng "Export_ngay_thang_nam.xlsx"
+        Date ngayHienTai = new Date(System.currentTimeMillis());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd_MM_yyyy");
+        String fileName = "ChiTietPhieuXuat_"+phieuXuatGoc.getMaPhieuXuat()+"_"+ dateFormat.format(ngayHienTai) + ".xlsx";
+
+        // Thiết lập tên file mặc định cho hộp thoại lưu
+        File initialDirectory = new File(System.getProperty("user.home"));
+        File defaultFile = new File(initialDirectory, fileName);
+        fileChooser.setInitialFileName(fileName);
+        fileChooser.setInitialDirectory(initialDirectory);
+        fileChooser.setInitialFileName(fileName);
+
+        File selectedFile = fileChooser.showSaveDialog(null);
+
+        // Kiểm tra nếu người dùng đã chọn vị trí lưu tệp Excel
+        if (selectedFile != null) {
+            // Gọi hàm exportFromExcel và truyền đường dẫn tệp Excel được chọn
+            exportToExcel(selectedFile.getAbsolutePath());
+        }
+
+    }
+    public void exportToExcel(String filePath) {
+        // Tạo hoặc mở tệp Excel
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet("ChiTietPhieuXuatData"); // Tạo một sheet mới hoặc sử dụng sheet hiện có
+
+        // Tạo hàng đầu tiên với các tiêu đề cột
+        Row headerRow = sheet.createRow(0);
+        String[] columnTitles = {"Mã mặt hàng", "Số lượng", "Thành tiền"};
+        int cellnum = 0;
+        for (String title : columnTitles) {
+            Cell cell = headerRow.createCell(cellnum++);
+            cell.setCellValue(title);
+        }
+
+        List<ChiTietPhieuXuat> chiTietPhieuXuats = null;
+        // Lấy danh sách chi tiết phiếu nhập từ cơ sở dữ liệu
+        try {
+            chiTietPhieuXuats = CTPXDAO.getInstance().QueryByPhieuXuatID(phieuXuatGoc.getID());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Ghi dữ liệu vào các dòng của tệp Excel
+        int rownum = 1; // Bắt đầu từ hàng thứ 2 sau tiêu đề
+        for (ChiTietPhieuXuat chiTiet : chiTietPhieuXuats) {
+            Row row = sheet.createRow(rownum++);
+            cellnum = 0;
+            MatHang matHang = null;
+            try {
+                matHang = MatHangDAO.getInstance().QueryID(chiTiet.getMaMatHang());
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            row.createCell(cellnum++).setCellValue(matHang.getMaMatHang());
+            row.createCell(cellnum++).setCellValue(chiTiet.getSoLuong());
+            row.createCell(cellnum++).setCellValue(chiTiet.getThanhTien());
+        }
+
+        // Tự động điều chỉnh độ rộng của các cột
+        for (int i = 0; i < columnTitles.length; i++) {
+            sheet.autoSizeColumn(i);
+        }
+
+        // Lưu tệp Excel
+        try (FileOutputStream fos = new FileOutputStream(filePath)) {
+            workbook.write(fos);
+            workbook.close();
+            PopDialog.popSuccessDialog("Xuất file excel thành công");
+        } catch (IOException e) {
+            PopDialog.popErrorDialog("Xuất file excel thất bại", e.getMessage());
         }
     }
 }
