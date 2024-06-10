@@ -2,9 +2,11 @@ package org.doancnpm.ManHinhBaoCao;
 
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
@@ -83,16 +85,22 @@ public class ManHinhBaoCaoController implements Initializable {
         mixlineChart.setTitle("Doanh thu và tổng nợ đại lý");
         CalculateSQL calculateSQL = CalculateSQL.getInstance();
 
-        mixlineChart.getData().clear(); // Xóa dữ liệu cũ trước khi vẽ lại
+        mixlineChart.getData().clear();
         // Tạo dữ liệu cho tổng doanh số
         XYChart.Series<String, Number> totalSalesSeries = bieuDoController.createSalesDataSeries(selectedYear);
         totalSalesSeries.setName("Tổng doanh số");
         mixlineChart.getData().add(totalSalesSeries);
 
+
         // Tạo dữ liệu cho tổng nợ của các đại lý
-        Map<String, Double> totalDebts = calculateSQL.calculateTotalDebtUntilMonth(selectedYear);
-        XYChart.Series<String, Number> totalDebtsSeries = bieuDoController.createDebtsDataSeries(totalDebts);
-        totalDebtsSeries.setName("Tổng nợ của các đại lý");
-        mixlineChart.getData().add(totalDebtsSeries);
+        XYChart.Series<String, Number> totalReceiptsSeries = bieuDoController.createReceiptsSeries(selectedYear);
+        totalReceiptsSeries.setName("Tổng giá trị phiếu thu");
+        mixlineChart.getData().add(totalReceiptsSeries);
+
+
+        // Đảm bảo trục X hiển thị tất cả các tháng
+        CategoryAxis xAxis = (CategoryAxis) mixlineChart.getXAxis();
+        xAxis.setCategories(FXCollections.observableArrayList("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"));
     }
+
 }

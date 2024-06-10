@@ -111,11 +111,16 @@ public class CalculateSQL {
         for (int yearTest = currentYear; yearTest >= year; yearTest--) {
             // Xác định tháng bắt đầu dựa trên năm
             int startMonthOfYear = (yearTest == currentYear) ? currentMonth : 12;
-            int endMonth = (year == currentYear || yearTest != currentYear) ? 2 : 1;
+            int endMonth ;
+            if(year==currentYear || yearTest == year){
+                endMonth = 2;
+            }else{
+                endMonth = 1;
+            }
 
             // Bắt đầu tính toán tổng nợ từ tháng bắt đầu của năm đó
             for (int month = startMonthOfYear; month >= endMonth; month--) {
-                if (month == 1 && yearTest != year) {
+                if (month == 1) {
                     totalDebtAll += calculateTotalReceiptsForMonth(1, yearTest) - calculateTotalValueExportsForMonth(1, yearTest);
                     totalDebts.put((yearTest - 1) + "-" + 12, totalDebtAll);
                     // Xuất dòng lệnh kiểm tra
@@ -526,6 +531,31 @@ public class CalculateSQL {
         }
 
         return activeMonths;
+    }
+    public double calculateTotalValueReceiptsForMonth(int month, int year) {
+        Connection conn = DatabaseDriver.getConnect();
+        double totalValueReceipts = 0;
+        if (conn != null) {
+            try {
+                String sql = "SELECT SUM(SoTienThu) AS TotalValueReceipts FROM PHIEUTHUTIEN WHERE MONTH(NgayLapPhieu) = ? AND YEAR(NgayLapPhieu) = ?";
+                PreparedStatement pstmt = conn.prepareStatement(sql);
+                pstmt.setInt(1, month);
+                pstmt.setInt(2, year);
+                ResultSet rs = pstmt.executeQuery();
+
+                if (rs.next()) {
+                    totalValueReceipts = rs.getDouble("TotalValueReceipts");
+                }
+
+                rs.close();
+                pstmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Không thể kết nối đến cơ sở dữ liệu.");
+        }
+        return totalValueReceipts;
     }
 }
 

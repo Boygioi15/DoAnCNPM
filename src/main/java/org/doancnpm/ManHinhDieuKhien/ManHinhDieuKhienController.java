@@ -55,11 +55,10 @@ public class ManHinhDieuKhienController implements Initializable {
         totalSalesSeries.setName("Tổng doanh số");
         mixlineChart.getData().add(totalSalesSeries);
 
-        // Tạo dữ liệu cho tổng nợ của các đại lý
-        Map<String, Double> totalDebts = calculateSQL.calculateTotalDebtUntilMonth(currentYear);
-        XYChart.Series<String, Number> totalDebtsSeries = createDebtsDataSeries(totalDebts);
-        totalDebtsSeries.setName("Tổng nợ của các đại lý");
-        mixlineChart.getData().add(totalDebtsSeries);
+        // Tạo dữ liệu cho tổng giá trị phiếu thu
+        XYChart.Series<String, Number> totalReceiptsSeries = createReceiptsSeries(currentYear);
+        totalReceiptsSeries.setName("Tổng giá trị phiếu thu");
+        mixlineChart.getData().add(totalReceiptsSeries);
     }
 
     private XYChart.Series<String, Number> createSalesDataSeries(int year) {
@@ -79,21 +78,18 @@ public class ManHinhDieuKhienController implements Initializable {
         return series;
     }
 
-    private XYChart.Series<String, Number> createDebtsDataSeries(Map<String, Double> totalDebts) {
+    private XYChart.Series<String, Number> createReceiptsSeries(int year) {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
         LocalDate now = LocalDate.now();
         int currentMonth = now.getMonthValue();
-        int currentYear = now.getYear();
-        if (totalDebts.containsKey(currentYear + "-1")) {
+        if (year == now.getYear()) {
             for (int month = 1; month <= currentMonth; month++) {
-                String monthKey = currentYear + "-" + month;
-                series.getData().add(new XYChart.Data<>(months[month - 1], totalDebts.getOrDefault(monthKey, 0.0)));
+                series.getData().add(new XYChart.Data<>(months[month - 1], CalculateSQL.getInstance().calculateTotalValueReceiptsForMonth(month, year)));
             }
         } else {
             for (int month = 1; month <= 12; month++) {
-                String monthKey = currentYear + "-" + month;
-                series.getData().add(new XYChart.Data<>(months[month - 1], totalDebts.getOrDefault(monthKey, 0.0)));
+                series.getData().add(new XYChart.Data<>(months[month - 1], CalculateSQL.getInstance().calculateTotalValueReceiptsForMonth(month, year)));
             }
         }
         return series;

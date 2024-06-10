@@ -10,7 +10,11 @@ public class BaoCaoDoanhSo {
     private double tongTriGia;
     private double tyLe;
 
-    public BaoCaoDoanhSo(int STT,int maDaiLy, Date ngayLapPhieu, int soPhieuXuat, double tongTriGia, double tyLe) {
+    public BaoCaoDoanhSo() {
+
+    }
+
+    public BaoCaoDoanhSo(int STT, int maDaiLy, Date ngayLapPhieu, int soPhieuXuat, double tongTriGia, double tyLe) {
         this.STT = STT;
         this.maDaiLy = maDaiLy;
         this.ngayLapPhieu = ngayLapPhieu;
@@ -18,6 +22,7 @@ public class BaoCaoDoanhSo {
         this.tongTriGia = tongTriGia;
         this.tyLe = tyLe;
     }
+
     public int getSTT() {
         return STT;
     }

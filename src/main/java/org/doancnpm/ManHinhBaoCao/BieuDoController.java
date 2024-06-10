@@ -7,21 +7,18 @@ import java.time.LocalDate;
 import java.util.Map;
 
 public class BieuDoController {
-    protected XYChart.Series<String, Number> createDebtsDataSeries(Map<String, Double> totalDebts) {
+    protected XYChart.Series<String, Number> createReceiptsSeries(int year) {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
         LocalDate now = LocalDate.now();
         int currentMonth = now.getMonthValue();
-        int currentYear = now.getYear();
-        if (totalDebts.containsKey(currentYear + "-1")) {
+        if (year == now.getYear()) {
             for (int month = 1; month <= currentMonth; month++) {
-                String monthKey = currentYear + "-" + month;
-                series.getData().add(new XYChart.Data<>(months[month - 1], totalDebts.getOrDefault(monthKey, 0.0)));
+                series.getData().add(new XYChart.Data<>(months[month - 1], CalculateSQL.getInstance().calculateTotalValueReceiptsForMonth(month, year)));
             }
         } else {
             for (int month = 1; month <= 12; month++) {
-                String monthKey = currentYear + "-" + month;
-                series.getData().add(new XYChart.Data<>(months[month - 1], totalDebts.getOrDefault(monthKey, 0.0)));
+                series.getData().add(new XYChart.Data<>(months[month - 1], CalculateSQL.getInstance().calculateTotalValueReceiptsForMonth(month, year)));
             }
         }
         return series;
