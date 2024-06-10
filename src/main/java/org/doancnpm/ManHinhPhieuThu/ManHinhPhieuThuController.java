@@ -38,7 +38,9 @@ import org.doancnpm.DAO.PhieuThuDAO;
 import org.doancnpm.Filters.PhieuThuFilter;
 import org.doancnpm.ManHinhPhieuXuat.LapPhieuXuatDialog;
 import org.doancnpm.Models.*;
+import org.doancnpm.Ultilities.CurrentNVInfor;
 import org.doancnpm.Ultilities.DayFormat;
+import org.doancnpm.Ultilities.MoneyFormatter;
 import org.doancnpm.Ultilities.PopDialog;
 import javafx.scene.text.Text;
 
@@ -88,7 +90,7 @@ public class ManHinhPhieuThuController implements Initializable {
     private final ObservableList<PhieuThu> dsPhieuThuFiltered = FXCollections.observableArrayList();
     private final PhieuThuFilter filter = new PhieuThuFilter();
 
-    NhanVien nhanVienLoggedIn = null;
+    NhanVien nhanVienLoggedIn;
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initTableView();
@@ -214,8 +216,10 @@ public class ManHinhPhieuThuController implements Initializable {
             return new SimpleObjectProperty<>(nhanVien.getMaNhanVien());
         });
 
-        TableColumn<PhieuThu, Integer> tongTienThuCol = new TableColumn<>("Tổng tiền thu");
-        tongTienThuCol.setCellValueFactory(new PropertyValueFactory<>("SoTienThu"));
+        TableColumn<PhieuThu, String> tongTienThuCol = new TableColumn<>("Tổng tiền thu");
+        tongTienThuCol.setCellValueFactory(data ->{
+            return new SimpleStringProperty(MoneyFormatter.convertLongToString(data.getValue().getSoTienThu()));
+        });
 
         TableColumn<PhieuThu, Boolean> selectedCol = new TableColumn<>( );
         HBox headerBox = new HBox();
@@ -282,8 +286,8 @@ public class ManHinhPhieuThuController implements Initializable {
 
                                     suaBtn.setOnAction(_ -> {
                                         try {
-                                            PhieuXuat phieuXuat = getTableView().getItems().get(getIndex());
-                                            new LapPhieuXuatDialog(phieuXuat, nhanVienLoggedIn).showAndWait();
+                                            PhieuThu phieuThu = getTableView().getItems().get(getIndex());
+                                            new LapPhieuThuDialog(phieuThu, CurrentNVInfor.getInstance().getLoggedInNhanVien()).showAndWait();
                                         } catch(IOException exc) {
                                             exc.printStackTrace();
                                         }
@@ -379,7 +383,7 @@ public class ManHinhPhieuThuController implements Initializable {
             tenNVText.setText(nv.getHoTen());
 
             ngayLapPhieuText.setText(DayFormat.GetDayStringFormatted(phieuThu.getNgayLap()));
-            soTienThuText.setText(Double.toString(phieuThu.getSoTienThu()));
+            soTienThuText.setText(MoneyFormatter.convertLongToString(phieuThu.getSoTienThu()));
             ghiChuTextArea.setText(phieuThu.getGhiChu());
         }
         catch (SQLException _){}
@@ -579,17 +583,8 @@ public class ManHinhPhieuThuController implements Initializable {
     //functionalities
     public void OpenDirectAddDialog() {
         try {
-            new LapPhieuThuDialog(nhanVienLoggedIn).showAndWait().ifPresent(
-                    phieuThuAdded -> {
-                        try {
-                            PhieuThuDAO.getInstance().Insert(phieuThuAdded);
-                            PopDialog.popSuccessDialog("Thêm mới phiếu thu thành công");
-                        }
-                        catch (SQLException e) {
-                            PopDialog.popErrorDialog("Thêm mới phiếu thu thất bại", e.toString());
-                        }
-                    }
-            );
+            new LapPhieuThuDialog(null,nhanVienLoggedIn).showAndWait();
+
         }
         catch (IOException e) {
             e.printStackTrace();

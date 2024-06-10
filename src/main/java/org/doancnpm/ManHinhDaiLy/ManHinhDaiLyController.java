@@ -167,7 +167,7 @@ public class ManHinhDaiLyController implements Initializable {
 
         TableColumn<DaiLy, String> noHienTaiCol = new TableColumn<>("Nợ hiện tại");
         noHienTaiCol.setCellValueFactory(data -> {
-            return new SimpleStringProperty(MoneyFormatter.ConvertLongToString(data.getValue().getNoHienTai()));
+            return new SimpleStringProperty(MoneyFormatter.convertLongToString(data.getValue().getNoHienTai()));
         });
 
         //selected collumn:
@@ -461,7 +461,7 @@ public class ManHinhDaiLyController implements Initializable {
             emailText.setText(daiLy.getEmail());
             diaChiText.setText(daiLy.getDiaChi());
             ngayTiepNhanText.setText(DayFormat.GetDayStringFormatted(daiLy.getNgayTiepNhan()));
-            noHienTaiText.setText(MoneyFormatter.ConvertLongToString(daiLy.getNoHienTai()));
+            noHienTaiText.setText(MoneyFormatter.convertLongToString(daiLy.getNoHienTai()));
             ghiChuTextArea.setText(daiLy.getGhiChu());
         }
         catch (SQLException _){}
@@ -623,7 +623,7 @@ public class ManHinhDaiLyController implements Initializable {
     //functionalities
     public void OpenDirectAddDialog(){
         try {
-            new TiepNhanDaiLyDialog().showAndWait();
+            new TiepNhanDaiLyDialog(null).showAndWait();
         }
         catch (IOException e) {
             PopDialog.popErrorDialog("Không thể mở dialog thêm đại lý");

@@ -20,6 +20,8 @@ import java.net.URL;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TiepNhanDaiLyDialogController implements Initializable {
 
@@ -32,6 +34,7 @@ public class TiepNhanDaiLyDialogController implements Initializable {
     @FXML private TextArea ghiChuTextArea;
 
     DaiLy initialValue = null;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         displayDataInCb();
@@ -48,7 +51,8 @@ public class TiepNhanDaiLyDialogController implements Initializable {
 
             LoaiDaiLy queriedLoaiDaiLy = LoaiDaiLyDAO.getInstance().QueryID(daiLy.getMaLoaiDaiLy());
             loaiDaiLyComboBox.setValue(queriedLoaiDaiLy);
-        } catch (SQLException _) { }
+        } catch (SQLException _) {
+        }
 
         tenDaiLyTextField.setText(daiLy.getTenDaiLy());
         diaChiTextField.setText(daiLy.getDiaChi());
@@ -56,6 +60,7 @@ public class TiepNhanDaiLyDialogController implements Initializable {
         emailTextField.setText(daiLy.getEmail());
         ghiChuTextArea.setText(daiLy.getGhiChu());
     }
+
     private void displayDataInCb() {
         try {
             ObservableList<Quan> quans = FXCollections.observableArrayList(QuanDAO.getInstance().QueryAll());
@@ -93,16 +98,19 @@ public class TiepNhanDaiLyDialogController implements Initializable {
             // Đặt DataSource cho ComboBox
             quanComboBox.setItems(quans);
             loaiDaiLyComboBox.setItems(loaiDaiLys);
-        }
-        catch (SQLException e) {
-            PopDialog.popErrorDialog("Lấy dữ liệu các quận/ loại đại lý thất bại",e.toString());
+        } catch (SQLException e) {
+            PopDialog.popErrorDialog("Lấy dữ liệu các quận/ loại đại lý thất bại", e.toString());
         }
     }
-    public DaiLy getDaiLy(){
-        if(initialValue==null){
+
+    public DaiLy getDaiLy() {
+        if (initialValue == null) {
             Date ngayTiepNhan = new Date(System.currentTimeMillis());
             DaiLy daiLy = new DaiLy();
+
             daiLy.setMaQuan(quanComboBox.getValue().getId());
+
+
             daiLy.setMaLoaiDaiLy(loaiDaiLyComboBox.getValue().getId());
 
             daiLy.setTenDaiLy(tenDaiLyTextField.getText());
@@ -110,11 +118,10 @@ public class TiepNhanDaiLyDialogController implements Initializable {
             daiLy.setEmail(emailTextField.getText());
             daiLy.setDienThoai(dienThoaiTextField.getText());
             daiLy.setNgayTiepNhan(ngayTiepNhan);
-            daiLy.setGhiChu( ghiChuTextArea.getText());
+            daiLy.setGhiChu(ghiChuTextArea.getText());
             return daiLy;
 
-        }
-        else{
+        } else {
             initialValue.setMaQuan(quanComboBox.getValue().getId());
             initialValue.setMaLoaiDaiLy(loaiDaiLyComboBox.getValue().getId());
 
@@ -122,8 +129,36 @@ public class TiepNhanDaiLyDialogController implements Initializable {
             initialValue.setDiaChi(diaChiTextField.getText());
             initialValue.setEmail(emailTextField.getText());
             initialValue.setDienThoai(dienThoaiTextField.getText());
-            initialValue.setGhiChu( ghiChuTextArea.getText());
+            initialValue.setGhiChu(ghiChuTextArea.getText());
             return initialValue;
         }
     }
+
+    public String getValidateData() {
+        if (quanComboBox.getValue() == null) {
+            return "Quận không được để trống";
+        }
+        if (loaiDaiLyComboBox.getValue() == null) {
+            return "Loại đại lý không được để trống";
+        }
+        if (diaChiTextField.getText().isEmpty()) {
+            return "Địa chỉ không được để trống";
+        }
+        if (tenDaiLyTextField.getText().isEmpty()) {
+            return "Tên đại lý không được để trống";
+        }
+        if (!isValidEmailFormat(emailTextField.getText().trim())) {
+            return "Email không đúng định dạng";
+        }
+
+        return "";
+    }
+
+    private boolean isValidEmailFormat(String email) {
+        String emailRegex = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
+        Pattern pattern = Pattern.compile(emailRegex);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
+
 }

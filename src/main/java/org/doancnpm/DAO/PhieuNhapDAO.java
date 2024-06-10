@@ -43,6 +43,7 @@ public class PhieuNhapDAO implements Idao<PhieuNhap> {
         if (rowsAffected > 0) {
             notifyChange();
         }
+        notifyChange();
         pstmt.close();
         return rowsAffected;
     }
@@ -100,7 +101,7 @@ public class PhieuNhapDAO implements Idao<PhieuNhap> {
             String nhaCungCap = rs.getString("nhaCungCap");
             int maNhanVien = rs.getInt("MaNhanVien");
             Date ngayLap  =rs.getDate("NgayLapPhieu");
-            double tongTien = rs.getDouble("tongTien");
+            Long tongTien = rs.getLong("tongTien");
             String ghiChu = rs.getString("GhiChu");
 
             phieuNhap = new PhieuNhap();
@@ -133,7 +134,7 @@ public class PhieuNhapDAO implements Idao<PhieuNhap> {
             String nhaCungCap = rs.getString("nhaCungCap");
             int maNhanVien = rs.getInt("MaNhanVien");
             Date ngayLap  =rs.getDate("NgayLapPhieu");
-            double tongTien = rs.getDouble("tongTien");
+            Long tongTien = rs.getLong("tongTien");
             String ghiChu = rs.getString("GhiChu");
 
             phieuNhap = new PhieuNhap();
@@ -165,7 +166,7 @@ public class PhieuNhapDAO implements Idao<PhieuNhap> {
             String nhaCungCap = rs.getString("nhaCungCap");
             int maNhanVien = rs.getInt("MaNhanVien");
             Date ngayLap  =rs.getDate("NgayLapPhieu");
-            double tongTien = rs.getDouble("tongTien");
+            Long tongTien = rs.getLong("tongTien");
             String ghiChu = rs.getString("GhiChu");
 
             PhieuNhap phieuNhap = new PhieuNhap();

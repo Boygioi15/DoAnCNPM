@@ -50,6 +50,7 @@ public class MatHangDAO implements Idao<MatHang> {
         pstmt.setInt(2, matHang.getMaDVT());
         pstmt.setDouble(3, matHang.getDonGiaNhap());
         pstmt.setString(4, matHang.getGhiChu());
+        pstmt.setInt(5, matHang.getID());
 
         int rowsAffected = pstmt.executeUpdate();
         if(rowsAffected>0){
@@ -80,7 +81,8 @@ public class MatHangDAO implements Idao<MatHang> {
     public void AddDatabaseListener(InvalidationListener listener) {
         matHangDtbChanged.addListener(listener);
     }
-    private void notifyChange(){
+    public void notifyChange(){
+
         matHangDtbChanged.set(!matHangDtbChanged.get());
     }
     @Override
@@ -98,8 +100,8 @@ public class MatHangDAO implements Idao<MatHang> {
             String maMH = rs.getString("MaMatHang");
             int maDVT = rs.getInt("MaDonViTinh");
             String tenMH = rs.getString("TenMatHang");
-            Double donGiaNhap = rs.getDouble("DonGiaNhap");
-            Double donGiaXuat = rs.getDouble("DonGiaXuat");
+            Long donGiaNhap = rs.getLong("DonGiaNhap");
+            Long donGiaXuat = rs.getLong("DonGiaXuat");
             String ghiChu = rs.getString("GhiChu");
             int sl = rs.getInt("SoLuong");
 
@@ -137,8 +139,8 @@ public class MatHangDAO implements Idao<MatHang> {
             String maMH = rs.getString("MaMatHang");
             int maDVT = rs.getInt("MaDonViTinh");
             String tenMH = rs.getString("TenMatHang");
-            Double donGiaNhap = rs.getDouble("DonGiaNhap");
-            Double donGiaXuat = rs.getDouble("DonGiaXuat");
+            Long donGiaNhap = rs.getLong("DonGiaNhap");
+            Long donGiaXuat = rs.getLong("DonGiaXuat");
             String ghiChu = rs.getString("GhiChu");
             int sl = rs.getInt("SoLuong");
 

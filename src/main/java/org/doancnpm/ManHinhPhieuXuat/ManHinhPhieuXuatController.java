@@ -28,6 +28,7 @@ import org.doancnpm.DAO.*;
 import org.doancnpm.Filters.PhieuXuatFilter;
 import org.doancnpm.Models.*;
 import org.doancnpm.Ultilities.DayFormat;
+import org.doancnpm.Ultilities.MoneyFormatter;
 import org.doancnpm.Ultilities.PopDialog;
 
 import java.io.*;
@@ -146,18 +147,15 @@ public class ManHinhPhieuXuatController implements Initializable {
         TableColumn<ChiTietPhieuXuat, Integer> slCol = new TableColumn<>("Số lượng");
         slCol.setCellValueFactory( new PropertyValueFactory<>("soLuong"));
 
-        TableColumn<ChiTietPhieuXuat, Double> donGiaNhapCol = new TableColumn<>("Đơn giá");
+        TableColumn<ChiTietPhieuXuat, String> donGiaNhapCol = new TableColumn<>("Đơn giá");
         donGiaNhapCol.setCellValueFactory(data -> {
-            MatHang mh = null;
-            try {
-                mh = MatHangDAO.getInstance().QueryID(data.getValue().getMaMatHang());
-            } catch (SQLException _) {}
-            return new SimpleObjectProperty<>(mh.getDonGiaNhap());
+            return new SimpleObjectProperty<>(MoneyFormatter.convertLongToString(data.getValue().getDonGiaXuat()));
         });
 
-        TableColumn<MatHang, Integer> thanhTienCol = new TableColumn<>("Thành tiền");
-        thanhTienCol.setCellValueFactory(new PropertyValueFactory<>("thanhTien"));
-
+        TableColumn<ChiTietPhieuXuat, String> thanhTienCol = new TableColumn<>("Thành tiền ");
+        thanhTienCol.setCellValueFactory(data->{
+            return new SimpleStringProperty(MoneyFormatter.convertLongToString(data.getValue().getThanhTien()));
+        });
         detailTableView.getColumns().addAll(
                 mhCol,dvtCol,slCol,donGiaNhapCol,thanhTienCol
         );
@@ -230,8 +228,10 @@ public class ManHinhPhieuXuatController implements Initializable {
         TableColumn<PhieuXuat, Integer> dlCol = new TableColumn<>("Đại lý");
         dlCol.setCellValueFactory(new PropertyValueFactory<>("maDaiLy"));
 
-        TableColumn<PhieuXuat, Integer> tongTienCol = new TableColumn<>("Tổng tiền");
-        tongTienCol.setCellValueFactory(new PropertyValueFactory<>("tongTien"));
+        TableColumn<PhieuXuat, String> tongTienCol = new TableColumn<>("Tổng tiền");
+        tongTienCol.setCellValueFactory(data->{
+            return new SimpleStringProperty(MoneyFormatter.convertLongToString(data.getValue().getTongTien()));
+        });
 
         TableColumn<PhieuXuat, Boolean> selectedCol = new TableColumn<>( );
         HBox headerBox = new HBox();
@@ -398,7 +398,7 @@ public class ManHinhPhieuXuatController implements Initializable {
         }
         catch (SQLException _){}
         ngayLapPhieuText.setText(DayFormat.GetDayStringFormatted(phieuXuat.getNgayLapPhieu()));
-        tongTienText.setText(Double.toString(phieuXuat.getTongTien()));
+        tongTienText.setText(MoneyFormatter.convertLongToString(phieuXuat.getTongTien()));
 
         //item
         try{
@@ -610,6 +610,7 @@ public class ManHinhPhieuXuatController implements Initializable {
     public void OpenDirectAddDialog() {
         try {
             new LapPhieuXuatDialog(nhanVienLoggedIn).showAndWait();
+            updateListFromDatabase();
         }
         catch (IOException e) {
             e.printStackTrace();

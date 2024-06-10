@@ -6,7 +6,9 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.doancnpm.Login.LoginController;
 import org.doancnpm.Main.AdminController;
+import org.doancnpm.Main.StaffController;
 import org.doancnpm.Models.NhanVien;
+import org.doancnpm.Ultilities.CurrentNVInfor;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -26,7 +28,13 @@ public class NavController {
      * Will show the main application screen.
      */
     public void authenticated(NhanVien nhanVienLoggedIn) {
-        showMainView(nhanVienLoggedIn);
+        if(CurrentNVInfor.getInstance().getLoggedInNhanVien().getMaChucVu().equals(3)){
+            showAdminView(nhanVienLoggedIn); //admin
+        }
+        else if(CurrentNVInfor.getInstance().getLoggedInNhanVien().getMaChucVu().equals(2)){
+            showStaffView(nhanVienLoggedIn);
+        }
+
     }
 
     /**
@@ -61,13 +69,36 @@ public class NavController {
         }
     }
 
-    private void showMainView(NhanVien nhanVienLoggedIn) {
+    private void showAdminView(NhanVien nhanVienLoggedIn) {
         try {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/fxml/Main/AdminUI.fxml")
             );
             Parent objectGraph = (Parent) loader.load();
             AdminController controller = loader.getController();
+
+            if (controller != null) {
+                controller.initManager(this);
+                controller.setNhanvienLoggedIn(nhanVienLoggedIn);
+            } else {
+                Logger.getLogger(NavController.class.getName()).log(Level.SEVERE, "MainController is null.");
+            }
+
+            scene.setRoot(objectGraph);
+            scene.getWindow().sizeToScene();
+            scene.getWindow().centerOnScreen();
+        } catch (IOException ex) {
+            Logger.getLogger(NavController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    private void showStaffView(NhanVien nhanVienLoggedIn) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/fxml/Main/StaffUI.fxml")
+            );
+            Parent objectGraph = (Parent) loader.load();
+            StaffController controller = loader.getController();
+
             if (controller != null) {
                 controller.initManager(this);
                 controller.setNhanvienLoggedIn(nhanVienLoggedIn);

@@ -3,14 +3,14 @@ package org.doancnpm.Models;
 public class LoaiDaiLy {
     private Integer id;
     private String maLoai;
-    private Integer soNoToiDa;
+    private Long soNoToiDa;
     private String tenLoai;
     private String ghiChu;
 
     public LoaiDaiLy() {
     }
 
-    public LoaiDaiLy(Integer id, String maLoai, Integer soNoToiDa, String tenLoai, String ghiChu) {
+    public LoaiDaiLy(Integer id, String maLoai, Long soNoToiDa, String tenLoai, String ghiChu) {
         this.id = id;
         this.maLoai = maLoai;
         this.soNoToiDa = soNoToiDa;
@@ -43,11 +43,11 @@ public class LoaiDaiLy {
         this.tenLoai = tenLoai;
     }
 
-    public Integer getSoNoToiDa() {
+    public Long getSoNoToiDa() {
         return soNoToiDa;
     }
 
-    public void setSoNoToiDa(Integer soNoToiDa) {
+    public void setSoNoToiDa(Long soNoToiDa) {
         this.soNoToiDa = soNoToiDa;
     }
 
