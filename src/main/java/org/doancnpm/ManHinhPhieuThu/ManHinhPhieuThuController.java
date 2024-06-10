@@ -255,12 +255,12 @@ public class ManHinhPhieuThuController implements Initializable {
 
         TableColumn actionCol = new TableColumn("Action");
 
-        Callback<TableColumn<PhieuXuat, String>, TableCell<PhieuXuat, String>> cellFactory
+        Callback<TableColumn<PhieuThu, String>, TableCell<PhieuThu, String>> cellFactory
                 = //
                 new Callback<>() {
                     @Override
-                    public TableCell call(final TableColumn<PhieuXuat, String> param) {
-                        final TableCell<PhieuXuat, String> cell = new TableCell<PhieuXuat, String>() {
+                    public TableCell call(final TableColumn<PhieuThu, String> param) {
+                        final TableCell<PhieuThu, String> cell = new TableCell<PhieuThu, String>() {
                             final Button suaBtn = new Button();
                             final Button xuatBtn = new Button();
 

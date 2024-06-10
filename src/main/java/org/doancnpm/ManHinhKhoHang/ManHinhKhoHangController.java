@@ -378,7 +378,6 @@ public class ManHinhKhoHangController implements Initializable {
                 tenMHCol,
                 dvtCol,
                 donGiaNhapCol,
-                donGiaXuatCol,
                 soLuongCol,
                 actionCol
         );

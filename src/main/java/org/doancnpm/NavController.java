@@ -29,9 +29,13 @@ public class NavController {
      */
     public void authenticated(NhanVien nhanVienLoggedIn) {
         if(CurrentNVInfor.getInstance().getLoggedInNhanVien().getMaChucVu().equals(3)){
+            System.out.println("Admin");
             showAdminView(nhanVienLoggedIn); //admin
         }
         else if(CurrentNVInfor.getInstance().getLoggedInNhanVien().getMaChucVu().equals(2)){
+            showStaffView(nhanVienLoggedIn);
+        }
+        else if(CurrentNVInfor.getInstance().getLoggedInNhanVien().getMaChucVu().equals(1)){
             showStaffView(nhanVienLoggedIn);
         }
 

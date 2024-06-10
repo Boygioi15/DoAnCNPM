@@ -80,7 +80,7 @@ public class LapPhieuThuDialog extends Dialog<PhieuThu> {
                     PopDialog.popSuccessDialog("Thêm mới phiếu thu thành công");
                 } catch (SQLException e) {
                     PopDialog.popErrorDialog("Thêm mới phiếu thu thất bại", e.toString());
-
+                    ob.consume();
                 }
             }else {
                 try {

@@ -15,7 +15,7 @@
 .date-picker .arrow-button {
 	-fx-background-color: white;
 	-fx-border-width: 0 0 0 1;
-	-fx-border-color: darkgray;
+	-fx-border-color: gray;
 }
 .date-picker .arrow-button .arrow {
 	-fx-background-color: gray;

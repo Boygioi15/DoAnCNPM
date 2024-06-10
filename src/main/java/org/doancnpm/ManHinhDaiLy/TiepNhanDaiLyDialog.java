@@ -75,6 +75,7 @@ public class TiepNhanDaiLyDialog extends Dialog<DaiLy>  {
             if(themHaySua){
                 try {
                     DaiLyDAO.getInstance().Insert(dl);
+                    PopDialog.popErrorDialog("Thêm mới đại lý thành công");
                 } catch (SQLException e) {
                     PopDialog.popErrorDialog("Thêm mới đại lý thất bại",e.getMessage());
                     ob.consume();
@@ -84,6 +85,7 @@ public class TiepNhanDaiLyDialog extends Dialog<DaiLy>  {
             else{
                 try {
                     DaiLyDAO.getInstance().Update(dl.getID(),dl);
+                    PopDialog.popErrorDialog("Cập nhật đại lý thành công");
                 } catch (SQLException e) {
                     PopDialog.popErrorDialog("Cập nhật đại lý thất bại",e.getMessage());
                     ob.consume();

@@ -188,7 +188,7 @@ public class DaiLyDAO implements Idao<DaiLy> {
         dailyDtbChanged.addListener(listener);
     }
 
-    private void notifyChange() {
+    public void notifyChange() {
         dailyDtbChanged.set(!dailyDtbChanged.get());
     }
 }

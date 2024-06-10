@@ -65,6 +65,7 @@ public class LapPhieuXuatDialog extends Dialog<PhieuXuat> {
                             ctpx.setMaPhieuXuat(phieuXuat.getID());
                         }
                         CTPXDAO.getInstance().InsertBlock(ctpxs);
+                        PopDialog.popSuccessDialog("Thêm mới phiếu xuất thành công");
                     }catch (SQLException e){
                         PopDialog.popErrorDialog("Thêm mới phiếu xuất thất bại",e.getMessage());
                         event.consume();

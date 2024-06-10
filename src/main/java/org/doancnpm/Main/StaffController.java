@@ -35,7 +35,6 @@ public class StaffController implements Initializable {
     public Button openPhieuXuatButton;
     public Button openPhieuNhapButton;
     public AnchorPane centerScreen;
-    public Label userNameLabel;
 
     private ManHinhDaiLyController manHinhDaiLyController;
     private ManHinhPhieuThuController manHinhPhieuThuController;
@@ -138,7 +137,6 @@ public class StaffController implements Initializable {
         navController.logout();
     }
     public void setNhanvienLoggedIn(NhanVien nhanVienLoggedIn) {
-        userNameLabel.setText(nhanVienLoggedIn.getHoTen());
 
         manHinhPhieuThuController.setNhanVienLoggedIn(nhanVienLoggedIn);
         manHinhPhieuNhapController.setNhanVienLoggedIn(nhanVienLoggedIn);
