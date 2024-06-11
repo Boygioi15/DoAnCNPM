@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.PopupControl;
+import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.doancnpm.ManHinhBaoCao.ManHinhBaoCaoController;
@@ -20,6 +21,7 @@ public class AppStart extends Application {
         loginManager.showLoginScreen();
 
         stage.setTitle("Quản lý đại lý");
+        stage.getIcons().add(new Image(getClass().getResource("/image/deal.png").toExternalForm()));
         stage.setScene(scene);
         stage.show();
     }

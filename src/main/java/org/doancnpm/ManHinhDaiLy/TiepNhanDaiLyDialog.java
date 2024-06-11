@@ -40,16 +40,18 @@ public class TiepNhanDaiLyDialog extends Dialog<DaiLy>  {
 
         ButtonType saveButtonType;
         if(initialValue==null){
+            this.setTitle("Tiếp nhận đại lý");
             saveButtonType = new ButtonType("Thêm mới", ButtonBar.ButtonData.OK_DONE);
             themHaySua = true;
         }
         else{
+            this.setTitle("Cập nhật đại lý");
             saveButtonType = new ButtonType("Cập nhật", ButtonBar.ButtonData.OK_DONE);
             themHaySua = false;
         }
         ButtonType cancelButtonType = new ButtonType("Thoát", ButtonBar.ButtonData.CANCEL_CLOSE);
 
-        this.setTitle("Tiếp nhận đại lý");
+
         this.getDialogPane().setContent(fxmlLoader.load());
 
         TiepNhanDaiLyDialogController c = fxmlLoader.getController();

@@ -43,16 +43,18 @@ public class ThemMoiMatHangDialog extends Dialog<MatHang>  {
 
         ButtonType saveButtonType;
         if(initialValue==null){
+            this.setTitle("Thêm mới mặt hàng");
             saveButtonType = new ButtonType("Thêm mới", ButtonBar.ButtonData.OK_DONE);
             themhaysua =true;
         }
         else{
+            this.setTitle("Cập nhật mặt hàng");
             saveButtonType = new ButtonType("Cập nhật", ButtonBar.ButtonData.OK_DONE);
             themhaysua=false;
         }
         ButtonType cancelButtonType = new ButtonType("Thoát", ButtonBar.ButtonData.CANCEL_CLOSE);
 
-        this.setTitle("Thêm mới mặt hàng");
+
         this.getDialogPane().setContent(fxmlLoader.load());
 
         ThemMoiMatHangDialogController c = fxmlLoader.getController();

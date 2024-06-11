@@ -29,14 +29,16 @@ public class LapPhieuNhapDialog extends Dialog<PhieuNhap> {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/Main/ManHinhPhieuNhap/LapPhieuNhap.fxml"));
         ButtonType saveButtonType;
         if(initialValue==null){
+            this.setTitle("Lập phiếu nhập hàng");
             saveButtonType = new ButtonType("Thêm mới", ButtonBar.ButtonData.OK_DONE);
         }
         else{
+            this.setTitle("Cập nhật phiếu nhập hàng");
             saveButtonType = new ButtonType("Cập nhật", ButtonBar.ButtonData.OK_DONE);
         }
         ButtonType cancelButtonType = new ButtonType("Thoát", ButtonBar.ButtonData.CANCEL_CLOSE);
 
-        this.setTitle("Lập phiếu nhập");
+
         this.getDialogPane().setContent(fxmlLoader.load());
 
         LapPhieuNhapDialogController c = fxmlLoader.getController();

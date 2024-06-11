@@ -46,14 +46,16 @@ public class TiepNhanNhanVienDialog extends Dialog<NhanVien>  {
 
         ButtonType saveButtonType;
         if(initialValue==null){
+            this.setTitle("Tiếp nhận nhân viên");
             saveButtonType = new ButtonType("Thêm mới", ButtonBar.ButtonData.OK_DONE);
         }
         else{
+            this.setTitle("Cập nhật nhân viên");
             saveButtonType = new ButtonType("Cập nhật", ButtonBar.ButtonData.OK_DONE);
         }
         ButtonType cancelButtonType = new ButtonType("Thoát", ButtonBar.ButtonData.CANCEL_CLOSE);
 
-        this.setTitle("Tiếp nhận nhân viên");
+
         this.getDialogPane().setContent(fxmlLoader.load());
 
         TiepNhanNhanVienDialogController c = fxmlLoader.getController();

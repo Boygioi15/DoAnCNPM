@@ -29,14 +29,15 @@ public class LapPhieuXuatDialog extends Dialog<PhieuXuat> {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/Main/ManHinhPhieuXuat/LapPhieuXuat.fxml"));
         ButtonType saveButtonType;
         if(initialValue==null){
+            this.setTitle("Lập phiếu xuất hàng");
             saveButtonType = new ButtonType("Thêm mới", ButtonBar.ButtonData.OK_DONE);
         }
         else{
+            this.setTitle("Cập nhật phiếu xuất hàng");
             saveButtonType = new ButtonType("Cập nhật", ButtonBar.ButtonData.OK_DONE);
         }
         ButtonType cancelButtonType = new ButtonType("Thoát", ButtonBar.ButtonData.CANCEL_CLOSE);
 
-        this.setTitle("Lập phiếu xuất");
         this.getDialogPane().setContent(fxmlLoader.load());
 
         LapPhieuXuatDialogController c = fxmlLoader.getController();

@@ -205,7 +205,7 @@
                            <content>
                               <VBox maxWidth="1.7976931348623157E308" spacing="10.0">
                                  <children>
-                                    <VBox spacing="10.0">
+                                    <VBox maxWidth="800.0" spacing="10.0">
                                        <children>
                                           <Label styleClass="body-text-header" text="Danh sách các nhân viên đã bị ẩn:" />
                                           <TableView fx:id="nhanVienTableView" prefHeight="200.0" stylesheets="@../../../css/tableView.css" VBox.vgrow="ALWAYS" />

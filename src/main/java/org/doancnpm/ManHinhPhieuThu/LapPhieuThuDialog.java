@@ -35,16 +35,17 @@ public class LapPhieuThuDialog extends Dialog<PhieuThu> {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/Main/ManHinhPhieuThu/LapPhieuThu.fxml"));
         ButtonType saveButtonType;
         if (initialValue == null) {
+            this.setTitle("Lập phiếu thu tiền");
             saveButtonType = new ButtonType("Thêm mới", ButtonBar.ButtonData.OK_DONE);
             themhaysua = true;
         } else {
+            this.setTitle("Cập nhật phiếu thu tiền");
             saveButtonType = new ButtonType("Cập nhật", ButtonBar.ButtonData.OK_DONE);
             themhaysua = false;
         }
 
         ButtonType cancelButtonType = new ButtonType("Thoát", ButtonBar.ButtonData.CANCEL_CLOSE);
 
-        this.setTitle("Lập phiếu thu");
         this.getDialogPane().setContent(fxmlLoader.load());
 
         LapPhieuThuDialogController c = fxmlLoader.getController();
