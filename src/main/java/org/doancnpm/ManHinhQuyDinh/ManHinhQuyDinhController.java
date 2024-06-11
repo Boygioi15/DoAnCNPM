@@ -734,6 +734,11 @@ public class ManHinhQuyDinhController implements Initializable {
             ghiChuCol.setPrefWidth(width * 0.3);
             actionCol.setPrefWidth(width * 0.2);
         });
+        sttCol.getStyleClass().add("column-header-left");
+        quanCol.getStyleClass().add("column-header-left");
+        ghiChuCol.getStyleClass().add("column-header-left");
+        actionCol.getStyleClass().add("column-header-left");
+
         quanTableView.setEditable(true);
         quanTableView.setItems(dsQuan);
     }
@@ -932,11 +937,17 @@ public class ManHinhQuyDinhController implements Initializable {
         ldlTableView.widthProperty().addListener(ob -> {
             double width = quanTableView.getWidth();
             sttCol.setPrefWidth(width * 0.1);
-            ldlCol.setPrefWidth(width * 0.25);
+            ldlCol.setPrefWidth(width * 0.2);
             noToiDaCol.setPrefWidth(width * 0.25);
             ghiChuCol.setPrefWidth(width * 0.3);
-            actionCol.setPrefWidth(width * 0.1);
+            actionCol.setPrefWidth(width * 0.15);
         });
+        sttCol.getStyleClass().add("column-header-left");
+        ldlCol.getStyleClass().add("column-header-left");
+        noToiDaCol.getStyleClass().add("column-header-left");
+        ghiChuCol.getStyleClass().add("column-header-left");
+        actionCol.getStyleClass().add("column-header-left");
+
         ldlTableView.setEditable(true);
         ldlTableView.setItems(dsLoaiDaiLy);
     }
@@ -1081,6 +1092,10 @@ public class ManHinhQuyDinhController implements Initializable {
             nhanVienCol.setPrefWidth(width * 0.3);
             actionCol.setPrefWidth(width * 0.2);
         });
+        sttCol.getStyleClass().add("column-header-left");
+        usernameCol.getStyleClass().add("column-header-left");
+        nhanVienCol.getStyleClass().add("column-header-left");
+        actionCol.getStyleClass().add("column-header-left");
         tkTableView.setEditable(true);
         tkTableView.setItems(dsTaiKhoan);
     }
@@ -1244,6 +1259,12 @@ public class ManHinhQuyDinhController implements Initializable {
             ghiChuCol.setPrefWidth(width * 0.3);
             actionCol.setPrefWidth(width * 0.2);
         });
+
+        sttCol.getStyleClass().add("column-header-left");
+        donViTinhCol.getStyleClass().add("column-header-left");
+        ghiChuCol.getStyleClass().add("column-header-left");
+        actionCol.getStyleClass().add("column-header-left");
+
         donViTinhTableView.setEditable(true);
         donViTinhTableView.setItems(dsDonViTinh);
     }
