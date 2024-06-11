@@ -60,13 +60,19 @@ public class LapPhieuXuatDialog extends Dialog<PhieuXuat> {
                         PhieuXuatDAO.getInstance().Insert(phieuXuat);
                         //turn back to get ID
                         phieuXuat = PhieuXuatDAO.getInstance().QueryMostRecent();
-                        System.out.println(phieuXuat.getID());
+
                         for(ChiTietPhieuXuat ctpx: ctpxs){
                             ctpx.setMaPhieuXuat(phieuXuat.getID());
                         }
                         CTPXDAO.getInstance().InsertBlock(ctpxs);
                         PopDialog.popSuccessDialog("Thêm mới phiếu xuất thành công");
+                        return;
                     }catch (SQLException e){
+                        try {
+                            PhieuXuatDAO.getInstance().Delete(phieuXuat.getID());
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
                         PopDialog.popErrorDialog("Thêm mới phiếu xuất thất bại",e.getMessage());
                         event.consume();
                     }

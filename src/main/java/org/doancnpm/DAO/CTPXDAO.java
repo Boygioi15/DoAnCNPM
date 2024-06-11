@@ -45,6 +45,7 @@ public class CTPXDAO {
             notifyChange();
             MatHangDAO.getInstance().notifyChange();
             DaiLyDAO.getInstance().notifyChange();
+            PhieuXuatDAO.getInstance().notifyChange();
         }
         pstmt.close();
         return rowsAffected;

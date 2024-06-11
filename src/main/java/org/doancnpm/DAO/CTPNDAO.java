@@ -44,6 +44,7 @@ public class CTPNDAO {
         if (rowsAffected > 0) {
             notifyChange();
             MatHangDAO.getInstance().notifyChange();
+            PhieuNhapDAO.getInstance().notifyChange();
         }
         pstmt.close();
         return rowsAffected;

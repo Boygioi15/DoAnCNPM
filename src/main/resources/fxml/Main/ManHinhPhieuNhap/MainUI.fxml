@@ -46,7 +46,7 @@
             </MenuButton>
             <MenuButton mnemonicParsing="false" styleClass="action-button" text="Thao tác">
                <items>
-                  <MenuItem fx:id="deleteSelectedButton" mnemonicParsing="false" text="Xóa các dòng đã chọn" />
+                  <MenuItem fx:id="deleteSelectedButton" mnemonicParsing="false" text="Xóa các dòng đã chọn" visible="false" />
                   <MenuItem fx:id="exportExcelButton" mnemonicParsing="false" text="Xuất file excel" />
                </items>
                <font>

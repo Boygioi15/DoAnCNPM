@@ -18,7 +18,15 @@ public class NhanVien {
     private Integer maChucVu;
     private Long luong;
     private String ghiChu;
+    private Boolean isDeleted;
 
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
+    }
     public NhanVien() {
     }
 

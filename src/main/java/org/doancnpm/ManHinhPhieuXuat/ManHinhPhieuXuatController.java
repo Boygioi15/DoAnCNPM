@@ -139,6 +139,9 @@ public class ManHinhPhieuXuatController implements Initializable {
             MatHang mh = null;
             try {
                 mh = MatHangDAO.getInstance().QueryID(data.getValue().getMaMatHang());
+                if(mh.getDeleted()){
+                    return new SimpleObjectProperty<>("X");
+                }
             } catch (SQLException _) {}
             return new SimpleObjectProperty<>(mh.getMaMatHang()+ " - "+mh.getTenMatHang());
         });

@@ -136,7 +136,7 @@ public class TaiKhoanDAO {
         taiKhoanDtbChanged.addListener(listener);
     }
 
-    private void notifyChange() {
+    public void notifyChange() {
         taiKhoanDtbChanged.set(!taiKhoanDtbChanged.get());
     }
 }

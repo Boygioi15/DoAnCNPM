@@ -184,6 +184,10 @@ public class LoginController implements Initializable {
                     if (taiKhoan.getPassword().equals(SHA256.getSHA256Hash(pass))) {
                         // Authorized
                         int maNhanVien = taiKhoan.getMaNhanVien();
+                        if(NhanVienDAO.getInstance().QueryID(maNhanVien).getDeleted()){
+                            addErrorMessage(errorBox, "Bạn đã xóa khỏi cuộc chơi ");
+                            return null;
+                        }
                         CurrentNVInfor.getInstance().setTaiKhoanOfNhanien(taiKhoan);
                         CurrentNVInfor.getInstance().setPassword(pass);
                         CurrentNVInfor.getInstance().setLoggedInNhanVien(NhanVienDAO.getInstance().QueryID(maNhanVien));
