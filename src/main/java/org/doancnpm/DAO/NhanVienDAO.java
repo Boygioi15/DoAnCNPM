@@ -3,6 +3,8 @@ package org.doancnpm.DAO;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import org.doancnpm.Models.DaiLy;
+import org.doancnpm.Models.MatHang;
 import org.doancnpm.Models.NhanVien;
 import org.doancnpm.Models.DatabaseDriver;
 import org.doancnpm.Ultilities.CurrentNVInfor;
@@ -78,7 +80,9 @@ public class NhanVienDAO implements Idao<NhanVien> {
     @Override
     public int Delete(int id) throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
-        String sql = "DELETE FROM NHANVIEN WHERE ID = ?";
+        String sql = "UPDATE NhanVien " +
+                "SET isDeleted = 1 " +
+                "WHERE ID = ?";
 
         assert conn != null;
         PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -91,7 +95,26 @@ public class NhanVienDAO implements Idao<NhanVien> {
         pstmt.close();
         return rowsAffected;
     }
+    public int Restore(int id) throws SQLException {
+        Connection conn = DatabaseDriver.getConnect();
+        String sql = "UPDATE NhanVien " +
+                "SET isDeleted = 0" +
+                "WHERE ID = ?";
 
+        assert conn != null;
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setInt(1, id);
+
+        int rowsAffected = pstmt.executeUpdate();
+        if (rowsAffected > 0) {
+            notifyChange();
+            TaiKhoanDAO.getInstance().notifyChange();
+            NhanVienDAO.getInstance().notifyChange();
+
+        }
+        pstmt.close();
+        return rowsAffected;
+    }
     @Override
     public NhanVien QueryID(int ID) throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
@@ -116,6 +139,7 @@ public class NhanVienDAO implements Idao<NhanVien> {
             int maChucVu = rs.getInt("MaChucVu");
             Long luong = rs.getLong("Luong");
             String ghiChu = rs.getString("GhiChu");
+            int isDeleted = rs.getInt("isDeleted");
 
             nhanVien.setID(id);
             nhanVien.setMaNhanVien(maNhanVien);
@@ -128,6 +152,8 @@ public class NhanVienDAO implements Idao<NhanVien> {
             nhanVien.setMaChucVu(maChucVu);
             nhanVien.setLuong(luong);
             nhanVien.setGhiChu(ghiChu);
+            nhanVien.setDeleted(isDeleted!=0);
+
         }
 
         rs.close();
@@ -139,7 +165,7 @@ public class NhanVienDAO implements Idao<NhanVien> {
     @Override
     public ArrayList<NhanVien> QueryAll() throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
-        String sql = "SELECT * FROM NHANVIEN";
+        String sql = "SELECT * FROM NHANVIEN Where isDeleted = 0";
 
         assert conn != null;
         PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -158,7 +184,7 @@ public class NhanVienDAO implements Idao<NhanVien> {
             int maChucVu = rs.getInt("MaChucVu");
             Long luong = rs.getLong("Luong");
             String ghiChu = rs.getString("GhiChu");
-
+            int isDeleted = rs.getInt("isDeleted");
             nhanVien.setID(ID);
             nhanVien.setMaNhanVien(maNhanVien);
             nhanVien.setHoTen(hoTen);
@@ -169,7 +195,7 @@ public class NhanVienDAO implements Idao<NhanVien> {
             nhanVien.setMaChucVu(maChucVu);
             nhanVien.setLuong(luong);
             nhanVien.setGhiChu(ghiChu);
-
+            nhanVien.setDeleted(isDeleted != 0);
             nhanVienList.add(nhanVien);
         }
 
@@ -210,5 +236,48 @@ public class NhanVienDAO implements Idao<NhanVien> {
             CurrentNVInfor.getInstance().getTaiKhoanOfNhanien().setPassword(newPassword);
         }
         pstmt.close();
+    }
+
+    public ArrayList<NhanVien> QueryDeleted() throws SQLException {
+        Connection conn = DatabaseDriver.getConnect();
+        String sql = "SELECT * FROM NhanVien Where isDeleted = 1";
+
+        assert conn != null;
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        ResultSet rs = pstmt.executeQuery();
+        ArrayList<NhanVien> nhanVienList = new ArrayList<>();
+
+        while (rs.next()) {
+            NhanVien nhanVien = new NhanVien();
+            String maNhanVien = rs.getString("MaNhanVien");
+            int ID = rs.getInt("ID");
+            String hoTen = rs.getString("HoTen");
+            String gioiTinh = rs.getString("GioiTinh");
+            Date ngaySinh = rs.getDate("NgaySinh");
+            String sdt = rs.getString("SDT");
+            String email = rs.getString("Email");
+            int maChucVu = rs.getInt("MaChucVu");
+            Long luong = rs.getLong("Luong");
+            String ghiChu = rs.getString("GhiChu");
+            int isDeleted = rs.getInt("isDeleted");
+
+            nhanVien.setID(ID);
+            nhanVien.setMaNhanVien(maNhanVien);
+            nhanVien.setHoTen(hoTen);
+            nhanVien.setGioiTinh(gioiTinh);
+            nhanVien.setNgaySinh(ngaySinh);
+            nhanVien.setSDT(sdt);
+            nhanVien.setEmail(email);
+            nhanVien.setMaChucVu(maChucVu);
+            nhanVien.setLuong(luong);
+            nhanVien.setGhiChu(ghiChu);
+            nhanVien.setDeleted(isDeleted != 0);
+            nhanVienList.add(nhanVien);
+        }
+
+        rs.close();
+        pstmt.close();
+
+        return nhanVienList;
     }
 }

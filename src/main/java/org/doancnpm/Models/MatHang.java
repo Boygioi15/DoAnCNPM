@@ -14,6 +14,15 @@ public class MatHang {
     private Long donGiaXuat;
     private Integer soLuong;
     private String ghiChu;
+    private Boolean isDeleted;
+
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
+    }
 
     public Integer getID() {
         return ID;

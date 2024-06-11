@@ -3,8 +3,10 @@ package org.doancnpm.DAO;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import org.doancnpm.Models.DaiLy;
 import org.doancnpm.Models.DatabaseDriver;
 import org.doancnpm.Models.MatHang;
+import org.doancnpm.Models.PhieuNhap;
 import org.doancnpm.Ultilities.CheckExist;
 
 import java.sql.*;
@@ -12,13 +14,16 @@ import java.util.ArrayList;
 
 public class MatHangDAO implements Idao<MatHang> {
     private static MatHangDAO singleton = null;
+
     public static MatHangDAO getInstance() {
-        if(singleton==null){
+        if (singleton == null) {
             singleton = new MatHangDAO();
         }
         return singleton;
     }
+
     private final BooleanProperty matHangDtbChanged = new SimpleBooleanProperty(false);
+
     @Override
     public int Insert(MatHang matHang) throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
@@ -31,7 +36,7 @@ public class MatHangDAO implements Idao<MatHang> {
         pstmt.setDouble(3, matHang.getDonGiaNhap());
         pstmt.setString(4, matHang.getGhiChu());
         int rowsAffected = pstmt.executeUpdate();
-        if(rowsAffected>0){
+        if (rowsAffected > 0) {
             notifyChange();
         }
         pstmt.close();
@@ -39,7 +44,7 @@ public class MatHangDAO implements Idao<MatHang> {
     }
 
     @Override
-    public int Update(int ID, MatHang matHang) throws SQLException{
+    public int Update(int ID, MatHang matHang) throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
         String sql = "UPDATE MATHANG " +
                 "SET TenMatHang = ?, MaDonViTinh = ?, DonGiaNhap = ?, GhiChu = ? " +
@@ -54,7 +59,7 @@ public class MatHangDAO implements Idao<MatHang> {
         pstmt.setInt(5, matHang.getID());
 
         int rowsAffected = pstmt.executeUpdate();
-        if(rowsAffected>0){
+        if (rowsAffected > 0) {
             notifyChange();
         }
         pstmt.close();
@@ -62,17 +67,41 @@ public class MatHangDAO implements Idao<MatHang> {
     }
 
     @Override
-    public int Delete(int id) throws SQLException{
+    public int Delete(int id) throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
-        String sql = "DELETE FROM MATHANG WHERE ID = ?";
+        String sql = "UPDATE MatHang " +
+                "SET isDeleted = 1 " +
+                "WHERE ID = ?";
 
         assert conn != null;
         PreparedStatement pstmt = conn.prepareStatement(sql);
         pstmt.setInt(1, id);
 
         int rowsAffected = pstmt.executeUpdate();
-        if(rowsAffected>0){
+        if (rowsAffected > 0) {
             notifyChange();
+            PhieuNhapDAO.getInstance().notifyChange();
+            PhieuXuatDAO.getInstance().notifyChange();
+        }
+        pstmt.close();
+        return rowsAffected;
+    }
+
+    public int Restore(int id) throws SQLException {
+        Connection conn = DatabaseDriver.getConnect();
+        String sql = "UPDATE MatHang " +
+                "SET isDeleted = 0" +
+                "WHERE ID = ?";
+
+        assert conn != null;
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setInt(1, id);
+
+        int rowsAffected = pstmt.executeUpdate();
+        if (rowsAffected > 0) {
+            notifyChange();
+            PhieuNhapDAO.getInstance().notifyChange();
+            PhieuXuatDAO.getInstance().notifyChange();
         }
         pstmt.close();
         return rowsAffected;
@@ -82,13 +111,15 @@ public class MatHangDAO implements Idao<MatHang> {
     public void AddDatabaseListener(InvalidationListener listener) {
         matHangDtbChanged.addListener(listener);
     }
-    public void notifyChange(){
+
+    public void notifyChange() {
         matHangDtbChanged.set(!matHangDtbChanged.get());
     }
+
     @Override
-    public ArrayList<MatHang> QueryAll() throws SQLException{
+    public ArrayList<MatHang> QueryAll() throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
-        String sql = "SELECT * FROM MATHANG";
+        String sql = "SELECT * FROM MATHANG  Where isDeleted = 0";
 
         assert conn != null;
         Statement stmt = conn.createStatement();
@@ -104,6 +135,7 @@ public class MatHangDAO implements Idao<MatHang> {
             Long donGiaXuat = rs.getLong("DonGiaXuat");
             String ghiChu = rs.getString("GhiChu");
             int sl = rs.getInt("SoLuong");
+            int isDeleted = rs.getInt("isDeleted");
 
             MatHang matHang = new MatHang();
             matHang.setID(ID);
@@ -114,7 +146,7 @@ public class MatHangDAO implements Idao<MatHang> {
             matHang.setDonGiaXuat(donGiaXuat);
             matHang.setGhiChu(ghiChu);
             matHang.setSoLuong(sl);
-
+            matHang.setDeleted(isDeleted != 0);
             matHangList.add(matHang);
         }
 
@@ -125,7 +157,7 @@ public class MatHangDAO implements Idao<MatHang> {
     }
 
     @Override
-    public MatHang QueryID(int ID) throws SQLException{
+    public MatHang QueryID(int ID) throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
         String sql = "SELECT * FROM MATHANG WHERE ID = ?";
 
@@ -143,6 +175,7 @@ public class MatHangDAO implements Idao<MatHang> {
             Long donGiaXuat = rs.getLong("DonGiaXuat");
             String ghiChu = rs.getString("GhiChu");
             int sl = rs.getInt("SoLuong");
+            int isDeleted = rs.getInt("isDeleted");
 
             matHang = new MatHang();
             matHang.setID(ID);
@@ -153,6 +186,7 @@ public class MatHangDAO implements Idao<MatHang> {
             matHang.setDonGiaXuat(donGiaXuat);
             matHang.setGhiChu(ghiChu);
             matHang.setSoLuong(sl);
+            matHang.setDeleted(isDeleted != 0);
         }
 
         rs.close();
@@ -160,6 +194,46 @@ public class MatHangDAO implements Idao<MatHang> {
 
         return matHang;
     }
+
+    public ArrayList<MatHang> QueryDeleted() throws SQLException {
+        Connection conn = DatabaseDriver.getConnect();
+        String sql = "SELECT * FROM MatHang Where isDeleted = 1";
+
+        assert conn != null;
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        ResultSet rs = pstmt.executeQuery();
+        ArrayList<MatHang> matHangList = new ArrayList<>();
+        while (rs.next()) {
+            int ID = rs.getInt("ID");
+            String maMH = rs.getString("MaMatHang");
+            int maDVT = rs.getInt("MaDonViTinh");
+            String tenMH = rs.getString("TenMatHang");
+            Long donGiaNhap = rs.getLong("DonGiaNhap");
+            Long donGiaXuat = rs.getLong("DonGiaXuat");
+            String ghiChu = rs.getString("GhiChu");
+            int sl = rs.getInt("SoLuong");
+            int isDeleted = rs.getInt("isDeleted");
+
+            MatHang matHang = new MatHang();
+            matHang.setID(ID);
+            matHang.setMaMatHang(maMH);
+            matHang.setMaDVT(maDVT);
+            matHang.setTenMatHang(tenMH);
+            matHang.setDonGiaNhap(donGiaNhap);
+            matHang.setDonGiaXuat(donGiaXuat);
+            matHang.setGhiChu(ghiChu);
+            matHang.setSoLuong(sl);
+            matHang.setDeleted(isDeleted != 0);
+            matHangList.add(matHang);
+        }
+
+        rs.close();
+        pstmt.close();
+
+        return matHangList;
+    }
+
+
     public MatHang QueryName(String name) throws SQLException {
         ArrayList<MatHang> allMatHang = QueryAll();
         String normalizedMatHang = CheckExist.normalize(name);

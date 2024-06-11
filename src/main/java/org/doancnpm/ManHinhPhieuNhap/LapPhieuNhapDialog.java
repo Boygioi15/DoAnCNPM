@@ -72,6 +72,7 @@ public class LapPhieuNhapDialog extends Dialog<PhieuNhap> {
                         } catch (SQLException _) {}
                         PopDialog.popErrorDialog("Thêm phiếu nhập thất bại",e.getMessage());
                         event.consume();
+                        return;
                     }
 
                 }

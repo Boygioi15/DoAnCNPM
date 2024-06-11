@@ -144,7 +144,6 @@ public class DaiLyDAO implements Idao<DaiLy> {
             Date ngayTiepNhan = rs.getDate("ngayTiepNhan");
             Long noHienTai = rs.getLong("NoHienTai");
             String ghiChu = rs.getString("GhiChu");
-
             int isDeleted = rs.getInt("isDeleted");
 
             daiLy.setMaDaiLy(maDL);
