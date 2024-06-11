@@ -233,7 +233,7 @@ public class ManHinhBaoCaoController implements Initializable {
                     }
                 }
 
-                BaoCaoCongNo item = new BaoCaoCongNo(stt, maDaiLy, new Date(), noDau, noCuoi);
+                BaoCaoCongNo item = new BaoCaoCongNo(stt, maDaiLy, new Date(), noDau, noCuoi,0);
                 baoCaoCongNoItems.add(item);
             }
         }
