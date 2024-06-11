@@ -33,23 +33,21 @@ public class MatHangFilter implements IFilter<MatHang> {
             }
             if (maDVT != null && !matHang.getMaDVT().equals(maDVT)) {
                 output.remove(matHang);
+                System.out.println(matHang.getMaDVT());
                 continue;
             }
             if(tonKho==null){
                 continue;
             }
-            System.out.println("hy");
             if(!tonKho){
                 if(matHang.getSoLuong().equals(0)){
                     output.remove(matHang);
                 }
-                System.out.println("hi");
             }
             else{
                 if(!matHang.getSoLuong().equals(0)){
                     output.remove(matHang);
                 }
-                System.out.println("ho");
             }
         }
         return output;

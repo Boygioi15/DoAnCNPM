@@ -221,6 +221,7 @@ public class ManHinhKhoHangController implements Initializable {
                     filter.setTonKho(false);
                 }
             }
+            filterList();
 
         });
     }

@@ -128,6 +128,7 @@ public class LapPhieuXuatDialogController implements Initializable {
 
             Date ngayTiepNhan = new Date(System.currentTimeMillis());
             ngayLapPhieuTextField.setText(DayFormat.GetDayStringFormatted(ngayTiepNhan));
+            xuatExcelBtn.setDisable(true);
             return;
         }
         title.setText("Cập nhật phiếu xuất");
