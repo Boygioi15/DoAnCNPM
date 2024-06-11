@@ -16,6 +16,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import org.doancnpm.DAO.DaiLyDAO;
+import org.doancnpm.DAO.MatHangDAO;
+import org.doancnpm.DAO.NhanVienDAO;
 import org.doancnpm.Main.AdminController;
 import org.doancnpm.Main.ManHinh;
 import org.doancnpm.SQLUltilities.CalculateSQL;
@@ -52,6 +55,7 @@ public class ManHinhDieuKhienController implements Initializable {
         initPieChart();
         initDataShow();
         initEvent();
+        initDtbListener();
     }
 
     // switch man hinh
@@ -166,7 +170,27 @@ public class ManHinhDieuKhienController implements Initializable {
         pieChartContainer.getChildren().addAll(innerCircle);
          */
     }
+    public void initDtbListener(){
+        NhanVienDAO.getInstance().AddDatabaseListener(ob -> {
+            nvText.setText(String.valueOf(CalculateSQL.getInstance().calSoNhanVien()));
+        });
+        DaiLyDAO.getInstance().AddDatabaseListener(ob -> {
+            dlText.setText(String.valueOf(CalculateSQL.getInstance().calSoDaiLy()));
+        });
 
+        MatHangDAO.getInstance().AddDatabaseListener(ob -> {
+            DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
+            symbols.setGroupingSeparator('.');
+            DecimalFormat df = new DecimalFormat("#,##0", symbols);
+            df.setMaximumFractionDigits(8);
+
+            tongGiaTriKhoHangText.setText(String.valueOf(df.format(CalculateSQL.getInstance().calTongGiaTriKhoHang())));
+
+            slMatHangText.setText(String.valueOf(CalculateSQL.getInstance().calSoLuongMatHang()));
+            soLuongHangTonKhoText.setText(String.valueOf(CalculateSQL.getInstance().calSoLuongHangTonKho()));
+
+        });
+    }
     public void initDataShow() {
         nvText.setText(String.valueOf(CalculateSQL.getInstance().calSoNhanVien()));
         dlText.setText(String.valueOf(CalculateSQL.getInstance().calSoDaiLy()));
@@ -175,9 +199,12 @@ public class ManHinhDieuKhienController implements Initializable {
         symbols.setGroupingSeparator('.');
         DecimalFormat df = new DecimalFormat("#,##0", symbols);
         df.setMaximumFractionDigits(8);
+
         tongGiaTriKhoHangText.setText(String.valueOf(df.format(CalculateSQL.getInstance().calTongGiaTriKhoHang())));
 
         slMatHangText.setText(String.valueOf(CalculateSQL.getInstance().calSoLuongMatHang()));
         soLuongHangTonKhoText.setText(String.valueOf(CalculateSQL.getInstance().calSoLuongHangTonKho()));
+
+
     }
 }

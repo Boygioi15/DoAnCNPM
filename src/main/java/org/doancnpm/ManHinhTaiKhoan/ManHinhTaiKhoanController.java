@@ -38,6 +38,8 @@ public class ManHinhTaiKhoanController implements Initializable {
 
     @FXML
     private VBox manHinhTaiKhoan;
+    @FXML
+    private Region imageAnchor;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {

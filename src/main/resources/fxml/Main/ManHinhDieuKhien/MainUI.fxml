@@ -33,7 +33,7 @@
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints minHeight="10.0" vgrow="ALWAYS" />
+          <RowConstraints minHeight="10.0" percentHeight="40.0" vgrow="ALWAYS" />
           <RowConstraints minHeight="10.0" vgrow="ALWAYS" />
         </rowConstraints>
          <children>
@@ -50,7 +50,7 @@
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text" text="Chào mừng bạn đến với trang quản lý dành cho admin" />
                      </children>
                   </VBox>
-                  <ImageView fitHeight="218.0" fitWidth="189.0" layoutY="44.66666666666667" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="21.0" AnchorPane.topAnchor="33.0">
+                  <ImageView fitHeight="128.0" fitWidth="128.0" layoutY="44.66666666666667" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
                      <image>
                         <Image url="@../../../image/hi_control.png" />
                      </image>

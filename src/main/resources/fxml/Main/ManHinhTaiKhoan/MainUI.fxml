@@ -20,7 +20,7 @@
     <children>
         <AnchorPane fx:id="imageAnchor" maxHeight="223.0" minHeight="200.0" prefHeight="223.0">
             <children>
-                <ImageView fx:id="backgroundImg" fitHeight="183.0" fitWidth="${imageAnchor.prefWidth}" layoutX="0.0" layoutY="0.0" pickOnBounds="true" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                <ImageView fx:id="backgroundImg" fitHeight="180.0" fitWidth="${imageAnchor.prefWidth}" layoutX="0.0" layoutY="0.0" pickOnBounds="true">
                     <image>
                         <Image url="@../../../image/background.png" />
                     </image>

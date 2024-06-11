@@ -85,7 +85,7 @@ public class AdminController implements Initializable {
 
         try {
             initScreens();
-            SwitchScreen(ManHinh.DAI_LY);
+            SwitchScreen(ManHinh.DIEU_KHIEN);
 
         } catch (Exception e) {
             e.printStackTrace();
