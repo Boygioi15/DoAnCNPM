@@ -131,6 +131,7 @@ public class LapPhieuXuatDialogController implements Initializable {
             xuatExcelBtn.setDisable(true);
             return;
         }
+        loadExcelBtn.setDisable(true);
         title.setText("Cập nhật phiếu xuất");
         phieuXuatGoc = phieuXuat;
         ngayLapPhieuTextField.setText(DayFormat.GetDayStringFormatted(phieuXuat.getNgayLapPhieu()));
