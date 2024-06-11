@@ -213,7 +213,6 @@ public class ManHinhPhieuThuController implements Initializable {
                 daiLy = DaiLyDAO.getInstance().QueryID(data.getValue().getMaDaiLy());
             } catch (SQLException _) {
             }
-            catch (SQLException _){}
             return new SimpleObjectProperty<>(daiLy.getMaDaiLy()+" - "+daiLy.getTenDaiLy());
         });
 

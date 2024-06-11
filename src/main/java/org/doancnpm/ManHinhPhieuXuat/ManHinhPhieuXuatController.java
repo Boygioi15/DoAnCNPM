@@ -370,7 +370,7 @@ public class ManHinhPhieuXuatController implements Initializable {
 
         maPXCol.getStyleClass().add("column-header-left");
         maNVCol.getStyleClass().add("column-header-left");
-        dlCol.getStyleClass().add("column-header-left");
+        daiLyCol.getStyleClass().add("column-header-left");
         tongTienCol.getStyleClass().add("column-header-left");
 
         selectedCol.getStyleClass().add("column-header-center");
