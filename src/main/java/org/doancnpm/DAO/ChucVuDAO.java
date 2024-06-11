@@ -57,6 +57,7 @@ public class ChucVuDAO implements Idao<ChucVu> {
         int rowsAffected = pstmt.executeUpdate();
         if (rowsAffected > 0) {
             notifyChange();
+            NhanVienDAO.getInstance().notifyChange();
         }
         pstmt.close();
         return rowsAffected;
@@ -74,6 +75,7 @@ public class ChucVuDAO implements Idao<ChucVu> {
         int rowsAffected = pstmt.executeUpdate();
         if (rowsAffected > 0) {
             notifyChange();
+
         }
         pstmt.close();
         return rowsAffected;

@@ -152,6 +152,7 @@ public class AdminController implements Initializable {
     }
     private void initMenuItemEvent() {
         themDaiLyMI.setOnAction(_ -> {
+            SwitchScreen(ManHinh.DAI_LY);
             try {
                 new TiepNhanDaiLyDialog(null).showAndWait();
             } catch (IOException e) {
@@ -159,6 +160,7 @@ public class AdminController implements Initializable {
             }
         });
         nhapHangMI.setOnAction(_ -> {
+            SwitchScreen(ManHinh.NHAP);
             try {
                 new LapPhieuNhapDialog(CurrentNVInfor.getInstance().getLoggedInNhanVien()).showAndWait();
             } catch (IOException e) {
@@ -166,6 +168,7 @@ public class AdminController implements Initializable {
             }
         });
         xuatHangMI.setOnAction(_ -> {
+            SwitchScreen(ManHinh.XUAT);
             try {
                 new LapPhieuXuatDialog(CurrentNVInfor.getInstance().getLoggedInNhanVien()).showAndWait();
             } catch (IOException exc) {
@@ -173,6 +176,7 @@ public class AdminController implements Initializable {
             }
         });
         themMoiMatHangMI.setOnAction(_ -> {
+            SwitchScreen(ManHinh.KHO_HANG);
             try {
                 new ThemMoiMatHangDialog().showAndWait();
             } catch (IOException e) {
@@ -181,6 +185,7 @@ public class AdminController implements Initializable {
             }
         });
         themNhanVienMI.setOnAction(_ -> {
+            SwitchScreen(ManHinh.NHAN_VIEN);
             try {
                 new TiepNhanNhanVienDialog().showAndWait();
             } catch (IOException e) {
@@ -188,6 +193,7 @@ public class AdminController implements Initializable {
             }
         });
         lapPhieuThuMI.setOnAction(_ -> {
+            SwitchScreen(ManHinh.PHIEU_THU);
             try {
                 new LapPhieuThuDialog(null, nhanVienLoggedIn).showAndWait();
 

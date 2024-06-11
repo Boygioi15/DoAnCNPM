@@ -37,6 +37,7 @@ public class QuanDAO implements Idao<Quan> {
         int rowsAffected = pstmt.executeUpdate();
         if (rowsAffected > 0) {
             notifyChange();
+            DaiLyDAO.getInstance().notifyChange();
         }
         pstmt.close();
         return rowsAffected;
@@ -56,6 +57,7 @@ public class QuanDAO implements Idao<Quan> {
         int rowsAffected = pstmt.executeUpdate();
         if (rowsAffected > 0) {
             notifyChange();
+            DaiLyDAO.getInstance().notifyChange();
         }
         pstmt.close();
         return rowsAffected;
@@ -73,6 +75,7 @@ public class QuanDAO implements Idao<Quan> {
         int rowsAffected = pstmt.executeUpdate();
         if (rowsAffected > 0) {
             notifyChange();
+            DaiLyDAO.getInstance().notifyChange();
         }
         pstmt.close();
         return rowsAffected;

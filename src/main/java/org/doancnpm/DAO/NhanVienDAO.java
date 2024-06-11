@@ -184,7 +184,7 @@ public class NhanVienDAO implements Idao<NhanVien> {
         nhanVienDtbChanged.addListener(listener);
     }
 
-    private void notifyChange() {
+    public void notifyChange() {
         nhanVienDtbChanged.set(!nhanVienDtbChanged.get());
     }
 

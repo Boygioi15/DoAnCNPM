@@ -8,6 +8,7 @@ import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -29,15 +30,7 @@ import java.util.ResourceBundle;
 
 public class ManHinhDieuKhienController implements Initializable {
 
-
-
-    // switch man hinh
-    AdminController switchConller;
-
-    public void setSwitchConller(AdminController controller){
-        switchConller = controller;
-    }
-
+    public AnchorPane openMHBaoCao;
     public HBox openMHNhanVien;
     public HBox openMHDaiLy;
     public GridPane openKhoHang;
@@ -61,6 +54,13 @@ public class ManHinhDieuKhienController implements Initializable {
         initEvent();
     }
 
+    // switch man hinh
+    AdminController switchConller;
+
+    public void setSwitchConller(AdminController controller){
+        switchConller = controller;
+    }
+
     private void initEvent() {
         openMHDaiLy.setOnMouseClicked(mouseEvent -> {
             switchConller.SwitchScreen(ManHinh.DAI_LY);
@@ -70,6 +70,9 @@ public class ManHinhDieuKhienController implements Initializable {
         });
         openKhoHang.setOnMouseClicked(mouseEvent -> {
             switchConller.SwitchScreen(ManHinh.KHO_HANG);
+        });
+        openMHBaoCao.setOnMouseClicked(mouseEvent -> {
+            switchConller.SwitchScreen(ManHinh.BAO_CAO);
         });
     }
 
