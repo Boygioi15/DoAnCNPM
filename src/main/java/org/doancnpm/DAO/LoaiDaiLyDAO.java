@@ -39,6 +39,7 @@ public class LoaiDaiLyDAO implements Idao<LoaiDaiLy> {
         int rowsAffected = pstmt.executeUpdate();
         if (rowsAffected > 0) {
             notifyChange();
+            DaiLyDAO.getInstance().notifyChange();
         }
         pstmt.close();
         return rowsAffected;
@@ -59,6 +60,8 @@ public class LoaiDaiLyDAO implements Idao<LoaiDaiLy> {
         int rowsAffected = pstmt.executeUpdate();
         if (rowsAffected > 0) {
             notifyChange();
+            DaiLyDAO.getInstance().notifyChange();
+
         }
         pstmt.close();
         return rowsAffected;
@@ -76,6 +79,7 @@ public class LoaiDaiLyDAO implements Idao<LoaiDaiLy> {
         int rowsAffected = pstmt.executeUpdate();
         if (rowsAffected > 0) {
             notifyChange();
+            DaiLyDAO.getInstance().notifyChange();
         }
         pstmt.close();
         return rowsAffected;

@@ -40,6 +40,7 @@ public class DonViTinhDAO implements Idao<DonViTinh> {
         int rowsAffected = pstmt.executeUpdate();
         if (rowsAffected > 0) {
             notifyChange();
+            MatHangDAO.getInstance().notifyChange();
         }
         pstmt.close();
         return rowsAffected;
@@ -59,6 +60,7 @@ public class DonViTinhDAO implements Idao<DonViTinh> {
         int rowsAffected = pstmt.executeUpdate();
         if (rowsAffected > 0) {
             notifyChange();
+            MatHangDAO.getInstance().notifyChange();
         }
         pstmt.close();
         return rowsAffected;
@@ -76,6 +78,7 @@ public class DonViTinhDAO implements Idao<DonViTinh> {
         int rowsAffected = pstmt.executeUpdate();
         if (rowsAffected > 0) {
             notifyChange();
+            MatHangDAO.getInstance().notifyChange();
         }
         pstmt.close();
         return rowsAffected;
