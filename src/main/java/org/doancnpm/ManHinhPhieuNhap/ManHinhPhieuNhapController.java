@@ -68,6 +68,7 @@ public class ManHinhPhieuNhapController implements Initializable {
     @FXML
     private MenuItem addDirectButton;
 
+    @FXML private MenuItem exportExcelButton;
     @FXML
     private Text maPNText;
     @FXML
