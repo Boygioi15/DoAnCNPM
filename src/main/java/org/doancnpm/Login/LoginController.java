@@ -420,7 +420,8 @@ public class LoginController implements Initializable {
             return;
         }
         try {
-            NhanVienDAO.getInstance().updatePasswordByEmail(emailText.getText(), enterPasswordText.getText());
+            String pass =enterPasswordText.getText().trim();
+            NhanVienDAO.getInstance().updatePasswordByEmail(emailText.getText(),SHA256.getSHA256Hash(pass));
             PopDialog.popSuccessDialog("Đổi mật khẩu thành công");
             currentScreenString.setValue("");
         } catch (Exception e) {

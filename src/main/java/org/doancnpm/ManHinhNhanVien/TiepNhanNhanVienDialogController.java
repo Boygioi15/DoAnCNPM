@@ -16,6 +16,7 @@ import javafx.util.StringConverter;
 import org.controlsfx.control.SearchableComboBox;
 import org.doancnpm.DAO.ChucVuDAO;
 import org.doancnpm.DAO.LoaiDaiLyDAO;
+import org.doancnpm.DAO.NhanVienDAO;
 import org.doancnpm.DAO.QuanDAO;
 import org.doancnpm.Models.*;
 import org.doancnpm.Ultilities.DayFormat;
@@ -23,8 +24,7 @@ import org.doancnpm.Ultilities.MoneyFormatter;
 import org.doancnpm.Ultilities.PopDialog;
 
 import java.net.URL;
-import java.sql.Date;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -129,6 +129,13 @@ public class TiepNhanNhanVienDialogController implements Initializable {
         if (!isValidEmailFormat(emailTextField.getText().trim())) {
             return "Email không đúng định dạng";
         }
+        try{
+            if (NhanVienDAO.getInstance().isEmailExists(emailTextField.getText().trim())) {
+               return ("Email đã tồn tại.");
+            }
+        }catch (Exception e){
+
+        }
         return "";
     }
     private boolean isValidEmailFormat(String email) {
@@ -137,4 +144,6 @@ public class TiepNhanNhanVienDialogController implements Initializable {
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
     }
+
+
 }

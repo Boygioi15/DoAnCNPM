@@ -21,6 +21,7 @@ import org.doancnpm.DAO.*;
 import org.doancnpm.Main.AdminController;
 import org.doancnpm.Main.ManHinh;
 import org.doancnpm.SQLUltilities.CalculateSQL;
+import org.doancnpm.Ultilities.CurrentNVInfor;
 
 import java.net.URL;
 import java.text.DecimalFormat;
@@ -36,6 +37,7 @@ public class ManHinhDieuKhienController implements Initializable {
     public HBox openMHNhanVien;
     public HBox openMHDaiLy;
     public GridPane openKhoHang;
+    public Text tenAdminText;
 
     @FXML
     private LineChart<String, Number> mixlineChart;
@@ -55,6 +57,8 @@ public class ManHinhDieuKhienController implements Initializable {
         initDataShow();
         initEvent();
         initDtbListener();
+
+        tenAdminText.setText(CurrentNVInfor.getInstance().getLoggedInNhanVien().getHoTen());
     }
 
     // switch man hinh
@@ -178,6 +182,7 @@ public class ManHinhDieuKhienController implements Initializable {
     public void initDtbListener(){
         NhanVienDAO.getInstance().AddDatabaseListener(ob -> {
             nvText.setText(String.valueOf(CalculateSQL.getInstance().calSoNhanVien()));
+            tenAdminText.setText(CurrentNVInfor.getInstance().getLoggedInNhanVien().getHoTen());
         });
         DaiLyDAO.getInstance().AddDatabaseListener(ob -> {
             dlText.setText(String.valueOf(CalculateSQL.getInstance().calSoDaiLy()));

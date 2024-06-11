@@ -8,6 +8,7 @@ import org.doancnpm.Models.MatHang;
 import org.doancnpm.Models.NhanVien;
 import org.doancnpm.Models.DatabaseDriver;
 import org.doancnpm.Ultilities.CurrentNVInfor;
+import org.doancnpm.Ultilities.PopDialog;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -23,7 +24,25 @@ public class NhanVienDAO implements Idao<NhanVien> {
     }
 
     private final BooleanProperty nhanVienDtbChanged = new SimpleBooleanProperty(false);
+    public boolean isEmailExists(String email) throws SQLException {
+        Connection conn = DatabaseDriver.getConnect();
+        String sql = "SELECT COUNT(*) FROM NHANVIEN WHERE Email = ?";
 
+        assert conn != null;
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setString(1, email);
+        ResultSet rs = pstmt.executeQuery();
+
+        boolean exists = false;
+        if (rs.next()) {
+            exists = rs.getInt(1) > 0;
+        }
+
+        rs.close();
+        pstmt.close();
+
+        return exists;
+    }
     @Override
     public int Insert(NhanVien nhanVien) throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
@@ -227,9 +246,10 @@ public class NhanVienDAO implements Idao<NhanVien> {
 
         int rowsUpdated = pstmt.executeUpdate();
         if (rowsUpdated > 0) {
-            System.out.println("Mật khẩu đã được cập nhật thành công.");
+            notifyChange();
+            PopDialog.popSuccessDialog("Mật khẩu đã được cập nhật thành công.");
         } else {
-            System.out.println("Không tìm thấy tài khoản tương ứng với địa chỉ email: " + email);
+           PopDialog.popErrorDialog("Không tìm thấy tài khoản tương ứng với địa chỉ email: " + email);
         }
         // khi sua moi cap nhat
         if(CurrentNVInfor.getInstance().getLoggedInNhanVien()!=null){

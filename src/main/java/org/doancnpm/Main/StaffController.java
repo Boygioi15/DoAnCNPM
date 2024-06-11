@@ -5,8 +5,13 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import org.doancnpm.DAO.*;
 import org.doancnpm.ManHinhBaoCao.ManHinhBaoCaoController;
 import org.doancnpm.ManHinhDaiLy.ManHinhDaiLyController;
 import org.doancnpm.ManHinhDieuKhien.ManHinhDieuKhienController;
@@ -19,6 +24,7 @@ import org.doancnpm.ManHinhQuyDinh.ManHinhQuyDinhController;
 import org.doancnpm.ManHinhTaiKhoan.ManHinhTaiKhoanController;
 import org.doancnpm.Models.NhanVien;
 import org.doancnpm.NavController;
+import org.doancnpm.Ultilities.CurrentNVInfor;
 import org.doancnpm.Ultilities.PopDialog;
 
 import java.io.IOException;
@@ -35,6 +41,8 @@ public class StaffController implements Initializable {
     public Button openPhieuXuatButton;
     public Button openPhieuNhapButton;
     public AnchorPane centerScreen;
+    public MenuButton userNameMenuButton;
+    public BorderPane mainScreen;
 
     private ManHinhDaiLyController manHinhDaiLyController;
     private ManHinhPhieuThuController manHinhPhieuThuController;
@@ -49,6 +57,8 @@ public class StaffController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initEvent();
+        initDatabaseBinding();
+        initKeyEventHandling();
         try {
             initScreens();
 
@@ -57,8 +67,13 @@ public class StaffController implements Initializable {
             PopDialog.popErrorDialog("Khởi tạo app thất bại", e.toString());
         }
         SwitchScreen(ManHinh.DAI_LY);
+        userNameMenuButton.setText(CurrentNVInfor.getInstance().getLoggedInNhanVien().getHoTen());
     }
-
+    private void initDatabaseBinding() {
+        NhanVienDAO.getInstance().AddDatabaseListener(_ -> {
+            userNameMenuButton.setText(CurrentNVInfor.getInstance().getLoggedInNhanVien().getHoTen());
+        });
+    }
     private void initScreens() throws IOException {
 
         manHinhDaiLyController = loadAndDoStuff("/fxml/Main/ManHinhDaiLy/MainUI.fxml").getController();
@@ -141,5 +156,59 @@ public class StaffController implements Initializable {
         manHinhPhieuThuController.setNhanVienLoggedIn(nhanVienLoggedIn);
         manHinhPhieuNhapController.setNhanVienLoggedIn(nhanVienLoggedIn);
         manHinhPhieuXuatController.setNhanVienLoggedIn(nhanVienLoggedIn);
+    }
+
+    private void initKeyEventHandling() {
+        mainScreen.sceneProperty().addListener((observable, oldScene, newScene) -> {
+            if (newScene != null) {
+                newScene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.R) {
+                        handleRKeyPress();
+                    }
+                });
+            }
+        });
+    }
+
+    private void handleRKeyPress() {
+        switch (currentManHinh) {
+            case DAI_LY -> {
+                DaiLyDAO.getInstance().notifyChange();
+                System.out.println("refresh DAI_LY");
+            }
+            case PHIEU_THU -> {
+                PhieuThuDAO.getInstance().notifyChange();
+                System.out.println("refresh PHIEU_THU");
+            }
+            case KHO_HANG -> {
+                MatHangDAO.getInstance().notifyChange();
+                System.out.println("refresh KHO_HANG");
+            }
+            case NHAP -> {
+                PhieuNhapDAO.getInstance().notifyChange();
+                System.out.println("refresh NHAP");
+            }
+            case XUAT -> {
+                PhieuXuatDAO.getInstance().notifyChange();
+                System.out.println("refresh XUAT");
+            }
+            case NHAN_VIEN -> {
+                NhanVienDAO.getInstance().notifyChange();
+                System.out.println("refresh NHAN_VIEN");
+            }
+            case QUY_DINH -> {
+                TaiKhoanDAO.getInstance().notifyChange();
+                LoaiDaiLyDAO.getInstance().notifyChange();
+                NhanVienDAO.getInstance().notifyChange();
+                DaiLyDAO.getInstance().notifyChange();
+                MatHangDAO.getInstance().notifyChange();
+                System.out.println("refresh QUY_DINH");
+            }
+            case TAI_KHOAN -> {
+                TaiKhoanDAO.getInstance().notifyChange();
+                System.out.println("refresh TAI_KHOAN");
+            }
+
+        }
     }
 }

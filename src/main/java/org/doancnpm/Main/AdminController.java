@@ -8,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -47,6 +48,7 @@ public class AdminController implements Initializable {
     public MenuItem nhapHangMI;
     public MenuItem themDaiLyMI;
     public MenuItem lapPhieuThuMI;
+    public MenuButton userNameMenuButton;
 
 
     private @FXML BorderPane mainScreen;
@@ -85,6 +87,7 @@ public class AdminController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initEvent();
         initMenuItemEvent();
+        initDatabaseBinding();
         try {
             initScreens();
             SwitchScreen(ManHinh.DIEU_KHIEN);
@@ -93,9 +96,13 @@ public class AdminController implements Initializable {
             e.printStackTrace();
             PopDialog.popErrorDialog("Khởi tạo app thất bại", e.toString());
         }
-
+        userNameMenuButton.setText(CurrentNVInfor.getInstance().getLoggedInNhanVien().getHoTen());
     }
-
+    private void initDatabaseBinding() {
+        NhanVienDAO.getInstance().AddDatabaseListener(_ -> {
+            userNameMenuButton.setText(CurrentNVInfor.getInstance().getLoggedInNhanVien().getHoTen());
+        });
+    }
     private void initScreens() throws IOException {
 
         manHinhDaiLyController = loadAndDoStuff("/fxml/Main/ManHinhDaiLy/MainUI.fxml").getController();
