@@ -12,16 +12,24 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import org.doancnpm.ManHinhBaoCao.ManHinhBaoCaoController;
 import org.doancnpm.ManHinhDaiLy.ManHinhDaiLyController;
+import org.doancnpm.ManHinhDaiLy.TiepNhanDaiLyDialog;
 import org.doancnpm.ManHinhDieuKhien.ManHinhDieuKhienController;
 import org.doancnpm.ManHinhKhoHang.ManHinhKhoHangController;
+import org.doancnpm.ManHinhKhoHang.ThemMoiMatHangDialog;
 import org.doancnpm.ManHinhNhanVien.ManHinhNhanVienController;
+import org.doancnpm.ManHinhNhanVien.TiepNhanNhanVienDialog;
+import org.doancnpm.ManHinhPhieuNhap.LapPhieuNhapDialog;
 import org.doancnpm.ManHinhPhieuNhap.ManHinhPhieuNhapController;
+import org.doancnpm.ManHinhPhieuThu.LapPhieuThuDialog;
 import org.doancnpm.ManHinhPhieuThu.ManHinhPhieuThuController;
+import org.doancnpm.ManHinhPhieuXuat.LapPhieuXuatDialog;
 import org.doancnpm.ManHinhPhieuXuat.ManHinhPhieuXuatController;
 import org.doancnpm.ManHinhQuyDinh.ManHinhQuyDinhController;
 import org.doancnpm.ManHinhTaiKhoan.ManHinhTaiKhoanController;
 import org.doancnpm.Models.NhanVien;
+import org.doancnpm.Models.PhieuXuat;
 import org.doancnpm.NavController;
+import org.doancnpm.Ultilities.CurrentNVInfor;
 import org.doancnpm.Ultilities.PopDialog;
 
 import java.io.IOException;
@@ -29,6 +37,15 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class AdminController implements Initializable {
+    public MenuItem themNhanVienMI;
+    public MenuItem themMoiMatHangMI;
+    public MenuItem xuatHangMI;
+    public MenuItem nhapHangMI;
+    public MenuItem themDaiLyMI;
+    public MenuItem lapPhieuThuMI;
+
+
+
     private @FXML BorderPane mainScreen;
     private @FXML AnchorPane centerScreen;
 
@@ -51,7 +68,7 @@ public class AdminController implements Initializable {
     private ManHinhPhieuNhapController manHinhPhieuNhapController;
     private ManHinhPhieuXuatController manHinhPhieuXuatController;
     private ManHinhNhanVienController manHinhNhanVienController;
-  
+
     private ManHinhQuyDinhController manHinhQuyDinhController;
     private ManHinhTaiKhoanController manHinhTaiKhoanController;
     private ManHinhDieuKhienController manHinhDieuKhienController;
@@ -60,16 +77,19 @@ public class AdminController implements Initializable {
     private NhanVien nhanVienLoggedIn;
 
     ManHinh currentManHinh;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initEvent();
+        initMenuItemEvent();
+
         try {
             initScreens();
             SwitchScreen(ManHinh.DAI_LY);
 
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            PopDialog.popErrorDialog("Khởi tạo app thất bại",e.toString());
+            PopDialog.popErrorDialog("Khởi tạo app thất bại", e.toString());
         }
 
     }
@@ -84,9 +104,9 @@ public class AdminController implements Initializable {
         manHinhNhanVienController = loadAndDoStuff("/fxml/Main/ManHinhNhanVien/MainUI.fxml").getController();
         manHinhQuyDinhController = loadAndDoStuff("/fxml/Main/ManHinhQuyDinh/MainUI.fxml").getController();
         manHinhTaiKhoanController = loadAndDoStuff("/fxml/Main/ManHinhTaiKhoan/MainUI.fxml").getController();
-
-        manHinhDieuKhienController = loadAndDoStuff("/fxml/Main/ManHinhDieuKhien/MainUI.fxml").getController();
         manHinhBaoCaoController = loadAndDoStuff("/fxml/Main/ManHinhBaoCao/MainUI.fxml").getController();
+        manHinhDieuKhienController = loadAndDoStuff("/fxml/Main/ManHinhDieuKhien/MainUI.fxml").getController();
+        manHinhDieuKhienController.setSwitchConller(this);
     }
 
     private FXMLLoader loadAndDoStuff(String path) throws IOException {
@@ -96,51 +116,99 @@ public class AdminController implements Initializable {
         commonFunc_Anchor(graph);
         return loader;
     }
-    private void initEvent(){
-        openDaiLyButton.setOnAction(_ ->{
+
+    private void initEvent() {
+        openDaiLyButton.setOnAction(_ -> {
             SwitchScreen(ManHinh.DAI_LY);
         });
-        openPhieuThuButton.setOnAction(_ ->{
+        openPhieuThuButton.setOnAction(_ -> {
             SwitchScreen(ManHinh.PHIEU_THU);
         });
-        openBangDieuKhienButton.setOnAction(_->{
+        openBangDieuKhienButton.setOnAction(_ -> {
             SwitchScreen(ManHinh.DIEU_KHIEN);
         });
-        openBaoCaoButton.setOnAction(_-> {
+        openBaoCaoButton.setOnAction(_ -> {
             SwitchScreen(ManHinh.BAO_CAO);
         });
-        openKhoHangButton.setOnAction(_ ->{
+        openKhoHangButton.setOnAction(_ -> {
             SwitchScreen(ManHinh.KHO_HANG);
         });
-        openPhieuNhapButton.setOnAction(_ ->{
+        openPhieuNhapButton.setOnAction(_ -> {
             SwitchScreen(ManHinh.NHAP);
         });
-        openPhieuXuatButton.setOnAction(_ ->{
+        openPhieuXuatButton.setOnAction(_ -> {
             SwitchScreen(ManHinh.XUAT);
         });
-        openNhanVienButton.setOnAction(_ ->{
+        openNhanVienButton.setOnAction(_ -> {
             SwitchScreen(ManHinh.NHAN_VIEN);
         });
-        openQuyDinhButton.setOnAction(_ ->{
+        openQuyDinhButton.setOnAction(_ -> {
             SwitchScreen(ManHinh.QUY_DINH);
         });
-        openTaiKhoanButton.setOnAction(_->{
+        openTaiKhoanButton.setOnAction(_ -> {
             SwitchScreen(ManHinh.TAI_KHOAN);
         });
+
+    }
+    private void initMenuItemEvent() {
+        themDaiLyMI.setOnAction(_ -> {
+            try {
+                new TiepNhanDaiLyDialog(null).showAndWait();
+            } catch (IOException e) {
+                PopDialog.popErrorDialog("Không thể mở dialog thêm đại lý");
+            }
+        });
+        nhapHangMI.setOnAction(_ -> {
+            try {
+                new LapPhieuNhapDialog(CurrentNVInfor.getInstance().getLoggedInNhanVien()).showAndWait();
+            } catch (IOException e) {
+                PopDialog.popErrorDialog("Không thể mở dialog thêm phiếu nhập ");
+            }
+        });
+        xuatHangMI.setOnAction(_ -> {
+            try {
+                new LapPhieuXuatDialog(CurrentNVInfor.getInstance().getLoggedInNhanVien()).showAndWait();
+            } catch (IOException exc) {
+                PopDialog.popErrorDialog("Không thể mở dialog thêm phiếu xuất");
+            }
+        });
+        themMoiMatHangMI.setOnAction(_ -> {
+            try {
+                new ThemMoiMatHangDialog().showAndWait();
+            } catch (IOException e) {
+                e.printStackTrace();
+                PopDialog.popErrorDialog("Không thể mở dialog thêm mặt hàng", e.getMessage());
+            }
+        });
+        themNhanVienMI.setOnAction(_ -> {
+            try {
+                new TiepNhanNhanVienDialog().showAndWait();
+            } catch (IOException e) {
+                PopDialog.popErrorDialog("Không thể mở dialog thêm nhân viên");
+            }
+        });
+        lapPhieuThuMI.setOnAction(_ -> {
+            try {
+                new LapPhieuThuDialog(null, nhanVienLoggedIn).showAndWait();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                PopDialog.popErrorDialog("Không thể mở dialog thêm phiếu thu", e.toString());
+            }
+        });
+
     }
     final PseudoClass selectedButton = PseudoClass.getPseudoClass("selected");
-    public void SwitchScreen(ManHinh manHinhCode){
+
+    public void SwitchScreen(ManHinh manHinhCode) {
         //toggle all off
 
         openBangDieuKhienButton.pseudoClassStateChanged(selectedButton, false);
-
         openDaiLyButton.pseudoClassStateChanged(selectedButton, false);
         openPhieuThuButton.pseudoClassStateChanged(selectedButton, false);
-
         openPhieuNhapButton.pseudoClassStateChanged(selectedButton, false);
         openPhieuXuatButton.pseudoClassStateChanged(selectedButton, false);
         openKhoHangButton.pseudoClassStateChanged(selectedButton, false);
-
         openNhanVienButton.pseudoClassStateChanged(selectedButton, false);
         openQuyDinhButton.pseudoClassStateChanged(selectedButton, false);
         openBaoCaoButton.pseudoClassStateChanged(selectedButton, false);
@@ -153,12 +221,12 @@ public class AdminController implements Initializable {
         manHinhPhieuXuatController.setVisibility(false);
         manHinhQuyDinhController.setVisibility(false);
         manHinhTaiKhoanController.setVisibility(false);
-      
+
         manHinhDieuKhienController.setVisibility(false);
 
         manHinhBaoCaoController.setVisibility(false);
 
-        switch (manHinhCode){
+        switch (manHinhCode) {
             case DAI_LY -> {
                 manHinhDaiLyController.setVisibility(true);
                 openDaiLyButton.pseudoClassStateChanged(selectedButton, true);
@@ -190,7 +258,7 @@ public class AdminController implements Initializable {
             case TAI_KHOAN -> {
                 manHinhTaiKhoanController.setVisibility(true);
             }
-            
+
             case DIEU_KHIEN -> {
                 manHinhDieuKhienController.setVisibility(true);
                 openBangDieuKhienButton.pseudoClassStateChanged(selectedButton, true);
@@ -202,12 +270,14 @@ public class AdminController implements Initializable {
         }
         currentManHinh = manHinhCode;
     }
-    private void commonFunc_Anchor(Parent parent){
-        AnchorPane.setLeftAnchor(parent,0.0);
-        AnchorPane.setTopAnchor(parent,0.0);
-        AnchorPane.setBottomAnchor(parent,0.0);
-        AnchorPane.setRightAnchor(parent,0.0);
+
+    private void commonFunc_Anchor(Parent parent) {
+        AnchorPane.setLeftAnchor(parent, 0.0);
+        AnchorPane.setTopAnchor(parent, 0.0);
+        AnchorPane.setBottomAnchor(parent, 0.0);
+        AnchorPane.setRightAnchor(parent, 0.0);
     }
+
     public void setNhanvienLoggedIn(NhanVien nhanVienLoggedIn) {
         this.nhanVienLoggedIn = nhanVienLoggedIn;
 
@@ -215,10 +285,12 @@ public class AdminController implements Initializable {
         manHinhPhieuNhapController.setNhanVienLoggedIn(nhanVienLoggedIn);
         manHinhPhieuXuatController.setNhanVienLoggedIn(nhanVienLoggedIn);
     }
+
     public void initManager(final NavController navController) {
         dangXuatButton.setOnAction(_ -> handleLogOut(navController));
     }
-    private void handleLogOut(NavController navController){
+
+    private void handleLogOut(NavController navController) {
         navController.logout();
     }
 

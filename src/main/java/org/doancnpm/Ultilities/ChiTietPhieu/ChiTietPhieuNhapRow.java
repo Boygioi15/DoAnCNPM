@@ -45,6 +45,8 @@ public class ChiTietPhieuNhapRow extends HBox {
         initMHComboBox();
         initBinding();
         MoneyFormatter.MoneyFormatTextField(thanhTienTextField);
+        MoneyFormatter.MoneyFormatTextField(slTextField);
+
     }
 
     public Long getThanhTien() {

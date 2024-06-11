@@ -4,6 +4,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.doancnpm.DAO.ChucVuDAO;
 import org.doancnpm.Login.LoginController;
 import org.doancnpm.Main.AdminController;
 import org.doancnpm.Main.StaffController;
@@ -14,10 +15,13 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/** Manages control flow for logins */
+/**
+ * Manages control flow for logins
+ */
 public class NavController {
     private Scene scene;
     private Stage stage;
+
     public NavController(Scene scene, Stage stage) {
         this.scene = scene;
         this.stage = stage;
@@ -28,16 +32,17 @@ public class NavController {
      * Will show the main application screen.
      */
     public void authenticated(NhanVien nhanVienLoggedIn) {
-        if(CurrentNVInfor.getInstance().getLoggedInNhanVien().getMaChucVu().equals(3)){
-            System.out.println("Admin");
-            showAdminView(nhanVienLoggedIn); //admin
+        try {
+            String chucVu = ChucVuDAO.getInstance().QueryID(CurrentNVInfor.getInstance().getLoggedInNhanVien().getMaChucVu()).getTenCV();
+            if (chucVu.equals("Admin")) {
+                showAdminView(nhanVienLoggedIn); //admin
+            } else if (chucVu.equals("Nhân viên")) {
+                showStaffView(nhanVienLoggedIn);
+            }
+        } catch (Exception e) {
+
         }
-        else if(CurrentNVInfor.getInstance().getLoggedInNhanVien().getMaChucVu().equals(2)){
-            showStaffView(nhanVienLoggedIn);
-        }
-        else if(CurrentNVInfor.getInstance().getLoggedInNhanVien().getMaChucVu().equals(1)){
-            showStaffView(nhanVienLoggedIn);
-        }
+
 
     }
 
@@ -50,9 +55,10 @@ public class NavController {
         currentStage.close(); // Đóng màn hình hiện tại
 
         Stage stage = new Stage();
-        Scene loginScene = new Scene(new Parent() {  });
+        Scene loginScene = new Scene(new Parent() {
+        });
 
-        NavController navController = new NavController(loginScene,stage);
+        NavController navController = new NavController(loginScene, stage);
         navController.showLoginScreen();
 
         stage.setScene(loginScene);
@@ -95,6 +101,7 @@ public class NavController {
             Logger.getLogger(NavController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
     private void showStaffView(NhanVien nhanVienLoggedIn) {
         try {
             FXMLLoader loader = new FXMLLoader(
