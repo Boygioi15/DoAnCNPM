@@ -52,11 +52,11 @@
           </Tab>
           <Tab text="Chi tiết doanh số">
                <content>
-                  <VBox spacing="20.0">
+                  <VBox maxHeight="1.7976931348623157E308" spacing="20.0">
                      <children>
-                        <ScrollPane fx:id="ScrollDoanhSo" fitToHeight="true" fitToWidth="true" VBox.vgrow="ALWAYS">
+                        <ScrollPane fx:id="ScrollDoanhSo" fitToWidth="true" VBox.vgrow="ALWAYS">
                            <content>
-                              <Accordion fx:id="accorditionDoanhSo" />
+                              <VBox fx:id="accorditionDoanhSo" />
                            </content>
                         </ScrollPane>
                         <HBox alignment="CENTER_RIGHT">
@@ -70,11 +70,11 @@
           </Tab>
             <Tab text="Chi tiết công nợ ">
                <content>
-                  <VBox spacing="20.0">
+                  <VBox maxHeight="1.7976931348623157E308" spacing="20.0">
                      <children>
-                        <ScrollPane fitToHeight="true" fitToWidth="true" VBox.vgrow="ALWAYS">
+                        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
                            <content>
-                              <Accordion fx:id="accorditionCongNo" />
+                              <VBox fx:id="accorditionCongNo" />
                            </content>
                         </ScrollPane>
                         <HBox alignment="CENTER_RIGHT">

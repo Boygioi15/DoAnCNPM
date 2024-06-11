@@ -492,7 +492,6 @@ public class ManHinhKhoHangController implements Initializable {
                     infoAlert.showAndWait();
                     return DonViTinhDAO.getInstance().QueryMostRecent().getId(); // Trả về ID của đơn vị tính mới
                 } else {
-                    PopDialog.popErrorDialog("Đơn vị tính " + dvtName + " không tồn tại");
                     return null;
                 }
             } else {
@@ -577,6 +576,7 @@ public class ManHinhKhoHangController implements Initializable {
         try (FileOutputStream fos = new FileOutputStream(filePath)) {
             workbook.write(fos);
             workbook.close();
+            PopDialog.popSuccessDialog("Xuất file excel thành công");
         } catch (IOException e) {
             PopDialog.popErrorDialog("Xuất file excel thất bại", e.getMessage());
         }

@@ -550,7 +550,6 @@ public class ManHinhDaiLyController implements Initializable {
                     infoAlert.showAndWait();
                     return LoaiDaiLyDAO.getInstance().QueryMostRecent().getId();
                 } else {
-                    PopDialog.popErrorDialog("Loại đại lý " + loaiDaiLyName + " không tồn tại");
                     return null;
                 }
             } else {
@@ -582,8 +581,7 @@ public class ManHinhDaiLyController implements Initializable {
                     infoAlert.showAndWait();
                     return QuanDAO.getInstance().QueryMostRecent().getId();
                 } else {
-                    PopDialog.popErrorDialog("Quận " + quanName + " không tồn tại");
-                    return null;
+                        return null;
                 }
             } else {
                 return QuanDAO.getInstance().QueryName(quanName).getId();
@@ -651,7 +649,7 @@ public class ManHinhDaiLyController implements Initializable {
 
             LoaiDaiLy loaiDaiLy;
             try{
-                loaiDaiLy = LoaiDaiLyDAO.getInstance().QueryID(daiLy.getID());
+                loaiDaiLy = LoaiDaiLyDAO.getInstance().QueryID(daiLy.getMaLoaiDaiLy());
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
@@ -674,6 +672,7 @@ public class ManHinhDaiLyController implements Initializable {
         try (FileOutputStream fos = new FileOutputStream(filePath)) {
             workbook.write(fos);
             workbook.close();
+            PopDialog.popSuccessDialog("Xuất file excel thành công");
         }
         catch (IOException e){
             PopDialog.popErrorDialog("Xuất file excel thất bại",e.getMessage());
