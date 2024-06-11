@@ -63,7 +63,7 @@
                         </ScrollPane>
                         <HBox alignment="CENTER_RIGHT">
                            <children>
-                              <Button mnemonicParsing="false" styleClass="action-button" text="Xuất báo cáo năm" />
+                              <Button fx:id="exportBaoCaoDSNam" mnemonicParsing="false" text="Xuất báo cáo năm" />
                            </children>
                         </HBox>
                      </children>
@@ -81,7 +81,7 @@
                         </ScrollPane>
                         <HBox alignment="CENTER_RIGHT">
                            <children>
-                              <Button mnemonicParsing="false" styleClass="action-button" text="Xuất báo cáo năm" />
+                              <Button fx:id="exportBaoCaoCNNam" mnemonicParsing="false" text="Xuất báo cáo năm" />
                            </children>
                         </HBox>
                      </children>

@@ -15,10 +15,12 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Popup;
 import org.doancnpm.DAO.DaiLyDAO;
 import org.doancnpm.Models.BaoCaoDoanhSo;
 import org.doancnpm.Models.DaiLy;
 import org.doancnpm.SQLUltilities.CalculateSQL;
+import org.doancnpm.Ultilities.PopDialog;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -99,18 +101,33 @@ public class BaoCaoDoanhSoController {
         tongTriGiaCol.setCellValueFactory(data -> new SimpleObjectProperty<>(df.format(data.getValue().getTongTriGia())));
         tongTriGiaCol.setPrefWidth(119.2);
 
-        TableColumn<BaoCaoDoanhSo, String> tyLeCol = new TableColumn<>("Tỷ lệ");
-        double finalTotalTongGiaTri = totalTongGiaTri;
+        TableColumn<BaoCaoDoanhSo, Double> tyLeCol = new TableColumn<>("Tỷ lệ");
         tyLeCol.setCellValueFactory(data -> {
-            double tongGiaTri = finalTotalTongGiaTri;
-            if (data.getValue().getMaDaiLy() != 0) {
+            double tongGiaTri = 0.0;
+            for (BaoCaoDoanhSo item : baoCaoDoanhSoItems) {
+                if(item.getSTT()!=0) {
+                    tongGiaTri += item.getTongTriGia();
+                }
+            }
+            if (data.getValue().getSTT() != baoCaoDoanhSoItems.size()&&data.getValue().getSTT()!=0) {
                 double tyLe = data.getValue().getTongTriGia() / tongGiaTri;
                 tyLe = Math.round(tyLe * 100.0) / 100.0;
                 data.getValue().setTyLe(tyLe);
-                return new SimpleObjectProperty<>(String.valueOf(tyLe));
-            } else {
-                return new SimpleObjectProperty<>("");
+
+                return new SimpleObjectProperty<>(tyLe);
+            } else if(data.getValue().getSTT()!=0){
+                double tongtyLe = 0;
+                for (int i = 0; i < data.getValue().getSTT() - 1; i++) {
+                    if(baoCaoDoanhSoItems.get(i).getSTT()!=0) {
+                        tongtyLe += baoCaoDoanhSoItems.get(i).getTyLe();
+                    }
+                }
+                double tyLe = 1 - tongtyLe;
+                tyLe = Math.round(tyLe * 100.0) / 100.0;
+                data.getValue().setTyLe(tyLe);
+                return new SimpleObjectProperty<>(tyLe);
             }
+            else return new SimpleObjectProperty<>((double)1);
         });
         tyLeCol.setPrefWidth(92.8);
 
@@ -145,7 +162,7 @@ public class BaoCaoDoanhSoController {
 
                 Button exportButton = new Button("Xuất PDF");
                 exportButton.setOnAction(event -> {
-                    exportBaoCaoDoanhSoToPDF(tableView.getItems(),monthValue,year);
+                    exportBaoCaoDoanhSoToPDF(tableView.getItems(), monthValue, year);
                 });
                 HBox buttonContainer = new HBox(10);
                 buttonContainer.setAlignment(Pos.CENTER_RIGHT);
@@ -185,27 +202,26 @@ public class BaoCaoDoanhSoController {
                 document.open();
 
                 // Add header
-                addHeader(document, titleFont, contentFont);
+                addHeader(document, titleFont, contentFont, month, year);
 
                 // Add company details
-                addCompanyDetails(document, boldFont, contentFont);
+                addDetails(document, boldFont, contentFont);
 
                 // Create and add table
                 PdfPTable table = createTable(data, contentFont, boldFont);
                 document.add(table);
 
-                // Add footer
-                addFooter(document, contentFont);
-
                 document.close();
+                PopDialog.popSuccessDialog("Xuất báo cáo doanh số tháng "+month+" năm "+year+ " thành công.");
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
-    private static void addHeader(Document document, Font titleFont, Font contentFont) throws DocumentException {
+
+    private static void addHeader(Document document, Font titleFont, Font contentFont, int month, int year) throws DocumentException {
         // Add title
-        Paragraph reportTitle = new Paragraph("BÁO CÁO DOANH SỐ", titleFont);
+        Paragraph reportTitle = new Paragraph("BÁO CÁO DOANH SỐ THÁNG " + month + " NĂM " + year, titleFont);
         reportTitle.setAlignment(Element.ALIGN_CENTER);
         document.add(reportTitle);
 
@@ -217,14 +233,14 @@ public class BaoCaoDoanhSoController {
         document.add(Chunk.NEWLINE);
     }
 
-    private static void addCompanyDetails(Document document, Font boldFont, Font contentFont) throws DocumentException {
+    private static void addDetails(Document document, Font boldFont, Font contentFont) throws DocumentException {
         Paragraph company = new Paragraph();
         company.setFont(contentFont);
         company.add(Chunk.NEWLINE);
-        company.add(new Phrase("Công ty XNK Thanh Hà\n", boldFont));
-        company.add(new Phrase("Email: xinchao@trangwebhay.vn\n", contentFont));
+        company.add(new Phrase("Thông tin liên hệ\n", contentFont));
+        company.add(new Phrase("Nhóm 27\n", boldFont));
+        company.add(new Phrase("SE104.O27\n", contentFont));
         company.add(new Phrase("Địa chỉ: 123 Đường ABC, Thành phố DEF\n", contentFont));
-        company.add(new Phrase("Hotline: +84 912 345 678\n", contentFont));
         company.setAlignment(Element.ALIGN_LEFT);
 
         document.add(company);
@@ -285,16 +301,56 @@ public class BaoCaoDoanhSoController {
         return cell;
     }
 
-    private static void addFooter(Document document, Font contentFont) throws DocumentException {
-        Paragraph footer = new Paragraph();
-        footer.setFont(contentFont);
-        footer.add(Chunk.NEWLINE);
-        footer.add(new Phrase("Thông tin liên hệ\n", contentFont));
-        footer.add(new Phrase("Email: xinchao@trangwebhay.vn\n", contentFont));
-        footer.add(new Phrase("Địa chỉ: 123 Đường ABC, Thành phố DEF\n", contentFont));
-        footer.add(new Phrase("Hotline: +84 912 345 678\n", contentFont));
-        footer.setAlignment(Element.ALIGN_LEFT);
+    private static void addHeaderNam(Document document, Font titleFont, Font contentFont, int year) throws DocumentException {
+        // Add title
+        Paragraph reportTitle = new Paragraph("BÁO CÁO DOANH SỐ NĂM " + year, titleFont);
+        reportTitle.setAlignment(Element.ALIGN_CENTER);
+        document.add(reportTitle);
 
-        document.add(footer);
+        // Add creation date
+        Paragraph dateParagraph = new Paragraph("Ngày tạo: " + LocalDate.now().toString(), contentFont);
+        dateParagraph.setAlignment(Element.ALIGN_RIGHT);
+        document.add(dateParagraph);
+
+        document.add(Chunk.NEWLINE);
+    }
+
+    protected static void exportBaoCaoDoanhSoNamPDF(List<BaoCaoDoanhSo> data, int year) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Lưu báo cáo doanh số");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
+        String initialFileName = String.format("BaoCaoDoanhSo_%d.pdf", year);
+        fileChooser.setInitialFileName(initialFileName);
+
+        File selectedFile = fileChooser.showSaveDialog(null);
+
+        if (selectedFile != null) {
+            Document document = new Document();
+            try {
+                BaseFont baseFont = BaseFont.createFont("src/main/resources/vuArial.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                Font titleFont = new Font(baseFont, 16, Font.BOLD);
+                Font contentFont = new Font(baseFont, 12);
+                Font boldFont = new Font(baseFont, 12, Font.BOLD);
+                PdfWriter.getInstance(document, new FileOutputStream(selectedFile.getAbsolutePath()));
+                document.open();
+
+                // Add header
+                addHeaderNam(document, titleFont, contentFont, year);
+
+                // Add company details
+                addDetails(document, boldFont, contentFont);
+
+                // Create and add table
+                PdfPTable table = createTable(data, contentFont, boldFont);
+                document.add(table);
+
+
+                document.close();
+                PopDialog.popSuccessDialog("Xuất báo cáo doanh số năm "+year+" thành công.");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

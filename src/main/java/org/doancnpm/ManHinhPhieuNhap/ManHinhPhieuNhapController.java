@@ -257,8 +257,13 @@ public class ManHinhPhieuNhapController implements Initializable {
         maPNCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getMaPhieuNhap()));
 
         TableColumn<PhieuNhap, String> maNVCol = new TableColumn<>("Nhân viên");
-        maNVCol.setCellValueFactory(new PropertyValueFactory<>("maNhanVien"));
-
+        maNVCol.setCellValueFactory(data -> {
+            NhanVien nhanVien = null;
+            try{
+                nhanVien = NhanVienDAO.getInstance().QueryID(data.getValue().getMaNhanVien());
+            } catch (SQLException _) {}
+            return new SimpleObjectProperty<>(nhanVien.getMaNhanVien()+" - "+nhanVien.getHoTen());
+        });
         TableColumn<PhieuNhap, Integer> nccCol = new TableColumn<>("Nhà cung cấp");
         nccCol.setCellValueFactory(new PropertyValueFactory<>("nhaCungCap"));
 

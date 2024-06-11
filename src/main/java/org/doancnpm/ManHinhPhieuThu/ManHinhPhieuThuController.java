@@ -213,7 +213,8 @@ public class ManHinhPhieuThuController implements Initializable {
                 daiLy = DaiLyDAO.getInstance().QueryID(data.getValue().getMaDaiLy());
             } catch (SQLException _) {
             }
-            return new SimpleObjectProperty<>(daiLy.getMaDaiLy());
+            catch (SQLException _){}
+            return new SimpleObjectProperty<>(daiLy.getMaDaiLy()+" - "+daiLy.getTenDaiLy());
         });
 
 
@@ -222,9 +223,8 @@ public class ManHinhPhieuThuController implements Initializable {
             NhanVien nhanVien = null;
             try {
                 nhanVien = NhanVienDAO.getInstance().QueryID(data.getValue().getMaNhanVien());
-            } catch (SQLException _) {
-            }
-            return new SimpleObjectProperty<>(nhanVien.getMaNhanVien());
+            } catch(SQLException _){}
+            return new SimpleObjectProperty<>(nhanVien.getMaNhanVien()+" - "+nhanVien.getHoTen());
         });
 
         TableColumn<PhieuThu, String> tongTienThuCol = new TableColumn<>("Tổng tiền thu");

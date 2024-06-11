@@ -236,10 +236,22 @@ public class ManHinhPhieuXuatController implements Initializable {
         maPXCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getMaPhieuXuat()));
 
         TableColumn<PhieuXuat, String> maNVCol = new TableColumn<>("Nhân viên");
-        maNVCol.setCellValueFactory(new PropertyValueFactory<>("maNhanVien"));
+        maNVCol.setCellValueFactory(data->{
+            NhanVien nhanVien = null;
+            try{
+                nhanVien = NhanVienDAO.getInstance().QueryID(data.getValue().getMaNhanVien());
+            } catch (SQLException _) {}
+            return new SimpleObjectProperty<>(nhanVien.getMaNhanVien()+" - "+nhanVien.getHoTen());
+        });
 
-        TableColumn<PhieuXuat, Integer> dlCol = new TableColumn<>("Đại lý");
-        dlCol.setCellValueFactory(new PropertyValueFactory<>("maDaiLy"));
+        TableColumn<PhieuXuat, String> daiLyCol = new TableColumn<>("Đại lý");
+        daiLyCol.setCellValueFactory(data->{
+            DaiLy daiLy = null;
+            try{
+                daiLy = DaiLyDAO.getInstance().QueryID(data.getValue().getMaDaiLy());
+            } catch (SQLException e) {}
+            return new SimpleObjectProperty<>(daiLy.getMaDaiLy()+" - "+daiLy.getTenDaiLy());
+        });
 
         TableColumn<PhieuXuat, String> tongTienCol = new TableColumn<>("Tổng tiền");
         tongTienCol.setCellValueFactory(data->{
@@ -351,7 +363,7 @@ public class ManHinhPhieuXuatController implements Initializable {
                 selectedCol,
                 maPXCol,
                 maNVCol,
-                dlCol,
+                daiLyCol,
                 tongTienCol,
                 actionCol
         );
@@ -369,7 +381,7 @@ public class ManHinhPhieuXuatController implements Initializable {
             selectedCol.setPrefWidth(width*0.1);
             maPXCol.setPrefWidth(width*0.13);
             maNVCol.setPrefWidth(width*0.13);
-            dlCol.setPrefWidth(width*0.24);
+            daiLyCol.setPrefWidth(width*0.24);
             tongTienCol.setPrefWidth(width*0.25);
             actionCol.setPrefWidth(width*0.15);
         });
