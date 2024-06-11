@@ -16,9 +16,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import org.doancnpm.DAO.DaiLyDAO;
-import org.doancnpm.DAO.MatHangDAO;
-import org.doancnpm.DAO.NhanVienDAO;
+import org.doancnpm.DAO.*;
 import org.doancnpm.Main.AdminController;
 import org.doancnpm.Main.ManHinh;
 import org.doancnpm.SQLUltilities.CalculateSQL;
@@ -78,10 +76,12 @@ public class ManHinhDieuKhienController implements Initializable {
         openMHBaoCao.setOnMouseClicked(mouseEvent -> {
             switchConller.SwitchScreen(ManHinh.BAO_CAO);
         });
+
     }
 
     private void initLineChart() {
-        mixlineChart.setTitle("Doanh thu và tổng nợ đại lý");
+        mixlineChart.getData().clear();
+        mixlineChart.setTitle("Hoạt động doanh thu và nợ hàng tháng");
         CalculateSQL calculateSQL = CalculateSQL.getInstance();
         LocalDate localDate = LocalDate.now();
         int currentYear = localDate.getYear();
@@ -132,6 +132,7 @@ public class ManHinhDieuKhienController implements Initializable {
     }
 
     private void initPieChart() {
+        tonkhoPieChart.getData().clear();
         CalculateSQL calculateSQL = CalculateSQL.getInstance();
         int soMatHangTonKho = calculateSQL.calSoMatHangTonKho();
         int tongSoMatHang = calculateSQL.calTongSoMatHang();
@@ -157,7 +158,7 @@ public class ManHinhDieuKhienController implements Initializable {
         }
 
         tonkhoPieChart.setData(pieChartData);
-        tonkhoPieChart.setTitle("Kho hàng");
+        tonkhoPieChart.setTitle("Tình trạng tồn kho");
         tonkhoPieChart.setLabelsVisible(false);
 
         /*
@@ -188,7 +189,14 @@ public class ManHinhDieuKhienController implements Initializable {
 
             slMatHangText.setText(String.valueOf(CalculateSQL.getInstance().calSoLuongMatHang()));
             soLuongHangTonKhoText.setText(String.valueOf(CalculateSQL.getInstance().calSoLuongHangTonKho()));
+            initPieChart();
 
+        });
+        PhieuXuatDAO.getInstance().AddDatabaseListener(observable -> {
+            initLineChart();
+        });
+        PhieuThuDAO.getInstance().AddDatabaseListener(observable -> {
+            initLineChart();
         });
     }
     public void initDataShow() {

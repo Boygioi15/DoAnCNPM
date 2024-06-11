@@ -159,7 +159,7 @@
                <children>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowSpan="2">
                      <children>
-                        <PieChart fx:id="tonkhoPieChart" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <PieChart fx:id="tonkhoPieChart" stylesheets="@../../../css/pieChart.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                      </children>
                   </AnchorPane>
                   <VBox alignment="CENTER_LEFT" prefHeight="159.0" prefWidth="61.0" GridPane.columnIndex="1">
@@ -189,7 +189,7 @@
             </GridPane>
             <AnchorPane fx:id="openMHBaoCao" prefHeight="200.0" prefWidth="200.0" styleClass="block" GridPane.rowIndex="1">
                <children>
-                  <LineChart fx:id="mixlineChart" layoutX="88.0" layoutY="89.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                  <LineChart fx:id="mixlineChart" layoutX="88.0" layoutY="89.0" stylesheets="@../../../css/lineChart.css" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                      <xAxis>
                         <CategoryAxis side="BOTTOM" />
                      </xAxis>

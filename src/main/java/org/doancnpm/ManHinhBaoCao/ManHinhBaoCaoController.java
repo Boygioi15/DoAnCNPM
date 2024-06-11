@@ -18,6 +18,8 @@ import javafx.stage.Stage;
 
 import javafx.util.Pair;
 import org.doancnpm.DAO.DaiLyDAO;
+import org.doancnpm.DAO.PhieuThuDAO;
+import org.doancnpm.DAO.PhieuXuatDAO;
 import org.doancnpm.Models.BaoCaoCongNo;
 import org.doancnpm.Models.BaoCaoDoanhSo;
 import org.doancnpm.Models.DaiLy;
@@ -68,6 +70,15 @@ public class ManHinhBaoCaoController implements Initializable {
         exportBaoCaoCNNam.setOnAction(actionEvent -> {
             handleXuatBaoCaoCNNam(CbYear.getValue());
         });
+
+        PhieuXuatDAO.getInstance().AddDatabaseListener(observable -> {
+            initLineChart(CbYear.getValue());
+            initAccordion(CbYear.getValue());
+        });
+        PhieuThuDAO.getInstance().AddDatabaseListener(observable -> {
+            initLineChart(CbYear.getValue());
+            initAccordion(CbYear.getValue());
+        });
     }
 
     private void initComboBox() {
@@ -97,7 +108,7 @@ public class ManHinhBaoCaoController implements Initializable {
 
 
     private void initLineChart(int selectedYear) {
-        mixlineChart.setTitle("Doanh thu và tổng nợ đại lý");
+        mixlineChart.setTitle("Hoạt động doanh thu và nợ hàng tháng");
         CalculateSQL calculateSQL = CalculateSQL.getInstance();
 
         mixlineChart.getData().clear();

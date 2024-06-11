@@ -1,0 +1,42 @@
+.chart {
+    -fx-padding: 10px;
+    -fx-background-color: transparent;
+}
+
+.chart-content {
+    -fx-padding: 10px;
+}
+
+.chart-legend, .chart-title {
+    -fx-font-family: 'Arial';
+    -fx-text-fill: gray;
+    -fx-font-size: 14px;
+}
+
+.chart-legend-item-symbol {
+    -fx-background-radius: 50%; /* Đảm bảo là hình tròn */
+}
+
+/* Thiết lập màu sắc cho các mục chú giải */
+.default-color0.chart-legend-item-symbol {
+    -fx-background-color: #4DB14E !important;
+}
+
+.default-color1.chart-legend-item-symbol {
+    -fx-background-color: #2496EF !important;
+}
+
+/* Đảm bảo màu sắc cho các phần của biểu đồ tròn */
+.default-color0.chart-pie {
+    -fx-pie-color: #4DB14E;
+}
+
+.default-color1.chart-pie {
+    -fx-pie-color: #2496EF;
+}
+
+.chart-pie-label {
+    -fx-font-family: 'Arial';
+    -fx-text-fill: gray;
+    -fx-font-size: 14px;
+}

@@ -1,21 +1,61 @@
 .chart {
     -fx-padding:  10px;
+    -fx-background-color: transparent;
 }
+
 .chart-content {
     -fx-padding: 10px;
 }
 
-.chart-series-line{
+.chart-legend, .chart-title {
+    -fx-font-family: 'Arial';
+    -fx-text-fill: gray;
+    -fx-font-size: 14px;
+}
+
+.chart-legend-item-symbol {
+    -fx-background-color: gray;
+}
+
+.chart-axis {
+    -fx-font-family: 'Arial';
+    -fx-text-fill: gray;
+    -fx-font-size: 14px;
+}
+
+.chart-series-line {
     -fx-stroke-width: 5px;
     -fx-effect: null;
 }
 
-.default-color0.chart-series-line { -fx-stroke: red }
-.default-color1.chart-series-line { -fx-stroke: orange }
-.default-color2.chart-series-line { -fx-stroke: red }
-.default-color3.chart-series-line { -fx-stroke: orange }
+.default-color0.chart-series-line {
+    -fx-stroke: #4DB14E;
+}
 
-.default-color0.chart-line-symbol { -fx-background-color: red ,white; }
-.default-color1.chart-line-symbol { -fx-background-color: orange ,white; }
-.default-color2.chart-line-symbol { -fx-background-color: red ,white; }
-.default-color3.chart-line-symbol { -fx-background-color: orange ,white; }
+.default-color1.chart-series-line {
+    -fx-stroke: #2496EF;
+}
+
+.default-color2.chart-series-line {
+    -fx-stroke: #4DB14E;
+}
+
+.default-color3.chart-series-line {
+    -fx-stroke: #2496EF;
+}
+
+.default-color0.chart-line-symbol {
+    -fx-background-color: #4DB14E, white;
+}
+
+.default-color1.chart-line-symbol {
+    -fx-background-color: #2496EF, white;
+}
+
+.default-color2.chart-line-symbol {
+    -fx-background-color: #4DB14E, white;
+}
+
+.default-color3.chart-line-symbol {
+    -fx-background-color: #2496EF, white;
+}

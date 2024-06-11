@@ -41,7 +41,7 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0">
                      <children>
-                        <LineChart fx:id="mixlineChart" layoutX="1.0" layoutY="4.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <LineChart fx:id="mixlineChart" layoutX="1.0" layoutY="4.0" stylesheets="@../../../css/lineChart.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                           <xAxis>
                             <CategoryAxis side="BOTTOM" />
                           </xAxis>
@@ -58,7 +58,7 @@
                      <children>
                         <ScrollPane fx:id="ScrollDoanhSo" fitToWidth="true" VBox.vgrow="ALWAYS">
                            <content>
-                              <VBox fx:id="accorditionDoanhSo"/>
+                              <VBox fx:id="accorditionDoanhSo" />
                            </content>
                         </ScrollPane>
                         <HBox alignment="CENTER_RIGHT">
