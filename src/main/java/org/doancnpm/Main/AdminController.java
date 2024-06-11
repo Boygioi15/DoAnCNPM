@@ -5,11 +5,15 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import org.doancnpm.DAO.*;
 import org.doancnpm.ManHinhBaoCao.ManHinhBaoCaoController;
 import org.doancnpm.ManHinhDaiLy.ManHinhDaiLyController;
 import org.doancnpm.ManHinhDaiLy.TiepNhanDaiLyDialog;
@@ -43,7 +47,6 @@ public class AdminController implements Initializable {
     public MenuItem nhapHangMI;
     public MenuItem themDaiLyMI;
     public MenuItem lapPhieuThuMI;
-
 
 
     private @FXML BorderPane mainScreen;
@@ -82,11 +85,10 @@ public class AdminController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initEvent();
         initMenuItemEvent();
-
         try {
             initScreens();
             SwitchScreen(ManHinh.DIEU_KHIEN);
-
+            initKeyEventHandling();
         } catch (Exception e) {
             e.printStackTrace();
             PopDialog.popErrorDialog("Khởi tạo app thất bại", e.toString());
@@ -150,6 +152,7 @@ public class AdminController implements Initializable {
         });
 
     }
+
     private void initMenuItemEvent() {
         themDaiLyMI.setOnAction(_ -> {
             SwitchScreen(ManHinh.DAI_LY);
@@ -204,6 +207,7 @@ public class AdminController implements Initializable {
         });
 
     }
+
     final PseudoClass selectedButton = PseudoClass.getPseudoClass("selected");
 
     public void SwitchScreen(ManHinh manHinhCode) {
@@ -298,6 +302,60 @@ public class AdminController implements Initializable {
 
     private void handleLogOut(NavController navController) {
         navController.logout();
+    }
+
+    private void initKeyEventHandling() {
+        mainScreen.sceneProperty().addListener((observable, oldScene, newScene) -> {
+            if (newScene != null) {
+                newScene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+                    if (event.getCode() == KeyCode.R) {
+                        handleRKeyPress();
+                    }
+                });
+            }
+        });
+    }
+
+    private void handleRKeyPress() {
+        switch (currentManHinh) {
+            case DAI_LY -> {
+                DaiLyDAO.getInstance().notifyChange();
+                System.out.println("refresh DAI_LY");
+            }
+            case PHIEU_THU -> {
+                PhieuThuDAO.getInstance().notifyChange();
+                System.out.println("refresh PHIEU_THU");
+            }
+            case KHO_HANG -> {
+                MatHangDAO.getInstance().notifyChange();
+                System.out.println("refresh KHO_HANG");
+            }
+            case NHAP -> {
+                PhieuNhapDAO.getInstance().notifyChange();
+                System.out.println("refresh NHAP");
+            }
+            case XUAT -> {
+                PhieuXuatDAO.getInstance().notifyChange();
+                System.out.println("refresh XUAT");
+            }
+            case NHAN_VIEN -> {
+                NhanVienDAO.getInstance().notifyChange();
+                System.out.println("refresh NHAN_VIEN");
+            }
+            case QUY_DINH -> {
+                TaiKhoanDAO.getInstance().notifyChange();
+                LoaiDaiLyDAO.getInstance().notifyChange();
+                NhanVienDAO.getInstance().notifyChange();
+                DaiLyDAO.getInstance().notifyChange();
+                MatHangDAO.getInstance().notifyChange();
+                System.out.println("refresh QUY_DINH");
+            }
+            case TAI_KHOAN -> {
+                TaiKhoanDAO.getInstance().notifyChange();
+                System.out.println("refresh TAI_KHOAN");
+            }
+
+        }
     }
 
 }
