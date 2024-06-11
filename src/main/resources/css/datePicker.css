@@ -22,7 +22,7 @@
 	-fx-border-color: gray;
 }
 .date-picker .arrow-button:hover {
-	-fx-background-color: -fx-secondary-color;
+	-fx-background-color: #F2F2F2;
 }
 .date-picker .arrow-button .arrow {
 	-fx-background-color: white;

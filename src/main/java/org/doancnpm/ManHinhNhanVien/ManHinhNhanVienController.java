@@ -670,6 +670,7 @@ public class ManHinhNhanVienController implements Initializable {
         try (FileOutputStream fos = new FileOutputStream(filePath)) {
             workbook.write(fos);
             workbook.close();
+            PopDialog.popSuccessDialog("Xuất file excel thành công");
         }
         catch (IOException e){
             PopDialog.popErrorDialog("Xuất file excel thất bại",e.getMessage());
@@ -727,11 +728,5 @@ public class ManHinhNhanVienController implements Initializable {
     private void filterList(){
         dsNhanVienFiltered.clear();
         dsNhanVienFiltered.addAll(filter.Filter());
-    }
-    private void resetFilter(){
-        chucVuComboBox.clearSelection();
-        chucVuComboBox.clear();
-        maNVTextField.clear();
-        tenNVTextField.clear();
     }
 }

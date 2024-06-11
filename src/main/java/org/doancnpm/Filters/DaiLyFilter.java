@@ -4,6 +4,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.FXCollections;
 import org.doancnpm.Models.DaiLy;
 import org.doancnpm.Models.MatHang;
+import org.doancnpm.Ultilities.CheckExist;
 
 public class DaiLyFilter implements IFilter<DaiLy> {
     ObservableList<DaiLy> input;
@@ -23,7 +24,7 @@ public class DaiLyFilter implements IFilter<DaiLy> {
         }
         output.addAll(input);
         for (DaiLy daiLy : input) {
-            if (maDaiLy != null && !maDaiLy.isEmpty() && !daiLy.getMaDaiLy().contains(maDaiLy)) {
+            if (maDaiLy != null && !maDaiLy.isEmpty() && !CheckExist.normalize(daiLy.getMaDaiLy()).contains(CheckExist.normalize(maDaiLy))) {
                 output.remove(daiLy);
                 continue;
             }
@@ -37,7 +38,7 @@ public class DaiLyFilter implements IFilter<DaiLy> {
                 continue;
             }
 
-            if (tenDaiLy != null && !tenDaiLy.isEmpty() && !daiLy.getTenDaiLy().contains(tenDaiLy)) {
+            if (tenDaiLy != null && !tenDaiLy.isEmpty() && !CheckExist.normalize(daiLy.getTenDaiLy()).contains(CheckExist.normalize(tenDaiLy))) {
                 output.remove(daiLy);
             }
         }

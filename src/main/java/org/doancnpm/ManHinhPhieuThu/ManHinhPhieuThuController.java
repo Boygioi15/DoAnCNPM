@@ -588,6 +588,7 @@ public class ManHinhPhieuThuController implements Initializable {
         try (FileOutputStream fos = new FileOutputStream(filePath)) {
             workbook.write(fos);
             workbook.close();
+            PopDialog.popSuccessDialog("Xuất file excel thành công");
         } catch (IOException e) {
             PopDialog.popErrorDialog("Xuất file excel thất bại", e.getMessage());
         }
@@ -630,6 +631,7 @@ public class ManHinhPhieuThuController implements Initializable {
                 addFooter(document, contentFont, phieuThu);
 
                 document.close();
+                PopDialog.popSuccessDialog("Xuất file pdf thành công");
             } catch (Exception e) {
                 e.printStackTrace();
             }

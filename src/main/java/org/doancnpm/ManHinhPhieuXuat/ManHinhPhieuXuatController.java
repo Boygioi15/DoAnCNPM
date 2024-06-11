@@ -64,7 +64,6 @@ public class ManHinhPhieuXuatController implements Initializable {
     @FXML private Region filterPaneContainer;
     @FXML private Button toggleFilterButton;
 
-    @FXML private MenuItem addExcelButton;
     @FXML private MenuItem addDirectButton;
     @FXML private MenuItem exportExcelButton;
 
@@ -116,8 +115,8 @@ public class ManHinhPhieuXuatController implements Initializable {
         masterDetailPane.setMasterNode(masterPane);
 
         masterDetailPane.widthProperty().addListener(ob ->{
-            detailPane.setMinWidth(masterDetailPane.getWidth()*0.3);
-            detailPane.setMaxWidth(masterDetailPane.getWidth()*0.3);
+            detailPane.setMinWidth(masterDetailPane.getWidth()*0.45);
+            detailPane.setMaxWidth(masterDetailPane.getWidth()*0.45);
         });
         mainTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, phieuXuat) -> {
             UpdateDetailPane((PhieuXuat) phieuXuat);
@@ -187,9 +186,6 @@ public class ManHinhPhieuXuatController implements Initializable {
     private void initEvent() {
         addDirectButton.setOnAction(_ -> {
             OpenDirectAddDialog();
-        });
-        addExcelButton.setOnAction(_ ->{
-
         });
         exportExcelButton.setOnAction(_->{
             exportDialog();
@@ -443,101 +439,6 @@ public class ManHinhPhieuXuatController implements Initializable {
         masterDetailPane.setShowDetailNode(false);
     }
 
-    //import - export
-    public void importDialog() {
-        // Hiển thị hộp thoại chọn tệp Excel
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Excel Files", "*.xlsx", "*.xls")
-        );
-        File selectedFile = fileChooser.showOpenDialog(mainTableView.getScene().getWindow()); // primaryStage là cửa sổ chính của ứng dụng, bạn cần thay thế nó bằng Stage thích hợp
-
-        // Kiểm tra nếu người dùng đã chọn một tệp Excel
-        if (selectedFile != null) {
-            // Gọi hàm importFromExcel và truyền đường dẫn tệp Excel đã chọn
-            importFromExcel(selectedFile.getAbsolutePath());
-        }
-    }
-    public void importFromExcel(String filePath)  {
-        /*
-        File file = new File(filePath);
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(file);
-        }
-        catch (FileNotFoundException e) {
-            PopDialog.popErrorDialog("Không thể mở file excel");
-            return;
-        }
-
-        XSSFWorkbook workbook = null;
-        try {
-            workbook = new XSSFWorkbook(fis);
-        }
-        catch (IOException e) {
-            PopDialog.popErrorDialog("Có lỗi trong quá trình thực hiện", e.getMessage());
-            return;
-        }
-        XSSFSheet sheet = workbook.getSheetAt(0); // Assuming data is in the first sheet
-
-        Date ngayLapPhieu = new Date(System.currentTimeMillis());
-
-        for (int i = 1; i <= sheet.getLastRowNum()-1; i++) {
-            Row row = sheet.getRow(i);
-            if (row != null) { // Kiểm tra xem dòng có tồn tại hay không
-                Cell maDaiLyCell = row.getCell(0);
-                Cell maNhanVienCell = row.getCell(1);
-                Cell tienThuCell = row.getCell(2);
-                Cell ghiChuCell = row.getCell(3);
-
-                PhieuXuat phieuXuat = new PhieuXuat();
-                String maDaiLy = maDaiLyCell.getStringCellValue();
-                String maNhanVien = maNhanVienCell.getStringCellValue();
-                int idDL, idNV;
-
-                try{
-                    idNV = Integer.parseInt(maNhanVien.substring(2));
-                }
-                catch (NumberFormatException e){
-                    PopDialog.popErrorDialog("Định dạng mã nhân viên không đúng");
-                    return;
-                }
-                try{
-                    idDL = Integer.parseInt(maDaiLy.substring(2));
-                }
-                catch (NumberFormatException e){
-                    PopDialog.popErrorDialog("Định dạng mã đại lý không đúng");
-                    return;
-                }
-
-                phieuXuat.setMaDaiLy(idDL);
-                phieuXuat.setMaNhanVien(idNV);
-                phieuXuat.setSoTienThu((int) tienThuCell.getNumericCellValue());
-                phieuXuat.setGhiChu(ghiChuCell.getStringCellValue());
-
-                phieuXuat.setNgayLap(ngayLapPhieu);
-                try {
-                    PhieuXuatDAO.getInstance().Insert(phieuXuat); // Thêm đối tượng vào cơ sở dữ liệu
-                }
-                catch (SQLException e) {
-                    PopDialog.popErrorDialog("Thêm mới phiếu xuất thất bại", e.getMessage());
-                    return;
-                }
-            }
-        }
-
-        try {
-            workbook.close();
-            fis.close();
-            PopDialog.popSuccessDialog("Thêm danh sách phiếu xuất từ file excel thành công");
-        }
-        catch (IOException e) {
-            PopDialog.popErrorDialog("Có lỗi trong quá trình thực hiện", e.getMessage());
-        }
-
-         */
-    }
-
     public void exportDialog() {
         // Hiển thị hộp thoại lưu tệp Excel
         FileChooser fileChooser = new FileChooser();
@@ -616,6 +517,7 @@ public class ManHinhPhieuXuatController implements Initializable {
         try (FileOutputStream fos = new FileOutputStream(filePath)) {
             workbook.write(fos);
             workbook.close();
+            PopDialog.popSuccessDialog("Xuất file excel thành công");
         } catch (IOException e) {
             PopDialog.popErrorDialog("Xuất file excel thất bại", e.getMessage());
         }
@@ -663,7 +565,9 @@ public class ManHinhPhieuXuatController implements Initializable {
                 addFooter(document, contentFont,phieuXuat);
 
                 document.close();
+                PopDialog.popSuccessDialog("Xuất file pdf thành công");
             } catch (Exception e) {
+                PopDialog.popErrorDialog("Xuất file pdf thất bại",e.getMessage());
                 e.printStackTrace();
             }
         }
