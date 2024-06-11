@@ -14,22 +14,25 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<ScrollPane fx:id="manHinhQuyDinh" fitToWidth="true" minHeight="-Infinity" minWidth="-Infinity" prefHeight="2000.0" prefWidth="1000.0" styleClass="background" stylesheets="@../../../css/quyDinhScreen.css" vvalue="1.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.doancnpm.ManHinhQuyDinh.ManHinhQuyDinhController">
+<ScrollPane fx:id="manHinhQuyDinh" fitToWidth="true" minHeight="-Infinity" minWidth="-Infinity" prefHeight="2000.0" prefWidth="1000.0" styleClass="background" stylesheets="@../../../css/quyDinhScreen.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.doancnpm.ManHinhQuyDinh.ManHinhQuyDinhController">
    <content>
       <VBox styleClass="background">
          <children>
             <TitledPane animated="false" text="Quận" VBox.vgrow="ALWAYS">
                <content>
-                  <VBox spacing="10.0">
+                  <VBox maxWidth="1.7976931348623157E308" spacing="10.0">
                      <children>
-                        <Label styleClass="body-text-header" text="Danh sách các quận:" />
-                        <TableView fx:id="quanTableView" prefHeight="200.0" stylesheets="@../../../css/tableView.css" VBox.vgrow="ALWAYS" />
-                        <HBox alignment="TOP_RIGHT" spacing="10.0">
+                        <VBox maxWidth="800.0" spacing="10.0">
                            <children>
-                              <Button fx:id="quanThemMoiBtn" mnemonicParsing="false" styleClass="add-button" text="Thêm mới" />
+                              <Label styleClass="body-text-header" text="Danh sách các quận:" />
+                              <TableView fx:id="quanTableView" prefHeight="200.0" stylesheets="@../../../css/tableView.css" VBox.vgrow="ALWAYS" />
+                              <HBox alignment="TOP_RIGHT" spacing="10.0">
+                                 <children>
+                                    <Button fx:id="quanThemMoiBtn" mnemonicParsing="false" styleClass="add-button" text="Thêm mới" />
+                                 </children>
+                              </HBox>
                            </children>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" spacing="10.0" />
+                        </VBox>
                      </children>
                      <padding>
                         <Insets bottom="10.0" left="15.0" right="10.0" top="10.0" />
@@ -39,15 +42,19 @@
             </TitledPane>
             <TitledPane animated="false" text="Loại đại lý" VBox.vgrow="ALWAYS">
                <content>
-                  <VBox spacing="10.0">
+                  <VBox maxWidth="1.7976931348623157E308" spacing="10.0">
                      <children>
-                        <Label styleClass="body-text-header" text="Danh sách các loại đại lý:" />
-                        <TableView fx:id="ldlTableView" prefHeight="200.0" stylesheets="@../../../css/tableView.css" VBox.vgrow="ALWAYS" />
-                        <HBox alignment="TOP_RIGHT" spacing="10.0">
+                        <VBox maxWidth="800.0" spacing="10.0">
                            <children>
-                              <Button fx:id="ldlThemMoiBtn" mnemonicParsing="false" styleClass="add-button" text="Thêm mới" />
+                              <Label styleClass="body-text-header" text="Danh sách các loại đại lý:" />
+                              <TableView fx:id="ldlTableView" prefHeight="200.0" stylesheets="@../../../css/tableView.css" VBox.vgrow="ALWAYS" />
+                              <HBox alignment="TOP_RIGHT" spacing="10.0">
+                                 <children>
+                                    <Button fx:id="ldlThemMoiBtn" mnemonicParsing="false" styleClass="add-button" text="Thêm mới" />
+                                 </children>
+                              </HBox>
                            </children>
-                        </HBox>
+                        </VBox>
                      </children>
                      <padding>
                         <Insets bottom="10.0" left="15.0" right="10.0" top="10.0" />
@@ -57,16 +64,19 @@
             </TitledPane>
             <TitledPane animated="false" text="Tài khoản" VBox.vgrow="ALWAYS">
                <content>
-                  <VBox spacing="10.0">
+                  <VBox maxWidth="1.7976931348623157E308" spacing="10.0">
                      <children>
-                        <Label styleClass="body-text-header" text="Danh sách tài khoản:" />
-                        <TableView fx:id="tkTableView" prefHeight="200.0" stylesheets="@../../../css/tableView.css" VBox.vgrow="ALWAYS" />
-                        <HBox alignment="TOP_RIGHT" spacing="10.0">
+                        <VBox maxWidth="800.0" spacing="10.0">
                            <children>
-                              <Button fx:id="tkThemMoiBtn" mnemonicParsing="false" styleClass="add-button" text="Thêm mới" />
+                              <Label styleClass="body-text-header" text="Danh sách tài khoản:" />
+                              <TableView fx:id="tkTableView" prefHeight="200.0" stylesheets="@../../../css/tableView.css" VBox.vgrow="ALWAYS" />
+                              <HBox alignment="TOP_RIGHT" spacing="10.0">
+                                 <children>
+                                    <Button fx:id="tkThemMoiBtn" mnemonicParsing="false" styleClass="add-button" text="Thêm mới" />
+                                 </children>
+                              </HBox>
                            </children>
-                        </HBox>
-                        <HBox alignment="CENTER_LEFT" spacing="10.0" />
+                        </VBox>
                      </children>
                      <padding>
                         <Insets bottom="10.0" left="15.0" right="10.0" top="10.0" />
@@ -76,16 +86,19 @@
             </TitledPane>
             <TitledPane animated="false" text="Đơn vị tính" VBox.vgrow="ALWAYS">
                <content>
-                  <VBox spacing="10.0">
+                  <VBox maxWidth="1.7976931348623157E308" spacing="10.0">
                      <children>
-                        <Label styleClass="body-text-header" text="Danh sách đơn vị tính:" />
-                        <HBox alignment="CENTER_LEFT" spacing="10.0" />
-                        <TableView fx:id="donViTinhTableView" prefHeight="200.0" stylesheets="@../../../css/tableView.css" VBox.vgrow="ALWAYS" />
-                        <HBox alignment="TOP_RIGHT" spacing="10.0">
+                        <VBox maxWidth="800.0" spacing="10.0">
                            <children>
-                              <Button fx:id="donViTinhThemMoiBtn" mnemonicParsing="false" styleClass="add-button" text="Thêm mới" />
+                              <Label styleClass="body-text-header" text="Danh sách đơn vị tính:" />
+                              <TableView fx:id="donViTinhTableView" prefHeight="200.0" stylesheets="@../../../css/tableView.css" VBox.vgrow="ALWAYS" />
+                              <HBox alignment="TOP_RIGHT" spacing="10.0">
+                                 <children>
+                                    <Button fx:id="donViTinhThemMoiBtn" mnemonicParsing="false" styleClass="add-button" text="Thêm mới" />
+                                 </children>
+                              </HBox>
                            </children>
-                        </HBox>
+                        </VBox>
                      </children>
                      <padding>
                         <Insets bottom="10.0" left="15.0" right="10.0" top="10.0" />
@@ -95,10 +108,9 @@
             </TitledPane>
             <TitledPane animated="false" text="Quy định khác" VBox.vgrow="ALWAYS">
                <content>
-                  <VBox spacing="10.0">
+                  <VBox maxWidth="1.7976931348623157E308" spacing="10.0">
                      <children>
-                        <HBox alignment="TOP_RIGHT" spacing="10.0" />
-                        <GridPane hgap="10.0" vgap="10.0">
+                        <GridPane hgap="10.0" maxWidth="800.0" vgap="10.0">
                            <columnConstraints>
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
@@ -131,7 +143,6 @@
                               </HBox>
                            </children>
                         </GridPane>
-                        <HBox alignment="CENTER_LEFT" spacing="10.0" />
                      </children>
                      <padding>
                         <Insets bottom="10.0" left="15.0" right="10.0" top="10.0" />
@@ -148,16 +159,19 @@
                      <children>
                         <TitledPane animated="false" text="Đại lý">
                            <content>
-                              <VBox spacing="10.0">
+                              <VBox maxWidth="1.7976931348623157E308" spacing="10.0">
                                  <children>
-                                    <Label styleClass="body-text-header" text="Danh sách các đại lý đã bị ẩn:" />
-                                    <TableView fx:id="daiLyTableView" prefHeight="200.0" stylesheets="@../../../css/tableView.css" VBox.vgrow="ALWAYS" />
-                                    <HBox alignment="TOP_RIGHT" spacing="10.0">
+                                    <VBox maxWidth="800.0" spacing="10.0">
                                        <children>
-                                          <Button fx:id="restoreDaiLyButton" mnemonicParsing="false" styleClass="restore-button" text="Khôi phục" />
+                                          <Label styleClass="body-text-header" text="Danh sách các đại lý đã bị ẩn:" />
+                                          <TableView fx:id="daiLyTableView" prefHeight="200.0" stylesheets="@../../../css/tableView.css" VBox.vgrow="ALWAYS" />
+                                          <HBox alignment="TOP_RIGHT" spacing="10.0">
+                                             <children>
+                                                <Button fx:id="restoreDaiLyButton" mnemonicParsing="false" styleClass="restore-button" text="Khôi phục" />
+                                             </children>
+                                          </HBox>
                                        </children>
-                                    </HBox>
-                                    <HBox alignment="CENTER_LEFT" spacing="10.0" />
+                                    </VBox>
                                  </children>
                                  <padding>
                                     <Insets bottom="10.0" left="15.0" right="10.0" top="10.0" />
@@ -167,15 +181,19 @@
                         </TitledPane>
                         <TitledPane animated="false" text="Mặt hàng">
                            <content>
-                              <VBox spacing="10.0">
+                              <VBox maxWidth="1.7976931348623157E308" spacing="10.0">
                                  <children>
-                                    <Label styleClass="body-text-header" text="Danh sách các mặt hàng đã bị ẩn:" />
-                                    <TableView fx:id="matHangTableView" prefHeight="200.0" stylesheets="@../../../css/tableView.css" VBox.vgrow="ALWAYS" />
-                                    <HBox alignment="TOP_RIGHT" spacing="10.0">
+                                    <VBox maxWidth="800.0" spacing="10.0">
                                        <children>
-                                          <Button fx:id="restoreMatHangBtn" mnemonicParsing="false" styleClass="restore-button" text="Khôi phục" />
+                                          <Label styleClass="body-text-header" text="Danh sách các mặt hàng đã bị ẩn:" />
+                                          <TableView fx:id="matHangTableView" prefHeight="200.0" stylesheets="@../../../css/tableView.css" VBox.vgrow="ALWAYS" />
+                                          <HBox alignment="TOP_RIGHT" spacing="10.0">
+                                             <children>
+                                                <Button fx:id="restoreMatHangBtn" mnemonicParsing="false" styleClass="restore-button" text="Khôi phục" />
+                                             </children>
+                                          </HBox>
                                        </children>
-                                    </HBox>
+                                    </VBox>
                                  </children>
                                  <padding>
                                     <Insets bottom="10.0" left="15.0" right="10.0" top="10.0" />
@@ -185,16 +203,19 @@
                         </TitledPane>
                         <TitledPane animated="false" text="Nhân viên">
                            <content>
-                              <VBox spacing="10.0">
+                              <VBox maxWidth="1.7976931348623157E308" spacing="10.0">
                                  <children>
-                                    <Label styleClass="body-text-header" text="Danh sách các nhân viên đã bị ẩn:" />
-                                    <TableView fx:id="nhanVienTableView" prefHeight="200.0" stylesheets="@../../../css/tableView.css" VBox.vgrow="ALWAYS" />
-                                    <HBox alignment="TOP_RIGHT" spacing="10.0">
+                                    <VBox spacing="10.0">
                                        <children>
-                                          <Button fx:id="restoreNhanVienBtn" mnemonicParsing="false" styleClass="restore-button" text="Khôi phục" />
+                                          <Label styleClass="body-text-header" text="Danh sách các nhân viên đã bị ẩn:" />
+                                          <TableView fx:id="nhanVienTableView" prefHeight="200.0" stylesheets="@../../../css/tableView.css" VBox.vgrow="ALWAYS" />
+                                          <HBox alignment="TOP_RIGHT" spacing="10.0">
+                                             <children>
+                                                <Button fx:id="restoreNhanVienBtn" mnemonicParsing="false" styleClass="restore-button" text="Khôi phục" />
+                                             </children>
+                                          </HBox>
                                        </children>
-                                    </HBox>
-                                    <HBox alignment="CENTER_LEFT" spacing="10.0" />
+                                    </VBox>
                                  </children>
                                  <padding>
                                     <Insets bottom="10.0" left="15.0" right="10.0" top="10.0" />

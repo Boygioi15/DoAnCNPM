@@ -13,7 +13,7 @@
 
 <VBox fx:id="TiepNhanDaiLyDialog" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" spacing="20.0" styleClass="background" stylesheets="@../../../css/addForm.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.doancnpm.ManHinhDaiLy.TiepNhanDaiLyDialogController">
    <children>
-      <Label styleClass="title-text" text="Tiếp nhận đại lý" />
+      <Label fx:id="title" styleClass="title-text" text="Tiếp nhận đại lý" />
       <HBox styleClass="separator">
          <VBox.margin>
             <Insets bottom="10.0" top="5.0" />

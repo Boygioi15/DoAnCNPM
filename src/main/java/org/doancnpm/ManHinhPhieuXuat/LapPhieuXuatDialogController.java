@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
@@ -40,7 +41,8 @@ public class LapPhieuXuatDialogController implements Initializable {
     @FXML private TextField nhanVienTextField;
     @FXML private SearchableComboBox<DaiLy> dlComboBox;
     @FXML Text tongTienText;
-
+    @FXML
+    Label title;
     @FXML private TextArea ghiChuTextArea;
 
     @FXML Button loadExcelBtn;
@@ -98,9 +100,9 @@ public class LapPhieuXuatDialogController implements Initializable {
     }
     public void themCTPX(){
         ChiTietPhieuXuatRow temp = new ChiTietPhieuXuatRow(ctpxContainer);
-        ctpxContainer.getChildren().add(ctpxContainer.getChildren().size()-2,temp);
+        ctpxContainer.getChildren().add(ctpxContainer.getChildren().size()-1,temp);
         temp.SetOnXoa(event -> {
-            if(ctpxContainer.getChildren().size()<=3){
+            if(ctpxContainer.getChildren().size()<=2){
                 event.consume();
             }else{
                 ctpxContainer.getChildren().remove(temp);
@@ -128,6 +130,7 @@ public class LapPhieuXuatDialogController implements Initializable {
             ngayLapPhieuTextField.setText(DayFormat.GetDayStringFormatted(ngayTiepNhan));
             return;
         }
+        title.setText("Cập nhật phiếu xuất");
         phieuXuatGoc = phieuXuat;
         ngayLapPhieuTextField.setText(DayFormat.GetDayStringFormatted(phieuXuat.getNgayLapPhieu()));
         try{
@@ -141,10 +144,25 @@ public class LapPhieuXuatDialogController implements Initializable {
 
         ghiChuTextArea.setText(phieuXuat.getGhiChu());
 
-
+        ctpxContainer.setDisable(true);
         ngayLapPhieuTextField.setDisable(true);
         nhanVienTextField.setDisable(true);
         dlComboBox.setDisable(true);
+        loadCTPXs();
+    }
+    private void loadCTPXs(){
+        try {
+            List<ChiTietPhieuXuat> list = CTPXDAO.getInstance().QueryByPhieuXuatID(phieuXuatGoc.getID());
+            for(ChiTietPhieuXuat chiTietPhieuXuat : list){
+                themCTPXExcel(chiTietPhieuXuat);
+            }
+            if(ctpxContainer.getChildren().size()>=2){
+                ctpxContainer.getChildren().remove(0);
+            }
+            capNhatTongTien();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
     public PhieuXuat getPhieuXuat(){
         if(phieuXuatGoc ==null){
@@ -205,9 +223,9 @@ public class LapPhieuXuatDialogController implements Initializable {
     public void themCTPXExcel(ChiTietPhieuXuat chiTietPhieuXuat) {
         ChiTietPhieuXuatRow temp = new ChiTietPhieuXuatRow(ctpxContainer);
         temp.loadFromChiTietPhieuXuat(chiTietPhieuXuat);
-        ctpxContainer.getChildren().add(ctpxContainer.getChildren().size() - 2, temp);
+        ctpxContainer.getChildren().add(ctpxContainer.getChildren().size() - 1, temp);
         temp.SetOnXoa(event -> {
-            if (ctpxContainer.getChildren().size() <= 3) {
+            if (ctpxContainer.getChildren().size() <= 2) {
                 event.consume();
             } else {
                 ctpxContainer.getChildren().remove(temp);
@@ -280,7 +298,9 @@ public class LapPhieuXuatDialogController implements Initializable {
         capNhatTongTien();
         // Xóa hàng đầu tiên sau khi nhập
         if (!hasError) {
-            ctpxContainer.getChildren().remove(0);
+            if(ctpxContainer.getChildren().size()>=2){
+                ctpxContainer.getChildren().remove(0);
+            }
         }
 
         try {

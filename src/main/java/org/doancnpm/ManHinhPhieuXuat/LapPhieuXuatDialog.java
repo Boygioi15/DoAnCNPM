@@ -36,7 +36,7 @@ public class LapPhieuXuatDialog extends Dialog<PhieuXuat> {
         }
         ButtonType cancelButtonType = new ButtonType("Thoát", ButtonBar.ButtonData.CANCEL_CLOSE);
 
-        this.setTitle("Lập phiếu nhập");
+        this.setTitle("Lập phiếu xuất");
         this.getDialogPane().setContent(fxmlLoader.load());
 
         LapPhieuXuatDialogController c = fxmlLoader.getController();
@@ -67,6 +67,9 @@ public class LapPhieuXuatDialog extends Dialog<PhieuXuat> {
                         CTPXDAO.getInstance().InsertBlock(ctpxs);
                         PopDialog.popSuccessDialog("Thêm mới phiếu xuất thành công");
                     }catch (SQLException e){
+                        try {
+                            PhieuXuatDAO.getInstance().Delete(phieuXuat.getID());
+                        } catch (SQLException _) {}
                         PopDialog.popErrorDialog("Thêm mới phiếu xuất thất bại",e.getMessage());
                         event.consume();
                     }

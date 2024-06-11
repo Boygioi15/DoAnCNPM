@@ -73,6 +73,7 @@ public class ManHinhPhieuXuatController implements Initializable {
     @FXML private Text maDLText,tenDLText;
     @FXML private Text ngayLapPhieuText;
     @FXML private Text tongTienText;
+    @FXML private TextArea ghiChuTextArea;
 
     @FXML private MasterDetailPane masterDetailPane;
 
@@ -81,6 +82,7 @@ public class ManHinhPhieuXuatController implements Initializable {
     @FXML private Region detailPane;
 
     @FXML private FlowPane emptySelectionPane;
+
 
     private final ObservableList<PhieuXuat> dsPhieuXuat = FXCollections.observableArrayList();
     private final ObservableList<PhieuXuat> dsPhieuXuatFiltered = FXCollections.observableArrayList();
@@ -384,8 +386,8 @@ public class ManHinhPhieuXuatController implements Initializable {
             selectedCol.setPrefWidth(width*0.1);
             maPXCol.setPrefWidth(width*0.13);
             maNVCol.setPrefWidth(width*0.13);
-            daiLyCol.setPrefWidth(width*0.24);
-            tongTienCol.setPrefWidth(width*0.25);
+            daiLyCol.setPrefWidth(width*0.3);
+            tongTienCol.setPrefWidth(width*0.2);
             actionCol.setPrefWidth(width*0.15);
         });
         mainTableView.setEditable( true );
@@ -444,7 +446,7 @@ public class ManHinhPhieuXuatController implements Initializable {
         catch (SQLException _){}
         ngayLapPhieuText.setText(DayFormat.GetDayStringFormatted(phieuXuat.getNgayLapPhieu()));
         tongTienText.setText(MoneyFormatter.convertLongToString(phieuXuat.getTongTien()));
-
+        ghiChuTextArea.setText(phieuXuat.getGhiChu());
         //item
         try{
             List<ChiTietPhieuXuat> chiTietPhieuXuatList = CTPXDAO.getInstance().QueryByPhieuXuatID(phieuXuat.getID());

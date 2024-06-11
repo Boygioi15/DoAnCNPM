@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import io.github.palexdev.materialfx.controls.MFXTextField?>
+<?import java.lang.String?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.HBox?>
 <?import org.controlsfx.control.SearchableComboBox?>
 
-<fx:root alignment="CENTER_LEFT" spacing="10.0" style="-fx-background-color: transparent;" type="HBox" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" spacing="12.0" style="-fx-background-color: transparent;" stylesheets="@../../css/addFormPhieu.css" type="HBox" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <SearchableComboBox fx:id="mhComboBox" prefWidth="100.0" promptText="Mặt hàng" />
-      <MFXTextField fx:id="dvtTextField" borderGap="6.0" floatMode="BORDER" floatingText="Đơn vị tính" prefWidth="120.0" />
-      <MFXTextField fx:id="slTextField" borderGap="6.0" floatMode="BORDER" floatingText="Số lượng" prefWidth="120.0" />
-      <MFXTextField fx:id="donGiaTextField" borderGap="5.0" floatMode="BORDER" floatingText="Đơn giá" prefWidth="120.0" text="1 Luffy" />
-      <MFXTextField fx:id="thanhTienTextField" borderGap="5.0" floatMode="BORDER" floatingText="Thành tiền" prefWidth="150.0" />
-      <Button mnemonicParsing="false" text="Xóa" fx:id="xoaBtn" />
+      <SearchableComboBox fx:id="mhComboBox" maxHeight="1.7976931348623157E308" prefWidth="170.0" promptText="Mặt hàng">
+         <styleClass>
+            <String fx:value="combobox" />
+            <String fx:value="body-text" />
+         </styleClass></SearchableComboBox>
+      <MFXTextField fx:id="slTextField" borderGap="6.0" floatMode="BORDER" floatingText="Số lượng" prefWidth="120.0" styleClass="body-text" />
+      <MFXTextField fx:id="dvtTextField" borderGap="6.0" editable="false" floatMode="BORDER" floatingText="Đơn vị tính" prefWidth="120.0" styleClass="body-text" />
+      <MFXTextField fx:id="donGiaTextField" borderGap="5.0" editable="false" floatMode="BORDER" floatingText="Đơn giá" prefWidth="130.0" styleClass="body-text" />
+      <MFXTextField fx:id="thanhTienTextField" borderGap="5.0" editable="false" floatMode="BORDER" floatingText="Thành tiền" prefWidth="130.0" styleClass="body-text" />
+      <Button maxHeight="1.7976931348623157E308" mnemonicParsing="false" styleClass="delete-button" text="Xóa" fx:id="xoaBtn" />
    </children>
 </fx:root>

@@ -90,6 +90,16 @@
             <Label styleClass="header-text" text="Thông tin chi tiết" />
             <AnchorPane VBox.vgrow="ALWAYS">
                <children>
+                  <FlowPane fx:id="emptySelectionPane" alignment="CENTER" columnHalignment="CENTER" style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../../image/eye.png" />
+                           </image>
+                        </ImageView>
+                        <Label maxWidth="170.0" styleClass="header-text" text="Vui lòng chọn phiếu xuất để xem chi tiết" textAlignment="CENTER" wrapText="true" />
+                     </children>
+                  </FlowPane>
                   <ScrollPane fitToWidth="true" maxHeight="1.7976931348623157E308" styleClass="background" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <content>
                         <GridPane hgap="15.0" maxHeight="1.7976931348623157E308" vgap="15.0">
@@ -143,16 +153,6 @@
                         </GridPane>
                      </content>
                   </ScrollPane>
-                  <FlowPane fx:id="emptySelectionPane" alignment="CENTER" columnHalignment="CENTER" style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <children>
-                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../../../image/eye.png" />
-                           </image>
-                        </ImageView>
-                        <Label maxWidth="170.0" styleClass="header-text" text="Vui lòng chọn phiếu xuất để xem chi tiết" textAlignment="CENTER" wrapText="true" />
-                     </children>
-                  </FlowPane>
                </children>
             </AnchorPane>
          </children>

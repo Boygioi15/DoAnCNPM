@@ -251,7 +251,7 @@ public class ManHinhPhieuThuController implements Initializable {
                 nhanVien = NhanVienDAO.getInstance().QueryID(data.getValue().getMaNhanVien());
             } catch (SQLException _) {
             }
-            return new SimpleObjectProperty<>(nhanVien.getMaNhanVien() + " - " + nhanVien.getHoTen());
+            return new SimpleObjectProperty<>(nhanVien.getMaNhanVien());
         });
 
         TableColumn<PhieuThu, String> tongTienThuCol = new TableColumn<>("Tổng tiền thu");
@@ -355,8 +355,8 @@ public class ManHinhPhieuThuController implements Initializable {
         mainTableView.getColumns().addAll(
                 selectedCol,
                 maPTCol,
-                maDLCol,
                 maNVCol,
+                maDLCol,
                 tongTienThuCol,
                 actionCol
         );
@@ -371,10 +371,10 @@ public class ManHinhPhieuThuController implements Initializable {
         mainTableView.widthProperty().addListener(ob -> {
             double width = mainTableView.getWidth();
             selectedCol.setPrefWidth(width * 0.1);
-            maPTCol.setPrefWidth(width * 0.15);
-            maDLCol.setPrefWidth(width * 0.15);
-            maNVCol.setPrefWidth(width * 0.15);
-            tongTienThuCol.setPrefWidth(width * 0.30);
+            maPTCol.setPrefWidth(width * 0.13);
+            maDLCol.setPrefWidth(width * 0.3);
+            maNVCol.setPrefWidth(width * 0.13);
+            tongTienThuCol.setPrefWidth(width * 0.2);
             actionCol.setPrefWidth(width * 0.15);
         });
 

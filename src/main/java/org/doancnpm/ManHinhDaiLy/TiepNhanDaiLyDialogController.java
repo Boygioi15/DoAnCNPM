@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.util.StringConverter;
@@ -32,6 +33,7 @@ public class TiepNhanDaiLyDialogController implements Initializable {
     @FXML private TextField dienThoaiTextField;
     @FXML private TextField emailTextField;
     @FXML private TextArea ghiChuTextArea;
+    @FXML private Label title;
 
     DaiLy initialValue = null;
 
@@ -59,6 +61,7 @@ public class TiepNhanDaiLyDialogController implements Initializable {
         dienThoaiTextField.setText(daiLy.getDienThoai());
         emailTextField.setText(daiLy.getEmail());
         ghiChuTextArea.setText(daiLy.getGhiChu());
+        title.setText("Cập nhật đại lý");
     }
 
     private void displayDataInCb() {

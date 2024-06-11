@@ -1,0 +1,107 @@
+.separator{
+    -fx-background-color: transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: black;
+}
+
+.normal-text-field{
+    -fx-background-color: transparent;
+
+    -fx-border-color: gray;
+    -fx-border-width: 1;
+    -fx-border-radius: 3;
+
+    -fx-min-height: 30;
+    -fx-max-height: 30;
+}
+.normal-text-field:hover {
+    -fx-border-color: #239DC4;
+    -fx-border-radius: 3;
+    -fx-border-width: 1;
+    -fx-border-insets: 0;
+}
+
+.normal-text-field:focused {
+    -fx-border-color: #1F88AB;
+    -fx-border-radius: 3;
+    -fx-border-width: 1.5;
+    -fx-border-insets: 0;
+}
+.text-area{
+    -fx-background-color: transparent;
+    -fx-border-color: gray;
+    -fx-border-width: 1;
+    -fx-border-radius: 2;
+    -fx-effect: null;
+}
+
+.uneditable-text-field{
+    -fx-background-color: transparent;
+    -fx-border-color: gray;
+    -fx-border-radius: 0;
+    -fx-border-width: 0 0 1 0;
+    -fx-min-height: 25;
+    -fx-max-height: 25;
+}
+.uneditable-text{
+    -fx-font-family: Arial;
+    -fx-fill: gray;
+    -fx-font-size: 11
+}
+
+.combobox{
+    -fx-background-color: transparent;
+    -fx-border-color: gray;
+    -fx-border-width: 1;
+    -fx-border-radius: 3;
+
+}
+.combobox:hover {
+    -fx-border-color: #239DC4;
+    -fx-border-radius: 3;
+    -fx-border-width: 1;
+    -fx-border-insets: 0;
+}
+
+.combobox:focused {
+    -fx-border-color: #1F88AB;
+    -fx-border-radius: 3;
+    -fx-border-width: 1;
+    -fx-border-insets: 0;
+}
+
+
+.title-text{
+    -fx-font-size: 24;
+    -fx-font-family: Arial;
+    -fx-font-weight: bold;
+}
+.header-text{
+    -fx-font-size: 16;
+    -fx-font-family: Arial;
+    -fx-font-weight: bold;
+}
+.body-text-header{
+    -fx-font-size: 13;
+    -fx-font-family: Arial;
+    -fx-font-weight: bold;
+}
+.body-text{
+    -fx-font-size: 13;
+    -fx-font-family: Arial;
+}
+
+.delete-button{
+    -fx-background-color: transparent;
+    -fx-background-radius: 3;
+    -fx-border-color: #880015;
+    -fx-border-radius: 3;
+    -fx-border-width: 1.5;
+
+    -fx-font-family: Arial;
+    -fx-font-size: 12;
+}
+
+.background{
+    -fx-background-color: #FFFFFF;
+}

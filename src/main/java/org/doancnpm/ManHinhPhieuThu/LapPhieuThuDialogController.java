@@ -5,6 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.util.StringConverter;
@@ -31,7 +32,8 @@ public class LapPhieuThuDialogController implements Initializable {
     @FXML private SearchableComboBox<DaiLy> dlComboBox;
     @FXML private TextArea ghiChuTextArea;
     @FXML private TextField soTienThuTextField;
-
+    @FXML
+    Label title;
     NhanVien nvLapPhieu;
     PhieuThu phieuThuGoc;
     @Override
@@ -75,6 +77,7 @@ public class LapPhieuThuDialogController implements Initializable {
             ngayLapPhieuTextField.setText(DayFormat.GetDayStringFormatted(ngayTiepNhan));
             return;
         }
+        title.setText("Cập nhật phiếu thu");
         phieuThuGoc = phieuThu;
         ngayLapPhieuTextField.setText(DayFormat.GetDayStringFormatted(phieuThu.getNgayLap()));
         try{

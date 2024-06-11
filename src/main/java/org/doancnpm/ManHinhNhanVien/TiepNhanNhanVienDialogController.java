@@ -9,6 +9,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.util.StringConverter;
@@ -38,7 +39,8 @@ public class TiepNhanNhanVienDialogController implements Initializable {
     @FXML private TextField emailTextField;
     @FXML private TextField luongTextField;
     @FXML private TextArea ghiChuTextArea;
-
+    @FXML
+    Label title;
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initAction();
@@ -54,6 +56,7 @@ public class TiepNhanNhanVienDialogController implements Initializable {
         if(nhanVien ==null){
             return;
         }
+        title.setText("Cập nhật nhân viên");
         try {
             ChucVu queriedChucVu = ChucVuDAO.getInstance().QueryID(nhanVien.getMaChucVu());
             chucVuComboBox.setValue(queriedChucVu);

@@ -104,14 +104,25 @@ public class ChiTietPhieuXuatRow extends HBox {
 
     }
     private void initBinding(){
+        slTextField.setEditable(false);
+        dvtTextField.setEditable(false);
+        donGiaTextField.setEditable(false);
+        thanhTienTextField.setEditable(false);
+
         slTextField.setDisable(true);
         dvtTextField.setDisable(true);
         donGiaTextField.setDisable(true);
         thanhTienTextField.setDisable(true);
+
         mhComboBox.valueProperty().addListener(ob -> {
             if(mhComboBox.getValue()==null){
                 slTextField.clear();
+                slTextField.setEditable(false);
+
                 slTextField.setDisable(true);
+                dvtTextField.setDisable(true);
+                donGiaTextField.setDisable(true);
+                thanhTienTextField.setDisable(true);
                 return;
             }
             try {
@@ -120,14 +131,23 @@ public class ChiTietPhieuXuatRow extends HBox {
                 donGiaTextField.setText(MoneyFormatter.convertLongToString(mhComboBox.getValue().getDonGiaXuat()));
             }catch (SQLException _) {}
 
+            slTextField.setEditable(true);
+
             slTextField.setDisable(false);
+            dvtTextField.setDisable(false);
+            donGiaTextField.setDisable(false);
+
         });
         slTextField.textProperty().addListener(ob -> {
             try{
                 Integer sl = Integer.parseInt(slTextField.getText());
                 Long thanhTien = sl*mhComboBox.getValue().getDonGiaXuat();
                 thanhTienTextField.setText(MoneyFormatter.convertLongToString(thanhTien));
-            }catch (Exception e){}
+                thanhTienTextField.setDisable(false);
+            }catch (Exception e){
+                thanhTienTextField.clear();
+                thanhTienTextField.setDisable(true);
+            }
         });
     }
     public ChiTietPhieuXuat getChiTietPhieuXuat(){

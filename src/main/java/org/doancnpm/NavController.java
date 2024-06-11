@@ -34,7 +34,7 @@ public class NavController {
     public void authenticated(NhanVien nhanVienLoggedIn) {
         try {
             String chucVu = ChucVuDAO.getInstance().QueryID(CurrentNVInfor.getInstance().getLoggedInNhanVien().getMaChucVu()).getTenCV();
-            if (chucVu.equals("Admin")) {
+            if (chucVu.equals("Admin")||chucVu.equals("Quản lý")) {
                 showAdminView(nhanVienLoggedIn); //admin
             } else if (chucVu.equals("Nhân viên")) {
                 showStaffView(nhanVienLoggedIn);
@@ -42,8 +42,6 @@ public class NavController {
         } catch (Exception e) {
 
         }
-
-
     }
 
     /**
@@ -71,6 +69,7 @@ public class NavController {
                     getClass().getResource("/fxml/Login/LoginUI.fxml")
             );
             scene.setRoot((Parent) loader.load());
+            stage.setResizable(false);
             LoginController controller =
                     loader.<LoginController>getController();
             controller.initManager(this);
@@ -95,7 +94,9 @@ public class NavController {
             }
 
             scene.setRoot(objectGraph);
-            scene.getWindow().sizeToScene();
+            stage.setResizable(true);
+            stage.setMinWidth(1300);
+            stage.setMinHeight(700);
             scene.getWindow().centerOnScreen();
         } catch (IOException ex) {
             Logger.getLogger(NavController.class.getName()).log(Level.SEVERE, null, ex);
@@ -118,6 +119,7 @@ public class NavController {
             }
 
             scene.setRoot(objectGraph);
+            stage.setResizable(true);
             stage.setMinWidth(1300);
             stage.setMinHeight(700);
             scene.getWindow().centerOnScreen();

@@ -81,7 +81,7 @@ public class ManHinhPhieuNhapController implements Initializable {
     private Text ngayLapPhieuText;
     @FXML
     private Text tongTienText;
-
+    @FXML private TextArea ghiChuTextArea;
     @FXML
     private MasterDetailPane masterDetailPane;
 
@@ -263,7 +263,7 @@ public class ManHinhPhieuNhapController implements Initializable {
             try{
                 nhanVien = NhanVienDAO.getInstance().QueryID(data.getValue().getMaNhanVien());
             } catch (SQLException _) {}
-            return new SimpleObjectProperty<>(nhanVien.getMaNhanVien()+" - "+nhanVien.getHoTen());
+            return new SimpleObjectProperty<>(nhanVien.getMaNhanVien());
         });
         TableColumn<PhieuNhap, Integer> nccCol = new TableColumn<>("Nhà cung cấp");
         nccCol.setCellValueFactory(new PropertyValueFactory<>("nhaCungCap"));
@@ -396,8 +396,8 @@ public class ManHinhPhieuNhapController implements Initializable {
             selectedCol.setPrefWidth(width*0.1);
             maPNCol.setPrefWidth(width*0.13);
             maNVCol.setPrefWidth(width*0.13);
-            nccCol.setPrefWidth(width*0.24);
-            tongTienCol.setPrefWidth(width*0.25);
+            nccCol.setPrefWidth(width*0.3);
+            tongTienCol.setPrefWidth(width*0.2);
             actionCol.setPrefWidth(width*0.15);
         });
         mainTableView.setEditable(true);
@@ -445,7 +445,7 @@ public class ManHinhPhieuNhapController implements Initializable {
         nccText.setText(phieuNhap.getNhaCungCap());
         ngayLapPhieuText.setText(DayFormat.GetDayStringFormatted(phieuNhap.getNgayLapPhieu()));
         tongTienText.setText(MoneyFormatter.convertLongToString(phieuNhap.getTongTien()));
-
+        ghiChuTextArea.setText(phieuNhap.getGhiChu());
         //item
         try {
             List<ChiTietPhieuNhap> chiTietPhieuNhapList = CTPNDAO.getInstance().QueryByPhieuNhapID(phieuNhap.getID());

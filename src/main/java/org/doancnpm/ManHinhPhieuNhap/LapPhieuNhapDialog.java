@@ -10,6 +10,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import org.doancnpm.DAO.CTPNDAO;
 import org.doancnpm.DAO.PhieuNhapDAO;
+import org.doancnpm.DAO.PhieuXuatDAO;
 import org.doancnpm.Models.ChiTietPhieuNhap;
 import org.doancnpm.Models.NhanVien;
 import org.doancnpm.Models.PhieuNhap;
@@ -66,6 +67,9 @@ public class LapPhieuNhapDialog extends Dialog<PhieuNhap> {
                         PopDialog.popSuccessDialog("Thêm mới phiếu nhập thành công");
                     }
                     catch (SQLException e){
+                        try {
+                            PhieuNhapDAO.getInstance().Delete(phieuNhap.getID());
+                        } catch (SQLException _) {}
                         PopDialog.popErrorDialog("Thêm phiếu nhập thất bại",e.getMessage());
                         event.consume();
                     }

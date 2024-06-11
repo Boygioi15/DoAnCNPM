@@ -5,6 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.util.StringConverter;
@@ -25,7 +26,8 @@ public class ThemMoiMatHangDialogController implements Initializable {
     @FXML private SearchableComboBox<DonViTinh> dvtComboBox;
     @FXML private TextField donGiaNhapTextField;
     @FXML private TextArea ghiChuTextArea;
-
+    @FXML
+    Label title;
     MatHang initialValue;
 
 
@@ -51,6 +53,7 @@ public class ThemMoiMatHangDialogController implements Initializable {
         if(matHang==null){
             return;
         }
+        title.setText("Cập nhật mặt hàng");
         initialValue = matHang;
         try {
             DonViTinh donViTinh = DonViTinhDAO.getInstance().QueryID(matHang.getMaDVT());

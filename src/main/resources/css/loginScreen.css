@@ -1,0 +1,132 @@
+@import url("ColorSource.css");
+
+.background {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+}
+.split-pane *.split-pane-divider {
+    -fx-background-color: #15568A;
+    -fx-background-insets: 0 5 2 0;
+}
+.scroll-pane > .viewport{
+    -fx-background-color: transparent;
+}
+
+
+.title-text{
+    -fx-font-size: 24;
+    -fx-font-family: Arial;
+    -fx-font-weight: bold;
+}
+.header-text{
+    -fx-font-size: 16;
+    -fx-font-family: Arial;
+    -fx-font-weight: bold;
+}
+.body-text-header{
+    -fx-font-size: 13;
+    -fx-font-family: Arial;
+    -fx-font-weight: bold;
+}
+.body-text{
+    -fx-font-size: 13;
+    -fx-font-family: Arial;
+}
+
+.text-field{
+    -fx-background-color: transparent;
+
+    -fx-border-color: gray;
+    -fx-border-width: 1;
+    -fx-border-radius: 3;
+
+    -fx-min-height: 30;
+    -fx-max-height: 30;
+}
+.text-field:hover {
+    -fx-border-color: #239DC4;
+    -fx-border-radius: 3;
+    -fx-border-width: 1;
+    -fx-border-insets: 0;
+}
+
+.text-field:focused {
+    -fx-border-color: #1F88AB;
+    -fx-border-radius: 3;
+    -fx-border-width: 1.5;
+    -fx-border-insets: 0;
+}
+.action-text-button{
+    -fx-text-fill: #15568A;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-effect: dropshadow(gaussian, rgba(35,141,227,0.15), 10, 0.5, 1, 0);
+}
+.action-text-button: hover {
+    -fx-text-fill: #175E96;
+    -fx-effect: dropshadow(gaussian, rgba(36,179,240,0.15), 10, 0.5, 1, 0);
+}
+.action-text-button: pressed {
+    -fx-text-fill: #1966A3;
+    -fx-effect: dropshadow(gaussian, rgba(38,157,252,0.15), 10, 0.5, 1, 0);
+}
+.turn-back-button{
+    -fx-font-family: Arial;
+    -fx-font-size: 14;
+
+    -fx-background-color: #F2F2F2;
+    -fx-background-radius: 3;
+}
+.turn-back-button: hover{
+    -fx-background-color: #D2D2D2;
+}
+.turn-back-button: pressed{
+    -fx-background-color: #E2E2E2;
+}
+.check-box .box {
+	-fx-background-color: white;
+	-fx-border-color:gray;
+	-fx-border-radius:3;
+}
+
+.check-box:selected .mark {
+	-fx-background-color: white;
+}
+
+.check-box:selected .box {
+	-fx-background-color: #2496EF;
+}
+
+.action-button{
+    -fx-background-color: #4DB14E;
+    -fx-font-family: Arial;
+    -fx-font-size: 14;
+    -fx-font-weight: bold;
+    -fx-text-fill: White;
+
+    -fx-min-height: 30;
+    -fx-max-height: 30;
+}
+.action-button: hover {
+    -fx-background-color: #449C45;
+}
+.action-button: pressed {
+    -fx-background-color: #3E8F3F;
+}
+.action-button .label {
+    -fx-text-fill: White;
+}
+.action-button .arrow {
+    -fx-background-color: transparent;
+    -fx-border-color: white;
+}
+.action-button:openvertically .arrow {
+    -fx-shape: "M0,0 L4,3 L8,0";
+}
+.action-button:showing .arrow {
+    -fx-shape: "M0,0 L4,-3 L8,0";
+}
+
+
+

@@ -13,15 +13,14 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 <?import org.controlsfx.control.SearchableComboBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="800.0" spacing="20.0" styleClass="background" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.doancnpm.ManHinhPhieuXuat.LapPhieuXuatDialogController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="900.0" spacing="20.0" styleClass="background" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.doancnpm.ManHinhPhieuXuat.LapPhieuXuatDialogController">
    <children>
-      <Label styleClass="title-text" text="Lập phiếu xuất hàng">
+      <Label fx:id="title" styleClass="title-text" text="Lập phiếu xuất hàng">
          <padding>
             <Insets left="10.0" />
          </padding>
@@ -31,21 +30,21 @@
             <HBox alignment="CENTER_LEFT" layoutX="-234.0" layoutY="45.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <Label styleClass="body-text-header" text="Đại lý:" />
-                  <SearchableComboBox fx:id="dlComboBox" styleClass="combobox" />
+                  <SearchableComboBox fx:id="dlComboBox" maxHeight="30.0" prefHeight="30.0" styleClass="combobox" />
                </children>
                <padding>
                   <Insets left="10.0" />
                </padding>
             </HBox>
-            <HBox alignment="CENTER" layoutX="-224.0" layoutY="55.0" prefWidth="200.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <HBox alignment="CENTER" layoutX="-224.0" layoutY="55.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <VBox spacing="2.0">
+                  <VBox prefWidth="100.0" spacing="2.0">
                      <children>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="uneditable-text" text="Ngày lập phiếu" />
                         <TextField fx:id="ngayLapPhieuTextField" maxWidth="200.0" prefWidth="200.0" styleClass="uneditable-text-field" />
                      </children>
                   </VBox>
-                  <VBox spacing="2.0">
+                  <VBox prefWidth="150.0" spacing="2.0">
                      <children>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="uneditable-text" text="Người lập phiếu" />
                         <TextField fx:id="nhanVienTextField" maxWidth="200.0" prefWidth="200.0" styleClass="uneditable-text-field" />
@@ -107,7 +106,6 @@
                               </Button>
                            </children>
                         </HBox>
-                        <Region prefHeight="50.0" />
                      </children>
                      <padding>
                         <Insets bottom="20.0" left="40.0" right="40.0" top="20.0" />
@@ -126,13 +124,13 @@
       <HBox alignment="TOP_RIGHT" spacing="5.0">
          <children>
             <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text-header" text="Tổng tiền:" />
-            <Text fx:id="tongTienText" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text-header" text="Text" />
+            <Text fx:id="tongTienText" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text-header" text="0" />
+            <Text fx:id="tongTienText1" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text-header" text="VNĐ" />
          </children>
          <padding>
             <Insets top="10.0" />
          </padding>
       </HBox>
-      <HBox styleClass="separator" />
       <GridPane>
          <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="20.0" prefWidth="100.0" />
@@ -143,7 +141,7 @@
          </rowConstraints>
          <children>
             <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text-header" text="Ghi chú:" />
-            <TextArea fx:id="ghiChuTextArea" editable="false" prefHeight="50.0" prefWidth="200.0" styleClass="body-text" GridPane.columnIndex="1" />
+            <TextArea fx:id="ghiChuTextArea" prefHeight="50.0" prefWidth="200.0" styleClass="body-text" GridPane.columnIndex="1" />
          </children>
          <padding>
             <Insets top="10.0" />
@@ -154,7 +152,7 @@
       <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
    </padding>
    <stylesheets>
-      <URL value="@../../../css/addForm.css" />
       <URL value="@../../../css/addFormButton.css" />
+      <URL value="@../../../css/addFormPhieu.css" />
    </stylesheets>
 </VBox>

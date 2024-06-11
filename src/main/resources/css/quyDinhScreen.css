@@ -63,6 +63,9 @@
     -fx-font-family: Arial;
     -fx-font-weight: bold;
 
+    -fx-border-color: gray;
+    -fx-border-width: 0 0 1 0;
+    
 }
 
 .title-text{

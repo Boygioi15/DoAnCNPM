@@ -60,7 +60,7 @@ public class LoginController implements Initializable {
     @FXML
     public VBox errorBox;
     @FXML
-    public Label forgotPasswordLabel;
+    public Button forgotPasswordBtn;
 
 
     //emailInputPane
@@ -139,7 +139,7 @@ public class LoginController implements Initializable {
     // main login pane
     private void initializeMainLoginPane() {
         //  loginButton.setOnAction(_ -> handleLogin(null));
-        forgotPasswordLabel.setOnMouseClicked(mouseEvent -> {
+        forgotPasswordBtn.setOnMouseClicked(mouseEvent -> {
             currentScreenString.setValue("EMAIL_INPUT_PANE");
         });
     }

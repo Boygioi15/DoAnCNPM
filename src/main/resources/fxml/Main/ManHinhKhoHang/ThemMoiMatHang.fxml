@@ -14,7 +14,7 @@
 
 <VBox fx:id="ThemMoiMatHangDialog" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="500.0" spacing="20.0" styleClass="background" stylesheets="@../../../css/addForm.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.doancnpm.ManHinhKhoHang.ThemMoiMatHangDialogController">
     <children>
-        <Label styleClass="title-text" text="Thêm mới mặt hàng" />
+        <Label fx:id="title" styleClass="title-text" text="Thêm mới mặt hàng" />
       <HBox styleClass="separator" />
         <AnchorPane>
             <children>

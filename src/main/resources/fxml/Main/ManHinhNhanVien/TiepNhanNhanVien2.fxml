@@ -14,7 +14,7 @@
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="550.0" spacing="20.0" styleClass="background" stylesheets="@../../../css/addForm.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.doancnpm.ManHinhNhanVien.TiepNhanNhanVienDialogController">
    <children>
-      <Label styleClass="title-text" text="Thêm mới nhân viên" />
+      <Label fx:id="title" styleClass="title-text" text="Thêm mới nhân viên" />
       <HBox styleClass="separator" />
       <VBox spacing="5.0">
          <children>
