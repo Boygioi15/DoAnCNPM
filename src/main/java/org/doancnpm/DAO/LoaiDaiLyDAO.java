@@ -182,7 +182,7 @@ public class LoaiDaiLyDAO implements Idao<LoaiDaiLy> {
         loaiDaiLyDtbChanged.addListener(listener);
     }
 
-    private void notifyChange() {
+    public void notifyChange() {
         loaiDaiLyDtbChanged.set(!loaiDaiLyDtbChanged.get());
     }
 }
