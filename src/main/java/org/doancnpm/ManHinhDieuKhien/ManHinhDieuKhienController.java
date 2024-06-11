@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
@@ -95,6 +96,9 @@ public class ManHinhDieuKhienController implements Initializable {
         XYChart.Series<String, Number> totalReceiptsSeries = createReceiptsSeries(currentYear);
         totalReceiptsSeries.setName("Tổng giá trị phiếu thu");
         mixlineChart.getData().add(totalReceiptsSeries);
+        // Đảm bảo trục X hiển thị tất cả các tháng
+        CategoryAxis xAxis = (CategoryAxis) mixlineChart.getXAxis();
+        xAxis.setCategories(FXCollections.observableArrayList("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"));
     }
 
     private XYChart.Series<String, Number> createSalesDataSeries(int year) {

@@ -8,13 +8,15 @@ public class BaoCaoCongNo {
     private Date ngayLapPhieu;
     private double noDau;
     private double noCuoi;
+    private double phatSinh;
 
-    public BaoCaoCongNo(int STT,int maDaiLy, Date ngayLapPhieu,double noDau, double noCuoi) {
+    public BaoCaoCongNo(int STT, int maDaiLy, Date ngayLapPhieu, double noDau, double noCuoi, double phatSinh) {
         this.STT = STT;
         this.maDaiLy = maDaiLy;
         this.ngayLapPhieu = ngayLapPhieu;
         this.noCuoi = noCuoi;
         this.noDau = noDau;
+        this.phatSinh = phatSinh;
     }
 
     public int getMaDaiLy() {
@@ -55,5 +57,13 @@ public class BaoCaoCongNo {
 
     public void setSTT(int STT) {
         this.STT = STT;
+    }
+
+    public double getPhatSinh() {
+        return phatSinh;
+    }
+
+    public void setPhatSinh(double phatSinh) {
+        this.phatSinh = phatSinh;
     }
 }

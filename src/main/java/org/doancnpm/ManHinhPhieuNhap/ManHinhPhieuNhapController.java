@@ -585,7 +585,7 @@ public class ManHinhPhieuNhapController implements Initializable {
 
                 // Add footer
                 addFooter(document, contentFont,phieuNhap);
-
+                addSign(document);
                 document.close();
                 PopDialog.popSuccessDialog("Xuất file pdf thành công");
             } catch (Exception e) {
@@ -717,7 +717,34 @@ public class ManHinhPhieuNhapController implements Initializable {
         cell.setFixedHeight(20);
         return cell;
     }
+    private static void addSign(Document document) throws DocumentException, IOException {
+        // Tạo bảng với 2 cột cho 2 ô chữ ký
+        PdfPTable table = new PdfPTable(2);
+        table.setWidthPercentage(100);
 
+        // Tạo font cho text (nếu cần)
+        BaseFont baseFont = BaseFont.createFont("src/main/resources/vuArial.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+        Font font = new Font(baseFont, 12, Font.BOLD);
+
+        // Tạo ô chữ ký bên trái
+        PdfPCell cellLeft = new PdfPCell(new Phrase("Người lập phiếu", font));
+        cellLeft.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
+        cellLeft.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cellLeft.setPaddingTop(20); // Khoảng cách phía trên
+
+        // Tạo ô chữ ký bên phải
+        PdfPCell cellRight = new PdfPCell(new Phrase("Đại diện nhà cung cấp", font));
+        cellRight.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
+        cellRight.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cellRight.setPaddingTop(20); // Khoảng cách phía trên
+
+        // Thêm các ô vào bảng
+        table.addCell(cellLeft);
+        table.addCell(cellRight);
+
+        // Thêm bảng vào tài liệu
+        document.add(table);
+    }
     //functionalities
     public void OpenDirectAddDialog() {
         try {

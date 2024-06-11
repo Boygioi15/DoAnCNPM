@@ -47,7 +47,7 @@ public class BaoCaoCongNoController {
                 double noDau = debtDetails.getKey();
                 double noCuoi = debtDetails.getValue();
 
-                BaoCaoCongNo item = new BaoCaoCongNo(stt, maDaiLy, new Date(), noDau, noCuoi);
+                BaoCaoCongNo item = new BaoCaoCongNo(stt, maDaiLy, new Date(), noDau, noCuoi,0);
                 baoCaoCongNoItems.add(item);
             }
         }
@@ -82,15 +82,21 @@ public class BaoCaoCongNoController {
         noDauCol.setCellValueFactory(data -> {
             return new SimpleObjectProperty<>(df.format(data.getValue().getNoDau()));
         });
-        noDauCol.setPrefWidth(150);
+        noDauCol.setPrefWidth(100);
 
         TableColumn<BaoCaoCongNo, String> noCuoiCol = new TableColumn<>("Nợ Cuối");
         noCuoiCol.setCellValueFactory(data -> {
             return new SimpleObjectProperty<>(df.format(data.getValue().getNoCuoi()));
         });
-        noCuoiCol.setPrefWidth(150);
+        noCuoiCol.setPrefWidth(100);
 
-        tableView.getColumns().addAll(sttCol, tenDaiLyCol, noDauCol, noCuoiCol);
+        TableColumn<BaoCaoCongNo, String> phatSinhCol = new TableColumn<>("Phát sinh");
+        phatSinhCol.setCellValueFactory(data -> {
+            return new SimpleObjectProperty<>(df.format(data.getValue().getPhatSinh()));
+        });
+        phatSinhCol.setPrefWidth(124.4);
+
+        tableView.getColumns().addAll(sttCol, tenDaiLyCol, noDauCol, noCuoiCol,phatSinhCol);
 
         tableView.setItems(baoCaoCongNoItems);
 
@@ -213,9 +219,9 @@ public class BaoCaoCongNoController {
     }
 
     private static PdfPTable createTable(List<BaoCaoCongNo> data, Font contentFont, Font boldFont) throws DocumentException {
-        PdfPTable table = new PdfPTable(4); // 5 columns
+        PdfPTable table = new PdfPTable(5); // 5 columns
         table.setWidthPercentage(100);
-        float[] columnWidths = {1, 3, 3, 3};
+        float[] columnWidths = {1, 3, 2.1F, 2.1F,1.8F};
         table.setWidths(columnWidths);
 
         // Add table headers
@@ -223,6 +229,7 @@ public class BaoCaoCongNoController {
         table.addCell(createCell("Đại lý", boldFont));
         table.addCell(createCell("Nợ đầu", boldFont));
         table.addCell(createCell("Nợ cuối", boldFont));
+        table.addCell(createCell("Phát sinh", boldFont));
 
         DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
         symbols.setGroupingSeparator('.');
@@ -240,6 +247,7 @@ public class BaoCaoCongNoController {
             table.addCell(createCell(daiLy != null ? daiLy.getTenDaiLy() : "", contentFont));
             table.addCell(createCell(df.format(item.getNoDau()), contentFont));
             table.addCell(createCell(df.format(item.getNoCuoi()), contentFont));
+            table.addCell(createCell(df.format(item.getPhatSinh()), contentFont));
         }
 
         return table;

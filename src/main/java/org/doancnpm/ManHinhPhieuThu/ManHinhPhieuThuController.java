@@ -662,7 +662,8 @@ public class ManHinhPhieuThuController implements Initializable {
                 addDetail(document, contentTienThu, phieuThu);
                 // Add footer
                 addFooter(document, contentFont, phieuThu);
-                addBank(document, DaiLyFont);
+                addBank(document);
+                addSign(document);
                 document.close();
                 PopDialog.popSuccessDialog("Xuất file pdf thành công");
             } catch (Exception e) {
@@ -751,16 +752,55 @@ public class ManHinhPhieuThuController implements Initializable {
         document.add(Chunk.NEWLINE);
     }
 
-    private static void addBank(Document document, Font DaiLyFont) throws DocumentException {
+    private static void addBank(Document document) throws DocumentException, IOException {
+        // Tạo đoạn văn và thiết lập font
         Paragraph footer = new Paragraph();
-        footer.setFont(DaiLyFont);
-        footer.add(new Phrase("Thông tin thanh toán\n", DaiLyFont));
-        footer.add(new Phrase("Ngân hàng: BIDV\n", DaiLyFont));
-        footer.add(new Phrase("STK: 53311111111\n", DaiLyFont));
-        footer.add(new Phrase("Chủ tài khoản: Nhóm 27\n", DaiLyFont));
-        document.add(footer);
+        BaseFont baseFont = BaseFont.createFont("src/main/resources/vuArial.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+        Font bankFont = new Font(baseFont, 14, Font.BOLD);
+        footer.setFont(bankFont);
 
+        // Thêm các dòng văn vào đoạn văn với các thông tin thanh toán
+        footer.add(new Phrase("Thông tin thanh toán\n", bankFont));
+        footer.add(new Phrase("Ngân hàng: BIDV\n", bankFont));
+        footer.add(new Phrase("STK: 53311111111\n", bankFont));
+        footer.add(new Phrase("Chủ tài khoản: Nhóm 27\n", bankFont));
+
+        // Thiết lập khoảng cách giữa các dòng
+        footer.setSpacingBefore(10);
+
+        // Thêm đoạn văn vào tài liệu
+        document.add(footer);
+        document.add(Chunk.NEWLINE);
     }
+    private static void addSign(Document document) throws DocumentException, IOException {
+        // Tạo bảng với 2 cột cho 2 ô chữ ký
+        PdfPTable table = new PdfPTable(2);
+        table.setWidthPercentage(100);
+
+        // Tạo font cho text (nếu cần)
+        BaseFont baseFont = BaseFont.createFont("src/main/resources/vuArial.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+        Font font = new Font(baseFont, 12, Font.BOLD);
+
+        // Tạo ô chữ ký bên trái
+        PdfPCell cellLeft = new PdfPCell(new Phrase("Người lập phiếu", font));
+        cellLeft.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
+        cellLeft.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cellLeft.setPaddingTop(20); // Khoảng cách phía trên
+
+        // Tạo ô chữ ký bên phải
+        PdfPCell cellRight = new PdfPCell(new Phrase("Đại diện đại lý", font));
+        cellRight.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
+        cellRight.setHorizontalAlignment(Element.ALIGN_CENTER);
+        cellRight.setPaddingTop(20); // Khoảng cách phía trên
+
+        // Thêm các ô vào bảng
+        table.addCell(cellLeft);
+        table.addCell(cellRight);
+
+        // Thêm bảng vào tài liệu
+        document.add(table);
+    }
+
 
     //functionalities
     public void OpenDirectAddDialog() {
