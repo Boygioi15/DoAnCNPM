@@ -702,10 +702,10 @@ public class ManHinhPhieuNhapController implements Initializable {
     }
 
     private static void addFooter(Document document, Font contentFont,PhieuNhap phieuNhap) throws DocumentException {
-        if(phieuNhap.getGhiChu()!= null) {
+        if(phieuNhap.getGhiChu() != null && !phieuNhap.getGhiChu().isEmpty()) {
             Paragraph footer = new Paragraph();
             footer.setFont(contentFont);
-            footer.add(new Phrase("Ghi chú: \n", contentFont));
+            footer.add(new Phrase("Ghi chú: ", contentFont));
             footer.add(new Phrase(phieuNhap.getGhiChu(), contentFont));
             document.add(footer);
         }

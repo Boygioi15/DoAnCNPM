@@ -662,7 +662,7 @@ public class ManHinhPhieuThuController implements Initializable {
                 addDetail(document, contentTienThu, phieuThu);
                 // Add footer
                 addFooter(document, contentFont, phieuThu);
-                addBank(document);
+                addBank(document,contentFont);
                 addSign(document);
                 document.close();
                 PopDialog.popSuccessDialog("Xuất file pdf thành công");
@@ -745,31 +745,57 @@ public class ManHinhPhieuThuController implements Initializable {
         if (phieuThu.getGhiChu() != null && !phieuThu.getGhiChu().isEmpty()) {
             Paragraph footer = new Paragraph();
             footer.setFont(contentFont);
-            footer.add(new Phrase("Ghi chú: \n", contentFont));
+            footer.add(new Phrase("Ghi chú: ", contentFont));
             footer.add(new Phrase(phieuThu.getGhiChu(), contentFont));
             document.add(footer);
         }
         document.add(Chunk.NEWLINE);
     }
 
-    private static void addBank(Document document) throws DocumentException, IOException {
-        // Tạo đoạn văn và thiết lập font
-        Paragraph footer = new Paragraph();
+    private static void addBank(Document document,Font content) throws DocumentException, IOException {
+        PdfPTable bankPTable = new PdfPTable(3);
+        bankPTable.setWidthPercentage(100);
+        bankPTable.getDefaultCell().setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
         BaseFont baseFont = BaseFont.createFont("src/main/resources/vuArial.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-        Font bankFont = new Font(baseFont, 14, Font.BOLD);
-        footer.setFont(bankFont);
+        Font font = new Font(baseFont, 12, Font.BOLD);
+        PdfPCell cell1 = new PdfPCell();
+        cell1.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
+        cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+        cell1.setVerticalAlignment(Element.ALIGN_LEFT);
+        cell1.setPadding(5);
+        Paragraph cell1P = new Paragraph();
+        cell1P.add(new Phrase("THÔNG TIN\n", font));
+        cell1P.add(new Phrase("THANH TOÁN\n", font));
+        cell1.addElement(cell1P);
 
-        // Thêm các dòng văn vào đoạn văn với các thông tin thanh toán
-        footer.add(new Phrase("Thông tin thanh toán\n", bankFont));
-        footer.add(new Phrase("Ngân hàng: BIDV\n", bankFont));
-        footer.add(new Phrase("STK: 53311111111\n", bankFont));
-        footer.add(new Phrase("Chủ tài khoản: Nhóm 27\n", bankFont));
+        PdfPCell cell2 = new PdfPCell();
+        cell2.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
+        cell2.setHorizontalAlignment(Element.ALIGN_LEFT);
 
-        // Thiết lập khoảng cách giữa các dòng
-        footer.setSpacingBefore(10);
+        Paragraph cell2P = new Paragraph();
+        cell2P.add(new Phrase("Ngân hàng BIDV\n",content));
+        cell2P.add(new Phrase("Nhóm 27\n",content));
+        cell2P.add(new Phrase("Số tài khoản: 5331111111",content));
+        cell2P.add(new Phrase());
+        cell2P.setAlignment(Element.ALIGN_LEFT);
+        cell2.addElement(cell2P);
 
-        // Thêm đoạn văn vào tài liệu
-        document.add(footer);
+        PdfPCell cell3 = new PdfPCell();
+        cell3.setBorder(com.itextpdf.text.Rectangle.NO_BORDER);
+        cell3.setHorizontalAlignment(Element.ALIGN_LEFT);
+
+        Paragraph cell3P = new Paragraph();
+        cell3P.add(new Phrase("+84123456789\n",content));
+        cell3P.add(new Phrase("SE104.O27\n",content));
+        cell3P.add(new Phrase("Trường Đại học CNTT\n",content));
+        cell3P.add(new Phrase());
+        cell3P.setAlignment(Element.ALIGN_LEFT);
+        cell3.addElement(cell3P);
+
+        bankPTable.addCell(cell1);
+        bankPTable.addCell(cell2);
+        bankPTable.addCell(cell3);
+        document.add(bankPTable);
         document.add(Chunk.NEWLINE);
     }
     private static void addSign(Document document) throws DocumentException, IOException {
