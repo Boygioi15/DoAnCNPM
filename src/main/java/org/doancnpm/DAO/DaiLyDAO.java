@@ -71,6 +71,8 @@ public class DaiLyDAO implements Idao<DaiLy> {
         int rowsAffected = pstmt.executeUpdate();
         if (rowsAffected > 0) {
             notifyChange();
+            PhieuThuDAO.getInstance().notifyChange();
+            PhieuXuatDAO.getInstance().notifyChange();
         }
         pstmt.close();
         return rowsAffected;
@@ -79,7 +81,9 @@ public class DaiLyDAO implements Idao<DaiLy> {
     @Override
     public int Delete(int id) throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
-        String sql = "DELETE FROM DAILY WHERE ID = ?";
+        String sql = "UPDATE DAILY " +
+                "SET isDeleted = 1 " +
+                "WHERE ID = ?";
 
         assert conn != null;
         PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -88,6 +92,28 @@ public class DaiLyDAO implements Idao<DaiLy> {
         int rowsAffected = pstmt.executeUpdate();
         if (rowsAffected > 0) {
             notifyChange();
+            PhieuThuDAO.getInstance().notifyChange();
+            PhieuXuatDAO.getInstance().notifyChange();
+        }
+        pstmt.close();
+        return rowsAffected;
+    }
+
+    public int Restore(int id) throws SQLException {
+        Connection conn = DatabaseDriver.getConnect();
+        String sql = "UPDATE DAILY " +
+                "SET isDeleted = 0" +
+                "WHERE ID = ?";
+
+        assert conn != null;
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setInt(1, id);
+
+        int rowsAffected = pstmt.executeUpdate();
+        if (rowsAffected > 0) {
+            notifyChange();
+            PhieuThuDAO.getInstance().notifyChange();
+            PhieuXuatDAO.getInstance().notifyChange();
         }
         pstmt.close();
         return rowsAffected;
@@ -119,6 +145,8 @@ public class DaiLyDAO implements Idao<DaiLy> {
             Long noHienTai = rs.getLong("NoHienTai");
             String ghiChu = rs.getString("GhiChu");
 
+            int isDeleted = rs.getInt("isDeleted");
+
             daiLy.setMaDaiLy(maDL);
             daiLy.setMaQuan(maQuan);
             daiLy.setMaLoaiDaiLy(maLoaiDL);
@@ -130,6 +158,8 @@ public class DaiLyDAO implements Idao<DaiLy> {
             daiLy.setNgayTiepNhan(ngayTiepNhan);
             daiLy.setNoHienTai(noHienTai);
             daiLy.setGhiChu(ghiChu);
+
+            daiLy.setDeleted(isDeleted != 0);
         }
 
         rs.close();
@@ -141,7 +171,61 @@ public class DaiLyDAO implements Idao<DaiLy> {
     @Override
     public ArrayList<DaiLy> QueryAll() throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
-        String sql = "SELECT * FROM DAILY";
+        String sql = "SELECT * FROM DAILY Where isDeleted = 0";
+
+        assert conn != null;
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        ResultSet rs = pstmt.executeQuery();
+        ArrayList<DaiLy> daiLyList = new ArrayList<>();
+
+        while (rs.next()) {
+            DaiLy daiLy = new DaiLy();
+
+            int ID = rs.getInt("ID");
+            String maDL = rs.getString("MaDaiLy");
+            int maQuan = rs.getInt("MaQuan");
+            int maLoaiDL = rs.getInt("MaLoaiDaiLy");
+            String tenDaiLy = rs.getString("TenDaiLy");
+            String SDT = rs.getString("DienThoai");
+            String email = rs.getString("email");
+            String diaChi = rs.getString("DiaChi");
+            Date ngayTiepNhan = rs.getDate("ngayTiepNhan");
+            Long noHienTai = rs.getLong("NoHienTai");
+            String ghiChu = rs.getString("GhiChu");
+
+            int isDeleted = rs.getInt("isDeleted");
+
+            daiLy.setID(ID);
+            daiLy.setMaDaiLy(maDL);
+            daiLy.setMaQuan(maQuan);
+            daiLy.setMaLoaiDaiLy(maLoaiDL);
+
+            daiLy.setTenDaiLy(tenDaiLy);
+            daiLy.setDiaChi(diaChi);
+            daiLy.setEmail(email);
+            daiLy.setDienThoai(SDT);
+            daiLy.setNgayTiepNhan(ngayTiepNhan);
+            daiLy.setNoHienTai(noHienTai);
+            daiLy.setGhiChu(ghiChu);
+
+            daiLyList.add(daiLy);
+
+            if(isDeleted==0){
+                daiLy.setDeleted(false);
+            }else{
+                daiLy.setDeleted(true);
+            }
+        }
+
+        rs.close();
+        pstmt.close();
+
+        return daiLyList;
+    }
+
+    public ArrayList<DaiLy> QueryDeleted() throws SQLException {
+        Connection conn = DatabaseDriver.getConnect();
+        String sql = "SELECT * FROM DAILY Where isDeleted = 1";
 
         assert conn != null;
         PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -184,6 +268,8 @@ public class DaiLyDAO implements Idao<DaiLy> {
 
         return daiLyList;
     }
+
+
     public DaiLy QueryName(String name) throws SQLException {
         ArrayList<DaiLy> allDaiLy = DaiLyDAO.getInstance().QueryAll();
         String normalizedDaiLyName = CheckExist.normalize(name);

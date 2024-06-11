@@ -19,7 +19,7 @@ public class DaiLy {
     private Date ngayTiepNhan;
     private Long noHienTai = 0L;
     private String ghiChu = "";
-
+    private Boolean isDeleted;
 
     public DaiLy() {
     }
@@ -102,5 +102,13 @@ public class DaiLy {
 
     public void setSelected(boolean selected) {
         this.selected.set(selected);
+    }
+
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
     }
 }

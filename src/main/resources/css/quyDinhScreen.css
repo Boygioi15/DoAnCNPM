@@ -127,6 +127,24 @@
     -fx-background-color: #2086D6;
 }
 
+.restore-button{
+    -fx-font-size: 14;
+    -fx-font-family: Arial;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-border-width: 0;
+
+    -fx-background-color: #4DB14E;
+    -fx-background-radius: 3;
+}
+.restore-button: hover {
+    -fx-background-color: #449C45;
+}
+.restore-button: pressed {
+    -fx-background-color: #3E8F3F;
+}
+
+
 .finish-button {
     -fx-font-size: 12;
     -fx-font-family: Arial;

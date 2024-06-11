@@ -209,10 +209,12 @@ public class ManHinhPhieuThuController implements Initializable {
         TableColumn<PhieuThu, String> maDLCol = new TableColumn<>("Đại lý");
         maDLCol.setCellValueFactory(data -> {
             DaiLy daiLy = null;
-            try {
+            try{
                 daiLy = DaiLyDAO.getInstance().QueryID(data.getValue().getMaDaiLy());
-            } catch (SQLException _) {
-            }
+                if(daiLy.getDeleted()){
+                    return new SimpleObjectProperty<>("X");
+                }
+            } catch (SQLException e) {}
             return new SimpleObjectProperty<>(daiLy.getMaDaiLy()+" - "+daiLy.getTenDaiLy());
         });
 
@@ -390,8 +392,14 @@ public class ManHinhPhieuThuController implements Initializable {
         try{
             DaiLy dl = DaiLyDAO.getInstance().QueryID(phieuThu.getMaDaiLy());
             NhanVien nv = NhanVienDAO.getInstance().QueryID(phieuThu.getMaNhanVien());
-            maDLText.setText(dl.getMaDaiLy());
-            tenDLText.setText(dl.getTenDaiLy());
+            if(dl.getDeleted()){
+                maDLText.setText("X");
+                tenDLText.setText("Đã bị ấn");
+            }
+            else{
+                maDLText.setText(dl.getMaDaiLy());
+                tenDLText.setText(dl.getTenDaiLy());
+            }
             maNVText.setText(nv.getMaNhanVien());
             tenNVText.setText(nv.getHoTen());
 

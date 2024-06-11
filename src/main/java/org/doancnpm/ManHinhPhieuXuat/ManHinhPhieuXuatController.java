@@ -241,7 +241,7 @@ public class ManHinhPhieuXuatController implements Initializable {
             try{
                 nhanVien = NhanVienDAO.getInstance().QueryID(data.getValue().getMaNhanVien());
             } catch (SQLException _) {}
-            return new SimpleObjectProperty<>(nhanVien.getMaNhanVien()+" - "+nhanVien.getHoTen());
+            return new SimpleObjectProperty<>(nhanVien.getMaNhanVien());
         });
 
         TableColumn<PhieuXuat, String> daiLyCol = new TableColumn<>("Đại lý");
@@ -249,6 +249,9 @@ public class ManHinhPhieuXuatController implements Initializable {
             DaiLy daiLy = null;
             try{
                 daiLy = DaiLyDAO.getInstance().QueryID(data.getValue().getMaDaiLy());
+                if(daiLy.getDeleted()){
+                    return new SimpleObjectProperty<>("X");
+                }
             } catch (SQLException e) {}
             return new SimpleObjectProperty<>(daiLy.getMaDaiLy()+" - "+daiLy.getTenDaiLy());
         });
@@ -427,8 +430,16 @@ public class ManHinhPhieuXuatController implements Initializable {
             tenNVText.setText(nv.getHoTen());
 
             DaiLy dl = DaiLyDAO.getInstance().QueryID(phieuXuat.getMaDaiLy());
-            maDLText.setText(dl.getMaDaiLy());
-            tenDLText.setText(dl.getTenDaiLy());
+            System.out.println(dl.getDeleted());
+            if(dl.getDeleted()){
+                maDLText.setText("X");
+                tenDLText.setText("Đã bị ấn");
+            }
+            else{
+                maDLText.setText(dl.getMaDaiLy());
+                tenDLText.setText(dl.getTenDaiLy());
+            }
+
         }
         catch (SQLException _){}
         ngayLapPhieuText.setText(DayFormat.GetDayStringFormatted(phieuXuat.getNgayLapPhieu()));

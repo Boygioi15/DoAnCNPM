@@ -141,7 +141,7 @@ public class PhieuThuDAO implements Idao<PhieuThu> {
         phieuThuDtbChanged.addListener(listener);
     }
 
-    private void notifyChange() {
+    public void notifyChange() {
         phieuThuDtbChanged.set(!phieuThuDtbChanged.get());
     }
 }

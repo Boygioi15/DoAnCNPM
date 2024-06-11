@@ -1,6 +1,7 @@
 package org.doancnpm.ManHinhQuyDinh;
 
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -8,8 +9,10 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
@@ -24,8 +27,10 @@ import org.doancnpm.Ultilities.PopDialog;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 public class ManHinhQuyDinhController implements Initializable {
 
@@ -43,6 +48,15 @@ public class ManHinhQuyDinhController implements Initializable {
     @FXML TableView donViTinhTableView;
     @FXML Button donViTinhThemMoiBtn;
 
+    @FXML TableView daiLyTableView;
+    @FXML Button restoreDaiLyButton;
+
+    @FXML  TableView matHangTableView;
+    @FXML Button restoreMatHangButton;
+
+    @FXML TableView nhanVienTableView;
+    @FXML Button restoreNhanVienButton;
+
     @FXML TextField slDLToiDaTextField;
     @FXML Button slDLCommitButton;
     @FXML TextField tyleTextField;
@@ -53,6 +67,11 @@ public class ManHinhQuyDinhController implements Initializable {
     private final ObservableList<LoaiDaiLy> dsLoaiDaiLy = FXCollections.observableArrayList();
     private final ObservableList<TaiKhoan> dsTaiKhoan = FXCollections.observableArrayList();
     private final ObservableList<DonViTinh> dsDonViTinh = FXCollections.observableArrayList();
+
+    private final ObservableList<DaiLy> dsDaiLy = FXCollections.observableArrayList();
+    private final ObservableList<MatHang> dsMatHang = FXCollections.observableArrayList();
+    private final ObservableList<NhanVien> dsNhanVien = FXCollections.observableArrayList();
+
     public void setVisibility(boolean visibility) {
         manHinhQuyDinh.setVisible(visibility);
     }
@@ -70,6 +89,9 @@ public class ManHinhQuyDinhController implements Initializable {
 
         initDonViTinhTable();
         initDonViTinhDtbBinding();
+
+        initDaiLyTable();
+        initDaiLyDtbBinding();
 
         initEvent();
         initData();
@@ -90,6 +112,9 @@ public class ManHinhQuyDinhController implements Initializable {
             themMoiDonViTinh();
         });
 
+        restoreDaiLyButton.setOnAction(ob -> {
+            restoreDaiLy();
+        });
         slDLCommitButton.setVisible(false);
         slDLCommitButton.setOnAction(ob ->{
             capNhatDLToiDa();
@@ -129,6 +154,8 @@ public class ManHinhQuyDinhController implements Initializable {
         loadTaiKhoanData();
         loadDonViTinhData();
 
+        loadDaiLyData();
+
         loadThamSoData();
     }
     private void loadThamSoData(){
@@ -139,6 +166,147 @@ public class ManHinhQuyDinhController implements Initializable {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private void initDaiLyTable(){
+        // Tạo các cột cho TableView
+        TableColumn<DaiLy, String> maDLCol = new TableColumn<>("Mã");
+        maDLCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getMaDaiLy()));
+
+        TableColumn<DaiLy, String> quanCol = new TableColumn<>("Quận");
+        quanCol.setCellValueFactory(data -> {
+            Quan quan = null;
+            try {
+                quan = QuanDAO.getInstance().QueryID(data.getValue().getMaQuan());
+            } catch (SQLException _) {}
+
+            return new SimpleObjectProperty<>(quan.getTenQuan());
+        });
+
+        TableColumn<DaiLy, String> loaiDLCol = new TableColumn<>("Loại");
+        loaiDLCol.setCellValueFactory(data -> {
+            LoaiDaiLy loaiDaiLy = null;
+            try {
+                loaiDaiLy = LoaiDaiLyDAO.getInstance().QueryID(data.getValue().getMaLoaiDaiLy());
+            } catch (SQLException _) {}
+            return new SimpleObjectProperty<>(loaiDaiLy.getTenLoai());
+        });
+
+        TableColumn<DaiLy, String> tenDLCol = new TableColumn<>("Tên đại lý");
+        tenDLCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getTenDaiLy()));
+
+        TableColumn<DaiLy, String> sdtCol = new TableColumn<>("SDT");
+        sdtCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getDienThoai()));
+        TableColumn<DaiLy, String> emailCol = new TableColumn<>("Email");
+        emailCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getEmail()));
+        TableColumn<DaiLy, String> diaChiCol = new TableColumn<>("Địa chỉ");
+        diaChiCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getDiaChi()));
+        //selected collumn:
+
+        TableColumn<DaiLy, Boolean> selectedCol = new TableColumn<>( );
+        HBox headerBox = new HBox();
+        CheckBox headerCheckBox = new CheckBox();
+        headerBox.getChildren().add(headerCheckBox);
+        headerBox.setAlignment(Pos.CENTER); // Center align the content
+        headerCheckBox.setDisable(true);
+        selectedCol.setGraphic(headerBox);
+        selectedCol.setSortable(false);
+        selectedCol.setCellValueFactory( new PropertyValueFactory<>( "selected" ));
+        selectedCol.setCellFactory(new Callback<TableColumn<DaiLy, Boolean>, TableCell<DaiLy, Boolean>>() {
+            @Override
+            public TableCell<DaiLy, Boolean> call(TableColumn<DaiLy, Boolean> param) {
+                TableCell<DaiLy, Boolean> cell = new TableCell<DaiLy, Boolean>() {
+                    @Override
+                    protected void updateItem(Boolean item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty || item == null) {
+                            setGraphic(null);
+                        } else {
+                            CheckBox checkBox = new CheckBox();
+                            checkBox.selectedProperty().bindBidirectional(((DaiLy) getTableRow().getItem()).selectedProperty());
+                            checkBox.getStyleClass().add("cell-center");
+                            setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+                            setGraphic(checkBox);
+                        }
+                    }
+                };
+                cell.getStyleClass().add("cell-center");
+                return cell;
+            }
+        });
+
+        daiLyTableView.getColumns().addAll(selectedCol,
+                maDLCol,
+                tenDLCol,
+                quanCol,
+                loaiDLCol,
+                sdtCol,
+                emailCol,
+                diaChiCol
+        );
+
+        maDLCol.getStyleClass().add("column-header-left");
+        quanCol.getStyleClass().add("column-header-left");
+        loaiDLCol.getStyleClass().add("column-header-left");
+        tenDLCol.getStyleClass().add("column-header-left");
+        sdtCol.getStyleClass().add("column-header-left");
+        emailCol.getStyleClass().add("column-header-left");
+        diaChiCol.getStyleClass().add("column-header-left");
+        selectedCol.getStyleClass().add("column-header-center");
+
+        daiLyTableView.widthProperty().addListener(ob -> {
+            double width = daiLyTableView.getWidth();
+            selectedCol.setPrefWidth(width*0.1);
+            maDLCol.setPrefWidth(width*0.1);
+            loaiDLCol.setPrefWidth(width*0.1);
+            quanCol.setPrefWidth(width*0.1);
+            sdtCol.setPrefWidth(width*0.1);
+            tenDLCol.setPrefWidth(width*0.18);
+            emailCol.setPrefWidth(width*0.17);
+            diaChiCol.setPrefWidth(width*0.18);
+        });
+        selectedCol.setResizable(false);
+        maDLCol.setResizable(false);
+        quanCol.setResizable(false);
+        loaiDLCol.setResizable(false);
+        tenDLCol.setResizable(false);
+        sdtCol.setResizable(false);
+        emailCol.setResizable(false);
+        diaChiCol.setResizable(false);
+
+        daiLyTableView.setItems(dsDaiLy);
+    }
+    private void loadDaiLyData(){
+        dsDaiLy.clear();
+        try {
+            dsDaiLy.addAll(DaiLyDAO.getInstance().QueryDeleted());
+        } catch (SQLException _) {}
+    }
+    private void initDaiLyDtbBinding(){
+        DaiLyDAO.getInstance().AddDatabaseListener(_ -> loadDaiLyData());
+    }
+    private void restoreDaiLy(){
+        final Set<DaiLy> restore = new HashSet<>();
+        for( Object o : daiLyTableView.getItems()) {
+            DaiLy dl = (DaiLy) o;
+            if( dl.isSelected()) {
+                restore.add( dl );
+            }
+        }
+        if(restore.isEmpty()){
+            PopDialog.popSuccessDialog("Bạn chưa chọn các đại lý cần khôi phục!");
+            return;
+        }
+        for(DaiLy dl : restore){
+            int ID = dl.getID();
+            try {
+                DaiLyDAO.getInstance().Restore(ID);
+            } catch (SQLException e) {
+                PopDialog.popErrorDialog("Khôi phục đại lý " + dl.getMaDaiLy() + " thất bại",e.getMessage());
+                return;
+            }
+        }
+        PopDialog.popSuccessDialog("Khôi phục "+restore.size()+" đại lý thành công");
     }
 
     private void initQuanTable(){
