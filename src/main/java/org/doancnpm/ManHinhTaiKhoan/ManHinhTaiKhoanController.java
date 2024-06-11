@@ -7,6 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
@@ -27,10 +28,9 @@ public class ManHinhTaiKhoanController implements Initializable {
 
     public CustomTextField phonenumberText;
     public CustomTextField emailText;
-    public MFXTextField newPasswordTextField;
-    public MFXPasswordField confirmNewPasswordTextField;
+    public PasswordField newPasswordTextField;
+    public PasswordField confirmNewPasswordTextField;
     public Button confirmButton;
-    public MFXPasswordField currentPasswordTextField;
     public VBox errorBox;
     public Text nameText;
     public ImageView backgroundImg;
@@ -44,7 +44,6 @@ public class ManHinhTaiKhoanController implements Initializable {
         nameText.setText(CurrentNVInfor.getInstance().getLoggedInNhanVien().getHoTen());
         phonenumberText.setText(CurrentNVInfor.getInstance().getLoggedInNhanVien().getSDT());
         emailText.setText(CurrentNVInfor.getInstance().getLoggedInNhanVien().getEmail());
-        currentPasswordTextField.setText(CurrentNVInfor.getInstance().getTaiKhoanOfNhanien().getPassword());
         initEvent();
     }
     private void clearErrorBox(VBox errorBox) {
@@ -92,7 +91,6 @@ public class ManHinhTaiKhoanController implements Initializable {
         return true;
     }
     private void updateUI(){
-        currentPasswordTextField.setText(CurrentNVInfor.getInstance().getTaiKhoanOfNhanien().getPassword());
         newPasswordTextField.clear();
         confirmNewPasswordTextField.clear();
     }

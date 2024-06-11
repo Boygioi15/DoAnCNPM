@@ -8,11 +8,15 @@ import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import org.doancnpm.Main.AdminController;
+import org.doancnpm.Main.ManHinh;
 import org.doancnpm.SQLUltilities.CalculateSQL;
 
 import java.net.URL;
@@ -26,12 +30,22 @@ import java.util.ResourceBundle;
 public class ManHinhDieuKhienController implements Initializable {
 
 
+
+    // switch man hinh
+    AdminController switchConller;
+
+    public void setSwitchConller(AdminController controller){
+        switchConller = controller;
+    }
+
+    public HBox openMHNhanVien;
+    public HBox openMHDaiLy;
+    public GridPane openKhoHang;
+
     @FXML
     private LineChart<String, Number> mixlineChart;
     @FXML
     private PieChart tonkhoPieChart;
-    @FXML
-    private StackPane pieChartContainer; // Thêm StackPane để chứa PieChart và Circle
     @FXML
     private Text nvText, dlText, tongGiaTriKhoHangText, slMatHangText, soLuongHangTonKhoText;
     @FXML
@@ -44,6 +58,19 @@ public class ManHinhDieuKhienController implements Initializable {
         initLineChart();
         initPieChart();
         initDataShow();
+        initEvent();
+    }
+
+    private void initEvent() {
+        openMHDaiLy.setOnMouseClicked(mouseEvent -> {
+            switchConller.SwitchScreen(ManHinh.DAI_LY);
+        });
+        openMHNhanVien.setOnMouseClicked(mouseEvent -> {
+            switchConller.SwitchScreen(ManHinh.NHAN_VIEN);
+        });
+        openKhoHang.setOnMouseClicked(mouseEvent -> {
+            switchConller.SwitchScreen(ManHinh.KHO_HANG);
+        });
     }
 
     private void initLineChart() {
@@ -57,11 +84,10 @@ public class ManHinhDieuKhienController implements Initializable {
         totalSalesSeries.setName("Tổng doanh số");
         mixlineChart.getData().add(totalSalesSeries);
 
-        // Tạo dữ liệu cho tổng nợ của các đại lý
-        Map<String, Double> totalDebts = calculateSQL.calculateTotalDebtUntilMonth(currentYear);
-        XYChart.Series<String, Number> totalDebtsSeries = createDebtsDataSeries(totalDebts);
-        totalDebtsSeries.setName("Tổng nợ của các đại lý");
-        mixlineChart.getData().add(totalDebtsSeries);
+        // Tạo dữ liệu cho tổng giá trị phiếu thu
+        XYChart.Series<String, Number> totalReceiptsSeries = createReceiptsSeries(currentYear);
+        totalReceiptsSeries.setName("Tổng giá trị phiếu thu");
+        mixlineChart.getData().add(totalReceiptsSeries);
     }
 
     private XYChart.Series<String, Number> createSalesDataSeries(int year) {
@@ -81,21 +107,18 @@ public class ManHinhDieuKhienController implements Initializable {
         return series;
     }
 
-    private XYChart.Series<String, Number> createDebtsDataSeries(Map<String, Double> totalDebts) {
+    private XYChart.Series<String, Number> createReceiptsSeries(int year) {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
         LocalDate now = LocalDate.now();
         int currentMonth = now.getMonthValue();
-        int currentYear = now.getYear();
-        if (totalDebts.containsKey(currentYear + "-1")) {
+        if (year == now.getYear()) {
             for (int month = 1; month <= currentMonth; month++) {
-                String monthKey = currentYear + "-" + month;
-                series.getData().add(new XYChart.Data<>(months[month - 1], totalDebts.getOrDefault(monthKey, 0.0)));
+                series.getData().add(new XYChart.Data<>(months[month - 1], CalculateSQL.getInstance().calculateTotalValueReceiptsForMonth(month, year)));
             }
         } else {
             for (int month = 1; month <= 12; month++) {
-                String monthKey = currentYear + "-" + month;
-                series.getData().add(new XYChart.Data<>(months[month - 1], totalDebts.getOrDefault(monthKey, 0.0)));
+                series.getData().add(new XYChart.Data<>(months[month - 1], CalculateSQL.getInstance().calculateTotalValueReceiptsForMonth(month, year)));
             }
         }
         return series;
@@ -130,6 +153,7 @@ public class ManHinhDieuKhienController implements Initializable {
         tonkhoPieChart.setTitle("Kho hàng");
         tonkhoPieChart.setLabelsVisible(false);
 
+        /*
         // Thêm hình tròn vào giữa PieChart để tạo DonutChart
         Circle innerCircle = new Circle();
         innerCircle.setFill(Color.WHITE); // Màu trắng cho hình tròn bên trong
@@ -137,6 +161,7 @@ public class ManHinhDieuKhienController implements Initializable {
 
         // Thêm PieChart và hình tròn vào StackPane
         pieChartContainer.getChildren().addAll(innerCircle);
+         */
     }
 
     public void initDataShow() {

@@ -3,6 +3,7 @@ package org.doancnpm.DAO;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import org.doancnpm.Models.DaiLy;
 import org.doancnpm.Models.DatabaseDriver;
 import org.doancnpm.Models.PhieuThu;
 
@@ -40,6 +41,7 @@ public class PhieuThuDAO implements Idao<PhieuThu> {
         int rowsAffected = pstmt.executeUpdate();
         if (rowsAffected > 0) {
             notifyChange();
+            DaiLyDAO.getInstance().notifyChange();
         }
         pstmt.close();
         return rowsAffected;
@@ -59,6 +61,7 @@ public class PhieuThuDAO implements Idao<PhieuThu> {
         int rowsAffected = pstmt.executeUpdate();
         if (rowsAffected > 0) {
             notifyChange();
+            DaiLyDAO.getInstance().notifyChange();
         }
         pstmt.close();
         return rowsAffected;

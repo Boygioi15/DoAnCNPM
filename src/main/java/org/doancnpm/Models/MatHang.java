@@ -10,8 +10,8 @@ public class MatHang {
     private String maMatHang;
     private String tenMatHang;
     private Integer maDVT;
-    private Double donGiaNhap;
-    private Double donGiaXuat;
+    private Long donGiaNhap;
+    private Long donGiaXuat;
     private Integer soLuong;
     private String ghiChu;
 
@@ -47,19 +47,19 @@ public class MatHang {
         this.maDVT = maDVT;
     }
 
-    public Double getDonGiaNhap() {
+    public Long getDonGiaNhap() {
         return donGiaNhap;
     }
 
-    public void setDonGiaNhap(Double donGiaNhap) {
+    public void setDonGiaNhap(Long donGiaNhap) {
         this.donGiaNhap = donGiaNhap;
     }
 
-    public Double getDonGiaXuat() {
+    public Long getDonGiaXuat() {
         return donGiaXuat;
     }
 
-    public void setDonGiaXuat(Double donGiaXuat) {
+    public void setDonGiaXuat(Long donGiaXuat) {
         this.donGiaXuat = donGiaXuat;
     }
 

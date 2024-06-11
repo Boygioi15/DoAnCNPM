@@ -98,7 +98,7 @@ public class PhieuXuatDAO implements Idao<PhieuXuat> {
             int maDaiLy = rs.getInt("MaDaiLy");
             int maNhanVien = rs.getInt("MaNhanVien");
             Date ngayLap  =rs.getDate("NgayLapPhieu");
-            double tongTien = rs.getDouble("tongTien");
+            Long tongTien = rs.getLong("tongTien");
             String ghiChu = rs.getString("GhiChu");
 
             PhieuXuat = new PhieuXuat();
@@ -131,7 +131,7 @@ public class PhieuXuatDAO implements Idao<PhieuXuat> {
             int maDaiLy = rs.getInt("MaDaiLy");
             int maNhanVien = rs.getInt("MaNhanVien");
             Date ngayLap  =rs.getDate("NgayLapPhieu");
-            double tongTien = rs.getDouble("tongTien");
+            Long tongTien = rs.getLong("tongTien");
             String ghiChu = rs.getString("GhiChu");
 
             PhieuXuat phieuXuat = new PhieuXuat();
@@ -166,7 +166,7 @@ public class PhieuXuatDAO implements Idao<PhieuXuat> {
             int maDaiLy = rs.getInt("MaDaiLy");
             int maNhanVien = rs.getInt("MaNhanVien");
             Date ngayLap  =rs.getDate("NgayLapPhieu");
-            double tongTien = rs.getDouble("tongTien");
+            Long tongTien = rs.getLong("tongTien");
             String ghiChu = rs.getString("GhiChu");
 
             phieuXuat = new PhieuXuat();
@@ -187,7 +187,7 @@ public class PhieuXuatDAO implements Idao<PhieuXuat> {
         phieuThuDtbChanged.addListener(listener);
     }
 
-    private void notifyChange() {
+    public void notifyChange() {
         phieuThuDtbChanged.set(!phieuThuDtbChanged.get());
     }
 }

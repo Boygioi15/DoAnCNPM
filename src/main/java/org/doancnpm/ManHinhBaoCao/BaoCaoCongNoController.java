@@ -15,10 +15,12 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.util.Pair;
 import org.doancnpm.DAO.DaiLyDAO;
 import org.doancnpm.Models.BaoCaoCongNo;
 import org.doancnpm.Models.DaiLy;
 import org.doancnpm.SQLUltilities.CalculateSQL;
+import org.doancnpm.Ultilities.PopDialog;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -30,31 +32,25 @@ import java.util.*;
 import java.util.List;
 
 public class BaoCaoCongNoController {
-    protected TableView<BaoCaoCongNo> createTableViewForMonth(Map<Integer, Map<String, Map<Double, Double>>> totalDebtsData, int month, int year) throws SQLException {
+    protected TableView<BaoCaoCongNo> createTableViewForMonth(Map<Integer, Map<String, Pair<Double, Double>>> totalDebtsData, int month, int year) throws SQLException {
         ObservableList<BaoCaoCongNo> baoCaoCongNoItems = FXCollections.observableArrayList();
 
         Set<Integer> activeDaiLyIDs = CalculateSQL.getInstance().filterDaiLyIDs(month, year);
         int stt = 0;
-        for (Map.Entry<Integer, Map<String, Map<Double, Double>>> outerEntry : totalDebtsData.entrySet()) {
+        for (Map.Entry<Integer, Map<String, Pair<Double, Double>>> outerEntry : totalDebtsData.entrySet()) {
             int maDaiLy = outerEntry.getKey();
             if (activeDaiLyIDs.contains(maDaiLy)) {
                 stt++;
                 String key = year + "-" + month;
-                Map<String, Map<Double, Double>> debtDetailsMap = outerEntry.getValue();
-                Map<Double, Double> debtDetails = debtDetailsMap.getOrDefault(key, new HashMap<>());
-                double noDau = 0.0;
-                double noCuoi = 0.0;
-
-                if (!debtDetails.isEmpty()) {
-                    noDau = debtDetails.keySet().iterator().next();
-                    noCuoi = debtDetails.get(noDau);
-                }
+                Map<String, Pair<Double, Double>> debtDetailsMap = outerEntry.getValue();
+                Pair<Double, Double> debtDetails = debtDetailsMap.getOrDefault(key, new Pair<>(0.0, 0.0));
+                double noDau = debtDetails.getKey();
+                double noCuoi = debtDetails.getValue();
 
                 BaoCaoCongNo item = new BaoCaoCongNo(stt, maDaiLy, new Date(), noDau, noCuoi);
                 baoCaoCongNoItems.add(item);
             }
         }
-
         TableView<BaoCaoCongNo> tableView = new TableView<>();
         tableView.setMaxHeight(300.0);
         tableView.setMaxWidth(500.0);
@@ -108,7 +104,7 @@ public class BaoCaoCongNoController {
 
             if (activeMonths.contains(monthValue)) {
                 try {
-                    Map<Integer, Map<String, Map<Double, Double>>> totalDebtsData = CalculateSQL.getInstance().calculateDebtUntilMonthWithDaiLy(year);
+                    Map<Integer, Map<String, Pair<Double, Double>>> totalDebtsData = CalculateSQL.getInstance().calculateDebtUntilMonthWithDaiLy(year);
                     VBox container = new VBox(10);
                     container.setAlignment(Pos.CENTER);
 
@@ -124,8 +120,9 @@ public class BaoCaoCongNoController {
                     layout.getChildren().add(tableView);
 
                     Button exportButton = new Button("Xuất PDF");
+                    int finalMonthValue = monthValue;
                     exportButton.setOnAction(event -> {
-                        exportBaoCaoCongNoToPDF(tableView.getItems());
+                        exportBaoCaoCongNoToPDF(tableView.getItems(), finalMonthValue,year);
                     });
                     HBox buttonContainer = new HBox(10);
                     buttonContainer.setAlignment(Pos.CENTER_RIGHT);
@@ -148,12 +145,13 @@ public class BaoCaoCongNoController {
     }
 
 
-    private static void exportBaoCaoCongNoToPDF(List<BaoCaoCongNo> data) {
+    private static void exportBaoCaoCongNoToPDF(List<BaoCaoCongNo> data,int month,int year) {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Lưu báo cáo doanh số");
+        fileChooser.setTitle("Lưu báo cáo công nợ");
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
-        fileChooser.setInitialFileName("BaoCaoDoanhSo.pdf");
+        String initialFileName = String.format("BaoCaoCongNo_%02d_%d.pdf", month, year);
+        fileChooser.setInitialFileName(initialFileName);
 
         File selectedFile = fileChooser.showSaveDialog(null);
 
@@ -168,28 +166,27 @@ public class BaoCaoCongNoController {
                 document.open();
 
                 // Add header
-                addHeader(document, titleFont, contentFont);
+                addHeader(document, titleFont, contentFont,month,year);
 
-                // Add customer and company details
-                addCustomerAndCompanyDetails(document, boldFont, contentFont);
+                // Add company details
+                addDetails(document, boldFont, contentFont);
 
                 // Create and add table
                 PdfPTable table = createTable(data, contentFont, boldFont);
                 document.add(table);
 
-                // Add footer
-                addFooter(document, contentFont);
 
                 document.close();
+                PopDialog.popSuccessDialog("Xuất báo cáo công nợ tháng "+month+" năm "+year+ " thành công.");
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private static void addHeader(Document document, Font titleFont, Font contentFont) throws DocumentException {
+    private static void addHeader(Document document, Font titleFont, Font contentFont, int month,int year) throws DocumentException {
         // Add title
-        Paragraph reportTitle = new Paragraph("BÁO CÁO CÔNG NỢ", titleFont);
+        Paragraph reportTitle = new Paragraph("BÁO CÁO CÔNG NỢ THÁNG "+month+" NĂM "+year,titleFont);
         reportTitle.setAlignment(Element.ALIGN_CENTER);
         document.add(reportTitle);
 
@@ -201,38 +198,17 @@ public class BaoCaoCongNoController {
         document.add(Chunk.NEWLINE);
     }
 
-    private static void addCustomerAndCompanyDetails(Document document, Font boldFont, Font contentFont) throws DocumentException {
-        PdfPTable detailsTable = new PdfPTable(2);
-        detailsTable.setWidthPercentage(100);
-        detailsTable.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+    private static void addDetails(Document document, Font boldFont, Font contentFont) throws DocumentException {
+        Paragraph company = new Paragraph();
+        company.setFont(contentFont);
+        company.add(Chunk.NEWLINE);
+        company.add(new Phrase("Thông tin liên hệ\n", boldFont));
+        company.add(new Phrase("Nhóm 27\n", contentFont));
+        company.add(new Phrase("SE104.O27\n", contentFont));
+        company.add(new Phrase("Hotline: +84 912 345 678\n", contentFont));
+        company.setAlignment(Element.ALIGN_LEFT);
 
-        // Customer details
-        PdfPCell customerDetailsCell = new PdfPCell();
-        customerDetailsCell.setBorder(Rectangle.NO_BORDER);
-        customerDetailsCell.setHorizontalAlignment(Element.ALIGN_LEFT);
-        Paragraph customerDetails = new Paragraph();
-        customerDetails.add(new Phrase("KHÁCH SẠN TRE XANH\n", boldFont));
-        customerDetails.add(new Phrase("Số điện thoại khách hàng: +84 912 345 678\n", contentFont));
-        customerDetails.add(new Phrase("Địa chỉ khách hàng: 148 Hồ Tùng Mậu, Bắc Từ Liêm, Hà Nội\n", contentFont));
-        customerDetails.add(new Phrase("Hóa đơn #12345\n", contentFont));
-        customerDetails.add(new Phrase("Ngày: 01/06/2025\n", contentFont));
-        customerDetailsCell.addElement(customerDetails);
-
-        // Company details
-        PdfPCell companyDetailsCell = new PdfPCell();
-        companyDetailsCell.setBorder(Rectangle.NO_BORDER);
-        companyDetailsCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-        Paragraph companyDetails = new Paragraph();
-        companyDetails.add(new Phrase("Công ty XNK Thanh Hà\n", boldFont));
-        companyDetails.add(new Phrase("Email: xinchao@trangwebhay.vn\n", contentFont));
-        companyDetails.add(new Phrase("Địa chỉ: 123 Đường ABC, Thành phố DEF\n", contentFont));
-        companyDetails.add(new Phrase("Hotline: +84 912 345 678\n", contentFont));
-        companyDetailsCell.addElement(companyDetails);
-
-        detailsTable.addCell(customerDetailsCell);
-        detailsTable.addCell(companyDetailsCell);
-
-        document.add(detailsTable);
+        document.add(company);
         document.add(Chunk.NEWLINE);
     }
 
@@ -268,28 +244,60 @@ public class BaoCaoCongNoController {
 
         return table;
     }
-
-    private static void addFooter(Document document, Font contentFont) throws DocumentException {
-        Paragraph footer = new Paragraph();
-        footer.setFont(contentFont);
-        footer.add(new Phrase("Thông tin thanh toán\n", contentFont));
-        footer.add(new Phrase("Ngân hàng VIB\n", contentFont));
-        footer.add(new Phrase("Tên tài khoản: Công ty XNK Thanh Hà\n", contentFont));
-        footer.add(new Phrase("Số tài khoản: 123-456-7890\n", contentFont));
-        footer.add(new Phrase("Hạn thanh toán: 01/07/2025\n", contentFont));
-        footer.add(Chunk.NEWLINE);
-        footer.add(new Phrase("Thông tin liên hệ\n", contentFont));
-        footer.add(new Phrase("Email: xinchao@trangwebhay.vn\n", contentFont));
-        footer.add(new Phrase("Địa chỉ: 123 Đường ABC, Thành phố DEF\n", contentFont));
-        footer.add(new Phrase("Hotline: +84 912 345 678\n", contentFont));
-        footer.setAlignment(Element.ALIGN_LEFT);
-
-        document.add(footer);
-    }
-
-    private static PdfPCell createCell(String content, Font font) {
+        private static PdfPCell createCell(String content, Font font) {
         PdfPCell cell = new PdfPCell(new Phrase(content, font));
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         return cell;
+    }
+    private static void addHeaderNam(Document document, Font titleFont, Font contentFont,int year) throws DocumentException {
+        // Add title
+        Paragraph reportTitle = new Paragraph("BÁO CÁO CÔNG NỢ NĂM "+year,titleFont);
+        reportTitle.setAlignment(Element.ALIGN_CENTER);
+        document.add(reportTitle);
+
+        // Add creation date
+        Paragraph dateParagraph = new Paragraph("Ngày tạo: " + LocalDate.now().toString(), contentFont);
+        dateParagraph.setAlignment(Element.ALIGN_RIGHT);
+        document.add(dateParagraph);
+
+        document.add(Chunk.NEWLINE);
+    }
+    protected static void exportBaoCaoCongNoNamPDF(List<BaoCaoCongNo> data,int year) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Lưu báo cáo công nợ");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
+        String initialFileName = String.format("BaoCaoCongNo_%d.pdf", year);
+        fileChooser.setInitialFileName(initialFileName);
+
+        File selectedFile = fileChooser.showSaveDialog(null);
+
+        if (selectedFile != null) {
+            Document document = new Document();
+            try {
+                BaseFont baseFont = BaseFont.createFont("src/main/resources/vuArial.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                Font titleFont = new Font(baseFont, 16, Font.BOLD);
+                Font contentFont = new Font(baseFont, 12);
+                Font boldFont = new Font(baseFont, 12, Font.BOLD);
+                PdfWriter.getInstance(document, new FileOutputStream(selectedFile.getAbsolutePath()));
+                document.open();
+
+                // Add header
+                addHeaderNam(document, titleFont, contentFont,year);
+
+                // Add company details
+                addDetails(document, boldFont, contentFont);
+
+                // Create and add table
+                PdfPTable table = createTable(data, contentFont, boldFont);
+                document.add(table);
+
+
+                document.close();
+                PopDialog.popSuccessDialog("Xuất báo cáo công nợ năm "+year+" thành công.");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

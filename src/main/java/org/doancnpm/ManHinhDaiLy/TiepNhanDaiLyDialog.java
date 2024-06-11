@@ -1,5 +1,6 @@
 package org.doancnpm.ManHinhDaiLy;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
@@ -35,7 +36,7 @@ public class TiepNhanDaiLyDialog extends Dialog<DaiLy>  {
     public TiepNhanDaiLyDialog(DaiLy initialValue) throws IOException {
         super();
 
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/Main/ManHinhDaiLy/TiepNhanDaiLyUI.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/Main/ManHinhDaiLy/TiepNhanDaiLyUI2.fxml"));
 
         ButtonType saveButtonType;
         if(initialValue==null){
@@ -63,13 +64,18 @@ public class TiepNhanDaiLyDialog extends Dialog<DaiLy>  {
 
         //them vao cuoi cung
         final Button btnOk = (Button)this.getDialogPane().lookupButton(saveButtonType);
-        btnOk.setOnAction(ob -> {
-            //check validator
+        btnOk.addEventFilter(ActionEvent.ACTION, ob -> {
+            String error = c.getValidateData();
+            if(!error.isEmpty()){
+                PopDialog.popErrorDialog("Thêm mới đại lý thất bại",error);
+                ob.consume();
+                return;
+            }
             DaiLy dl = c.getDaiLy();
-            //them
             if(themHaySua){
                 try {
                     DaiLyDAO.getInstance().Insert(dl);
+                    PopDialog.popErrorDialog("Thêm mới đại lý thành công");
                 } catch (SQLException e) {
                     PopDialog.popErrorDialog("Thêm mới đại lý thất bại",e.getMessage());
                     ob.consume();
@@ -79,6 +85,7 @@ public class TiepNhanDaiLyDialog extends Dialog<DaiLy>  {
             else{
                 try {
                     DaiLyDAO.getInstance().Update(dl.getID(),dl);
+                    PopDialog.popErrorDialog("Cập nhật đại lý thành công");
                 } catch (SQLException e) {
                     PopDialog.popErrorDialog("Cập nhật đại lý thất bại",e.getMessage());
                     ob.consume();
@@ -90,4 +97,5 @@ public class TiepNhanDaiLyDialog extends Dialog<DaiLy>  {
 
         //this.getDialogPane().lookupButton(saveButtonType).disableProperty().bind(c.validProperty().not());
     }
+
 }

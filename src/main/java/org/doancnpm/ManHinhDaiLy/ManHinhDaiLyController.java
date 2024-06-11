@@ -1,7 +1,7 @@
 package org.doancnpm.ManHinhDaiLy;
 
 import io.github.palexdev.materialfx.controls.MFXComboBox;
-import io.github.palexdev.materialfx.controls.MFXTextField;
+import javafx.animation.TranslateTransition;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -10,9 +10,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.CheckBoxTableCell;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Region;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.apache.poi.ss.usermodel.Cell;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -30,6 +34,7 @@ import org.doancnpm.Filters.DaiLyFilter;
 import org.doancnpm.Models.DaiLy;
 import org.doancnpm.Models.LoaiDaiLy;
 import org.doancnpm.Models.Quan;
+import org.doancnpm.Ultilities.CheckExist;
 import org.doancnpm.Ultilities.DayFormat;
 import org.doancnpm.Ultilities.MoneyFormatter;
 import org.doancnpm.Ultilities.PopDialog;
@@ -38,6 +43,8 @@ import java.io.*;
 import java.net.URL;
 import java.sql.SQLException;
 import java.sql.Date;
+import java.text.Normalizer;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /** Controls the main application screen */
@@ -47,21 +54,21 @@ public class ManHinhDaiLyController implements Initializable {
     @FXML private Button filterButton;
     @FXML private MenuItem addDirectButton;
     @FXML private MenuItem addExcelButton;
-    @FXML private Button lapPhieuThuTienButton;
     @FXML private MenuItem deleteSelectedButton;
     @FXML private MenuItem exportExcelButton;
 
     @FXML private TextField maDaiLyTextField;
     @FXML private TextField tenDaiLyTextField;
-    @FXML private ComboBox<Quan> quanComboBox;
-    @FXML private ComboBox<LoaiDaiLy> loaiDaiLyCombobox;
-
+    @FXML private MFXComboBox<Quan> quanComboBox;
+    @FXML private MFXComboBox<LoaiDaiLy> loaiDaiLyCombobox;
+    @FXML private Region filterPane;
+    @FXML private Region filterPaneContainer;
+    @FXML private Button toggleFilterButton;
 
     @FXML private TableView mainTableView;
 
     //MasterDetailPane
     @FXML private MasterDetailPane masterDetailPane;
-
     @FXML private Region masterPane;
     @FXML private Button toggleDetailButton;
     @FXML private Region detailPane;
@@ -75,9 +82,9 @@ public class ManHinhDaiLyController implements Initializable {
     @FXML private Text diaChiText;
     @FXML private Text ngayTiepNhanText;
     @FXML private Text noHienTaiText;
-
     @FXML private TextArea ghiChuTextArea;
 
+    @FXML private FlowPane emptySelectionPane;
     //model part
     private final ObservableList<DaiLy> dsDaiLy = FXCollections.observableArrayList();
     private final ObservableList<DaiLy> dsDaiLyFiltered = FXCollections.observableArrayList();
@@ -97,6 +104,7 @@ public class ManHinhDaiLyController implements Initializable {
         //init data
         updateListFromDatabase();
         initDetailPane();
+        initFilterPane();
     }
     public void setVisibility(boolean visibility){
         manHinhDaiLy.setVisible(visibility);
@@ -114,10 +122,25 @@ public class ManHinhDaiLyController implements Initializable {
         mainTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, daiLy) -> {
             UpdateDetailPane((DaiLy) daiLy);
         });
+        manHinhDaiLy.widthProperty().addListener(ob -> {
+            if(manHinhDaiLy.getWidth()>1030){
+                toggleDetailButton.setDisable(false);
+                OpenDetailPanel();
+            }else{
+                toggleDetailButton.setDisable(true);
+                CloseDetailPanel();
+            }
+        });
+    }
+    private void initFilterPane(){
+        Rectangle clip = new Rectangle();
+        clip.widthProperty().bind(filterPaneContainer.widthProperty());
+        clip.heightProperty().bind(filterPaneContainer.heightProperty());
+        filterPaneContainer.setClip(clip);
     }
     private void initTableView(){
         // Tạo các cột cho TableView
-        TableColumn<DaiLy, String> maDLCol = new TableColumn<>("Mã đại lý");
+        TableColumn<DaiLy, String> maDLCol = new TableColumn<>("Mã");
         maDLCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getMaDaiLy()));
 
 
@@ -147,7 +170,7 @@ public class ManHinhDaiLyController implements Initializable {
 
         TableColumn<DaiLy, String> noHienTaiCol = new TableColumn<>("Nợ hiện tại");
         noHienTaiCol.setCellValueFactory(data -> {
-            return new SimpleStringProperty(MoneyFormatter.ConvertLongToString(data.getValue().getNoHienTai()));
+            return new SimpleStringProperty(MoneyFormatter.convertLongToString(data.getValue().getNoHienTai()));
         });
 
         //selected collumn:
@@ -186,7 +209,7 @@ public class ManHinhDaiLyController implements Initializable {
 
 
         //action column
-        TableColumn actionCol = new TableColumn("Action");
+        TableColumn actionCol = new TableColumn("Thao tác");
         //actionCol.setCellValueFactory(new PropertyValueFactory<>("DUMMY"));
 
         Callback<TableColumn<DaiLy, String>, TableCell<DaiLy, String>> cellFactory
@@ -195,8 +218,8 @@ public class ManHinhDaiLyController implements Initializable {
                     @Override
                     public TableCell call(final TableColumn<DaiLy, String> param) {
                         final TableCell<DaiLy, String> cell = new TableCell<DaiLy, String>() {
-                            final Button suaBtn = new javafx.scene.control.Button("Sửa");
-                            final Button xoaBtn = new javafx.scene.control.Button("Xóa");
+                            final Button suaBtn = new javafx.scene.control.Button();
+                            final Button xoaBtn = new javafx.scene.control.Button();
 
                             @Override
                             public void updateItem(String item, boolean empty) {
@@ -206,6 +229,19 @@ public class ManHinhDaiLyController implements Initializable {
                                     setText(null);
                                 }
                                 else {
+                                    Image trashCan = new Image(getClass().getResourceAsStream("/image/trash_can.png"));
+                                    ImageView trashImage = new ImageView(trashCan);
+                                    Image edit = new Image(getClass().getResourceAsStream("/image/edit.png"));
+                                    ImageView editImage = new ImageView(edit);
+                                    trashImage.setFitWidth(20);
+                                    trashImage.setFitHeight(20);
+
+                                    editImage.setFitWidth(20);
+                                    editImage.setFitHeight(20);
+
+                                    xoaBtn.setGraphic(trashImage);
+                                    suaBtn.setGraphic(editImage);
+
                                     xoaBtn.setOnAction(event -> {
                                         DaiLy dl = getTableView().getItems().get(getIndex());
                                         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -235,7 +271,6 @@ public class ManHinhDaiLyController implements Initializable {
                                     hbox.getChildren().addAll(suaBtn,xoaBtn);
                                     hbox.setAlignment(Pos.CENTER);
                                     hbox.setMaxHeight(1000);
-                                    hbox.setSpacing(5);
                                     setGraphic(hbox);
                                     setText(null);
                                 }
@@ -270,17 +305,16 @@ public class ManHinhDaiLyController implements Initializable {
         noHienTaiCol.getStyleClass().add("column-header-left");
         selectedCol.getStyleClass().add("column-header-center");
         actionCol.getStyleClass().add("column-header-center");
-
-
-        selectedCol.setPrefWidth(50);
-        maDLCol.setPrefWidth(80);
-        tenDLCol.setPrefWidth(150);
-
-        quanCol.setPrefWidth(80);
-        loaiDLCol.setPrefWidth(80);
-        noHienTaiCol.setPrefWidth(120);
-        actionCol.setPrefWidth(100);
-
+        mainTableView.widthProperty().addListener(ob -> {
+            double width = mainTableView.getWidth();
+            selectedCol.setPrefWidth(width*0.1);
+            maDLCol.setPrefWidth(width*0.12);
+            quanCol.setPrefWidth(width*0.12);
+            loaiDLCol.setPrefWidth(width*0.12);
+            tenDLCol.setPrefWidth(width*0.24);
+            noHienTaiCol.setPrefWidth(width*0.15);
+            actionCol.setPrefWidth(width*0.15);
+        });
         mainTableView.setEditable( true );
         mainTableView.setPrefWidth(1100);
     }
@@ -291,7 +325,11 @@ public class ManHinhDaiLyController implements Initializable {
         deleteSelectedButton.setOnAction(_ -> DeleteSelectedRow());
 
         addExcelButton.setOnAction(_ -> {
-            OpenImportDialog();
+            try {
+                OpenImportDialog();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         });
         exportExcelButton.setOnAction(_ -> {
             OpenExportDialog();
@@ -304,7 +342,16 @@ public class ManHinhDaiLyController implements Initializable {
                 OpenDetailPanel();
             }
         });
+        toggleFilterButton.setOnAction(ob ->{
+            if(filterPane.isVisible()){
+                CloseFilterPanel();
+            }
+            else{
+                OpenFilterPanel();
+            }
+        });
     }
+
     private void initDatabaseBinding(){
         DaiLyDAO.getInstance().AddDatabaseListener(_ -> updateListFromDatabase());
     }
@@ -385,13 +432,31 @@ public class ManHinhDaiLyController implements Initializable {
         }
     }
 
+    public void OpenFilterPanel(){
+        TranslateTransition tt = new TranslateTransition(Duration.seconds(0.2), filterPane);
+        tt.setToX(0);
+        tt.play();
+        filterPane.setVisible(true);
+        tt.setOnFinished(e -> {
+        });
+    }
+    public void CloseFilterPanel(){
+        TranslateTransition tt = new TranslateTransition(Duration.seconds(0.2), filterPane);
+        tt.setToX(-filterPane.getWidth());
+        tt.play();
+
+        tt.setOnFinished(e -> {
+            filterPane.setVisible(false);
+        });
+    }
     //detail pane
     public void UpdateDetailPane(DaiLy daiLy){
         if(daiLy==null){
-            CloseDetailPanel();
+            emptySelectionPane.setVisible(true);
             return;
         }
         try{
+            emptySelectionPane.setVisible(false);
             Quan quan = QuanDAO.getInstance().QueryID(daiLy.getMaQuan());
             LoaiDaiLy loaiDaiLy = LoaiDaiLyDAO.getInstance().QueryID(daiLy.getMaLoaiDaiLy());
 
@@ -403,25 +468,22 @@ public class ManHinhDaiLyController implements Initializable {
             emailText.setText(daiLy.getEmail());
             diaChiText.setText(daiLy.getDiaChi());
             ngayTiepNhanText.setText(DayFormat.GetDayStringFormatted(daiLy.getNgayTiepNhan()));
-            noHienTaiText.setText(MoneyFormatter.ConvertLongToString(daiLy.getNoHienTai()));
+            noHienTaiText.setText(MoneyFormatter.convertLongToString(daiLy.getNoHienTai()));
             ghiChuTextArea.setText(daiLy.getGhiChu());
         }
         catch (SQLException _){}
 
     }
     public void OpenDetailPanel(){
-        toggleDetailButton.setText(">");
         masterDetailPane.setShowDetailNode(true);
-
     }
     public void CloseDetailPanel(){
         masterDetailPane.setShowDetailNode(false);
-        toggleDetailButton.setText("<");
     }
 
 
     //open import dialog
-    public void OpenImportDialog() {
+    public void OpenImportDialog() throws SQLException {
         // Hiển thị hộp thoại chọn tệp Excel
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().addAll(
@@ -435,13 +497,12 @@ public class ManHinhDaiLyController implements Initializable {
             importFromExcel(selectedFile.getAbsolutePath());
         }
     }
-    private void importFromExcel(String filePath)  {
+    private void importFromExcel(String filePath) {
         File file = new File(filePath);
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(file);
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             PopDialog.popErrorDialog("Không tìm thấy file excel");
             return;
         }
@@ -449,17 +510,15 @@ public class ManHinhDaiLyController implements Initializable {
         XSSFWorkbook workbook = null;
         try {
             workbook = new XSSFWorkbook(fis);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             PopDialog.popErrorDialog("Có lỗi trong quá trình thực hiện", e.getMessage());
             return;
         }
         XSSFSheet sheet = workbook.getSheetAt(0); // Assuming data is in the first sheet
 
-
         Date ngayTiepNhan = new Date(System.currentTimeMillis());
-
-        for (int i = 1; i <= sheet.getLastRowNum()-1; i++) {
+        boolean hasError = true; // Biến để theo dõi nếu có lỗi xảy ra
+        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
             if (row != null) { // Kiểm tra xem dòng có tồn tại hay không
                 Cell quanCell = row.getCell(0);
@@ -470,19 +529,42 @@ public class ManHinhDaiLyController implements Initializable {
                 Cell diaChiCell = row.getCell(5);
                 Cell ghiChuCell = row.getCell(6);
 
+                String quanName = quanCell.getStringCellValue().trim();
+                String loaiDaiLyName = loaiDaiLyCell.getStringCellValue().trim();
+
+                Integer loaiDaiLyID = handleLoaiDaiLy(loaiDaiLyName);
+                if (loaiDaiLyID == null) {
+                    continue;
+                }else{
+                    hasError =false;
+                }
+
+                Integer quanID = handleQuan(quanName);
+                if (quanID == null) {
+                    continue;
+                }
+                else{
+                    hasError =false;
+                }
+
                 DaiLy daiLy = new DaiLy();
-                daiLy.setMaQuan((int) quanCell.getNumericCellValue());
-                daiLy.setMaLoaiDaiLy((int) loaiDaiLyCell.getNumericCellValue());
+                daiLy.setMaQuan(quanID);
+                daiLy.setMaLoaiDaiLy(loaiDaiLyID);
                 daiLy.setTenDaiLy(tenDaiLyCell.getStringCellValue());
                 daiLy.setDienThoai(dienThoaiCell.getStringCellValue());
                 daiLy.setEmail(emailCell.getStringCellValue());
                 daiLy.setDiaChi(diaChiCell.getStringCellValue());
-                daiLy.setGhiChu(ghiChuCell.getStringCellValue());
+
+                // Kiểm tra ghiChuCell có phải là null hay không
+                if (ghiChuCell != null) {
+                    daiLy.setGhiChu(ghiChuCell.getStringCellValue());
+                } else {
+                    daiLy.setGhiChu(null);
+                }
                 daiLy.setNgayTiepNhan(ngayTiepNhan);
                 try {
                     DaiLyDAO.getInstance().Insert(daiLy); // Thêm đối tượng vào cơ sở dữ liệu
-                }
-                catch (SQLException e) {
+                } catch (SQLException e) {
                     PopDialog.popErrorDialog("Thêm mới đại lý thất bại", e.getMessage());
                     return;
                 }
@@ -492,13 +574,79 @@ public class ManHinhDaiLyController implements Initializable {
         try {
             workbook.close();
             fis.close();
-            PopDialog.popSuccessDialog("Thêm danh sách đại lý từ file excel thành công");
-        }
-        catch (IOException e) {
+            if (!hasError) { // Chỉ hiển thị dialog thành công nếu không có lỗi nào
+                PopDialog.popSuccessDialog("Thêm danh sách đại lý từ file excel thành công");
+            }
+            else{
+                PopDialog.popErrorDialog("Thêm danh sách đại lý từ file excel không thành công");
+            }
+        } catch (IOException e) {
             PopDialog.popErrorDialog("Có lỗi trong quá trình thực hiện", e.getMessage());
         }
-
     }
+
+    private Integer handleLoaiDaiLy(String loaiDaiLyName) {
+        try {
+            if (!CheckExist.checkLoaiDaiLy(loaiDaiLyName)) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Xác nhận");
+                alert.setHeaderText(null);
+                alert.setContentText(loaiDaiLyName + " không tồn tại. Bạn có muốn thêm loại đại lý mới không?");
+
+                ButtonType result = alert.showAndWait().orElse(ButtonType.CANCEL);
+
+                if (result == ButtonType.OK) {
+                    LoaiDaiLy loaiDaiLy = new LoaiDaiLy(null, null, 5000000l, loaiDaiLyName, "");
+                    LoaiDaiLyDAO.getInstance().Insert(loaiDaiLy);
+                    Alert infoAlert = new Alert(Alert.AlertType.INFORMATION);
+                    infoAlert.setTitle("Thông báo");
+                    infoAlert.setHeaderText(null);
+                    infoAlert.setContentText("Loại đại lý " + loaiDaiLyName + " đã được thêm thành công!");
+                    infoAlert.showAndWait();
+                    return LoaiDaiLyDAO.getInstance().QueryMostRecent().getId();
+                } else {
+                    return null;
+                }
+            } else {
+                return LoaiDaiLyDAO.getInstance().QueryName(loaiDaiLyName).getId();
+            }
+        } catch (SQLException e) {
+            PopDialog.popErrorDialog("Có lỗi trong quá trình xử lý loại đại lý", e.getMessage());
+            return null;
+        }
+    }
+
+    private Integer handleQuan(String quanName) {
+        try {
+            if (!CheckExist.checkQuan(quanName)) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Xác nhận");
+                alert.setHeaderText(null);
+                alert.setContentText(quanName + " không tồn tại. Bạn có muốn thêm quận mới không?");
+
+                ButtonType result = alert.showAndWait().orElse(ButtonType.CANCEL);
+
+                if (result == ButtonType.OK) {
+                    Quan quan = new Quan(null, "", quanName, null);
+                    QuanDAO.getInstance().Insert(quan);
+                    Alert infoAlert = new Alert(Alert.AlertType.INFORMATION);
+                    infoAlert.setTitle("Thông báo");
+                    infoAlert.setHeaderText(null);
+                    infoAlert.setContentText("Quận " + quanName + " đã được thêm thành công!");
+                    infoAlert.showAndWait();
+                    return QuanDAO.getInstance().QueryMostRecent().getId();
+                } else {
+                        return null;
+                }
+            } else {
+                return QuanDAO.getInstance().QueryName(quanName).getId();
+            }
+        } catch (SQLException e) {
+            PopDialog.popErrorDialog("Có lỗi trong quá trình xử lý quận", e.getMessage());
+            return null;
+        }
+    }
+
 
     public void OpenExportDialog() {
         // Hiển thị hộp thoại lưu tệp Excel
@@ -507,7 +655,8 @@ public class ManHinhDaiLyController implements Initializable {
 
         // Tạo tên file với định dạng "Export_ngay_thang_nam.xlsx"
         Date ngayHienTai = new Date(System.currentTimeMillis());
-        String fileName = "DsDaiLy_" + DayFormat.GetDayStringFormatted(ngayHienTai) + ".xlsx";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd_MM_yyyy");
+        String fileName = "DsDaiLy_" + dateFormat.format(ngayHienTai) + ".xlsx";
 
         // Thiết lập tên file mặc định cho hộp thoại lưu
         File initialDirectory = new File(System.getProperty("user.home"));
@@ -532,7 +681,7 @@ public class ManHinhDaiLyController implements Initializable {
 
         // Tạo hàng đầu tiên với các tiêu đề cột
         Row headerRow = sheet.createRow(0);
-        String[] columnTitles = {"Mã đại lý", "Quận", "Loại đại lý", "Tên đại lý", "Số điện thoại", "Email", "Địa chỉ", "Nợ hiện tại", "Ghi chú"};
+        String[] columnTitles = {"Mã đại lý", "Quận", "Loại đại lý", "Tên đại lý", "Số điện thoại", "Email", "Địa chỉ", "Nợ hiện tại","Ngày tiếp nhận", "Ghi chú"};
         int cellnum = 0;
         for (String title : columnTitles) {
             Cell cell = headerRow.createCell(cellnum++);
@@ -545,20 +694,40 @@ public class ManHinhDaiLyController implements Initializable {
             Row row = sheet.createRow(rownum++);
             cellnum = 0;
             row.createCell(cellnum++).setCellValue(daiLy.getMaDaiLy());
-            row.createCell(cellnum++).setCellValue(daiLy.getMaQuan());
-            row.createCell(cellnum++).setCellValue(daiLy.getMaLoaiDaiLy());
+            Quan quan = new Quan();
+            try{
+                quan = QuanDAO.getInstance().QueryID(daiLy.getMaQuan());
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            row.createCell(cellnum++).setCellValue(quan.getTenQuan());
+
+            LoaiDaiLy loaiDaiLy;
+            try{
+                loaiDaiLy = LoaiDaiLyDAO.getInstance().QueryID(daiLy.getMaLoaiDaiLy());
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            row.createCell(cellnum++).setCellValue(loaiDaiLy.getTenLoai());
             row.createCell(cellnum++).setCellValue(daiLy.getTenDaiLy());
             row.createCell(cellnum++).setCellValue(daiLy.getDienThoai());
             row.createCell(cellnum++).setCellValue(daiLy.getEmail());
             row.createCell(cellnum++).setCellValue(daiLy.getDiaChi());
             row.createCell(cellnum++).setCellValue(daiLy.getNoHienTai());
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            row.createCell(cellnum++).setCellValue(dateFormat.format(daiLy.getNgayTiepNhan()));
             row.createCell(cellnum++).setCellValue(daiLy.getGhiChu());
+        }
+        // Tự động điều chỉnh độ rộng của các cột
+        for (int i = 0; i < columnTitles.length; i++) {
+            sheet.autoSizeColumn(i);
         }
 
         // Lưu tệp Excel
         try (FileOutputStream fos = new FileOutputStream(filePath)) {
             workbook.write(fos);
             workbook.close();
+            PopDialog.popSuccessDialog("Xuất file excel thành công");
         }
         catch (IOException e){
             PopDialog.popErrorDialog("Xuất file excel thất bại",e.getMessage());
@@ -568,7 +737,7 @@ public class ManHinhDaiLyController implements Initializable {
     //functionalities
     public void OpenDirectAddDialog(){
         try {
-            new TiepNhanDaiLyDialog().showAndWait();
+            new TiepNhanDaiLyDialog(null).showAndWait();
         }
         catch (IOException e) {
             PopDialog.popErrorDialog("Không thể mở dialog thêm đại lý");
@@ -616,15 +785,5 @@ public class ManHinhDaiLyController implements Initializable {
     private void filterList(){
         dsDaiLyFiltered.clear();
         dsDaiLyFiltered.addAll(filter.Filter());
-    }
-    private void resetFilter(){
-        quanComboBox.getSelectionModel().clearSelection();
-        quanComboBox.setValue(null);
-
-        maDaiLyTextField.clear();
-        tenDaiLyTextField.clear();
-
-        loaiDaiLyCombobox.getSelectionModel().clearSelection();
-        loaiDaiLyCombobox.setValue(null);
     }
 }

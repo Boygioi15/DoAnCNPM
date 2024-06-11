@@ -4,7 +4,16 @@ public class ChiTietPhieuXuat {
     Integer maPhieuXuat;
     Integer maMatHang;
     Integer soLuong;
-    Double thanhTien;
+    Long thanhTien;
+    Long donGiaXuat;
+
+    public Long getDonGiaXuat() {
+        return donGiaXuat;
+    }
+
+    public void setDonGiaXuat(Long donGiaXuat) {
+        this.donGiaXuat = donGiaXuat;
+    }
 
     public Integer getMaPhieuXuat() {
         return maPhieuXuat;
@@ -30,11 +39,11 @@ public class ChiTietPhieuXuat {
         this.soLuong = soLuong;
     }
 
-    public Double getThanhTien() {
+    public Long getThanhTien() {
         return thanhTien;
     }
 
-    public void setThanhTien(Double thanhTien) {
+    public void setThanhTien(Long thanhTien) {
         this.thanhTien = thanhTien;
     }
 }

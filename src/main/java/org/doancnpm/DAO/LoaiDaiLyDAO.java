@@ -5,6 +5,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import org.doancnpm.Models.DatabaseDriver;
 import org.doancnpm.Models.LoaiDaiLy;
+import org.doancnpm.Ultilities.CheckExist;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -31,7 +32,7 @@ public class LoaiDaiLyDAO implements Idao<LoaiDaiLy> {
 
         assert conn != null;
         PreparedStatement pstmt = conn.prepareStatement(sql);
-        pstmt.setInt(1, loaiDaiLy.getSoNoToiDa());
+        pstmt.setLong(1, loaiDaiLy.getSoNoToiDa());
         pstmt.setString(2, loaiDaiLy.getTenLoai());
         pstmt.setString(3, loaiDaiLy.getGhiChu());
 
@@ -50,7 +51,7 @@ public class LoaiDaiLyDAO implements Idao<LoaiDaiLy> {
 
         assert conn != null;
         PreparedStatement pstmt = conn.prepareStatement(sql);
-        pstmt.setInt(1, loaiDaiLy.getSoNoToiDa());
+        pstmt.setLong(1, loaiDaiLy.getSoNoToiDa());
         pstmt.setString(2, loaiDaiLy.getTenLoai());
         pstmt.setString(3, loaiDaiLy.getGhiChu());
         pstmt.setInt(4, id);
@@ -94,11 +95,27 @@ public class LoaiDaiLyDAO implements Idao<LoaiDaiLy> {
         if (rs.next()) {
             int id = rs.getInt("ID");
             String maLoai = rs.getString("MaLoai");
-            int soNoToiDa = rs.getInt("SoNoToiDa");
+            Long soNoToiDa = rs.getLong("SoNoToiDa");
             String tenLoai = rs.getString("TenLoai");
             String ghiChu = rs.getString("GhiChu");
 
             return new LoaiDaiLy(id, maLoai, soNoToiDa, tenLoai, ghiChu);
+        }
+
+        return null;
+    }
+    public LoaiDaiLy QueryName(String name) throws SQLException {
+        ArrayList<LoaiDaiLy> allLoaiDaiLy = QueryAll();
+        String normalizedLoaiDaiLy = CheckExist.normalize(name);
+
+        // Duyệt qua danh sách tất cả các Loại Đại Lý và kiểm tra xem Loại Đại Lý đã tồn tại hay không
+        for (LoaiDaiLy loaiDaiLy : allLoaiDaiLy) {
+            // Chuẩn hóa tên Loại Đại Lý từ danh sách (loại bỏ dấu và chuyển thành chữ thường)
+            String normalizedLoaiDaiLyName = CheckExist.normalize(loaiDaiLy.getTenLoai());
+
+            if (normalizedLoaiDaiLyName.equals(normalizedLoaiDaiLy)) {
+                return loaiDaiLy;
+            }
         }
 
         return null;
@@ -117,7 +134,7 @@ public class LoaiDaiLyDAO implements Idao<LoaiDaiLy> {
         while (rs.next()) {
             int id = rs.getInt("ID");
             String maLoai = rs.getString("MaLoai");
-            int soNoToiDa = rs.getInt("SoNoToiDa");
+            Long soNoToiDa = rs.getLong("SoNoToiDa");
             String tenLoai = rs.getString("TenLoai");
             String ghiChu = rs.getString("GhiChu");
 
@@ -141,7 +158,7 @@ public class LoaiDaiLyDAO implements Idao<LoaiDaiLy> {
             LoaiDaiLy ldl = new LoaiDaiLy();
             int id = rs.getInt("ID");
             String maLoai = rs.getString("MaLoai");
-            int soNoToiDa = rs.getInt("SoNoToiDa");
+            Long soNoToiDa = rs.getLong("SoNoToiDa");
             String tenLoai = rs.getString("TenLoai");
             String ghiChu = rs.getString("GhiChu");
 

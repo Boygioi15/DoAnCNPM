@@ -6,19 +6,26 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 <?import org.controlsfx.control.MasterDetailPane?>
 
-<VBox fx:id="manHinhPhieuXuat" spacing="10.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.doancnpm.ManHinhPhieuXuat.ManHinhPhieuXuatController">
+<VBox fx:id="manHinhPhieuXuat" spacing="10.0" styleClass="background" stylesheets="@../../../css/Screen.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.doancnpm.ManHinhPhieuXuat.ManHinhPhieuXuatController">
    <children>
-      <Label styleClass="headline" text="Danh sách phiếu xuất">
+      <Label styleClass="title-text" text="Danh sách phiếu xuất">
          <font>
             <Font size="36.0" />
          </font>
@@ -26,9 +33,9 @@
             <Insets />
          </VBox.margin>
       </Label>
-      <HBox spacing="10.0">
+      <HBox alignment="CENTER_LEFT" spacing="10.0">
          <children>
-            <MenuButton mnemonicParsing="false" styleClass="action-menu-button" text="Thêm mới">
+            <MenuButton mnemonicParsing="false" styleClass="add-button" text="Thêm mới">
                <items>
                   <MenuItem fx:id="addDirectButton" mnemonicParsing="false" text="Thêm trực tiếp" />
                   <MenuItem fx:id="addExcelButton" mnemonicParsing="false" text="Thêm từ file Excel" />
@@ -37,7 +44,7 @@
                   <Font size="18.0" />
                </font>
             </MenuButton>
-            <MenuButton mnemonicParsing="false" styleClass="action-menu-button" text="Thao tác">
+            <MenuButton mnemonicParsing="false" styleClass="action-button" text="Thao tác">
                <items>
                   <MenuItem fx:id="deleteSelectedButton" mnemonicParsing="false" text="Xóa các dòng đã chọn" />
                   <MenuItem fx:id="exportExcelButton" mnemonicParsing="false" text="Xuất file excel" />
@@ -46,80 +53,109 @@
                   <Font size="18.0" />
                </font>
             </MenuButton>
-         </children>
-      </HBox>
-      <HBox alignment="CENTER_LEFT" spacing="10.0">
-         <children>
-            <Button fx:id="refreshButton" mnemonicParsing="false" styleClass="action-button" text="Refresh">
-               <font>
-                  <Font size="18.0" />
-               </font>
+            <Button fx:id="toggleFilterButton" mnemonicParsing="false" styleClass="filter-button">
+               <graphic>
+                  <ImageView fitHeight="150.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../../image/filter.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
             </Button>
-            <MFXTextField fx:id="maPXTextField" borderGap="6.0" floatMode="BORDER" floatingText="Mã phiếu" prefWidth="120.0" styleClass="body-label" />
-            <MFXTextField fx:id="nvTextField" borderGap="6.0" floatMode="BORDER" floatingText="Nhân viên" prefWidth="120.0" styleClass="body-label" />
-            <MFXTextField fx:id="dlTextField" borderGap="6.0" floatMode="BORDER" floatingText="Đại lý" prefWidth="120.0" styleClass="body-label" />
+            <AnchorPane fx:id="filterPaneContainer">
+               <children>
+                  <HBox fx:id="filterPane" alignment="CENTER_LEFT" spacing="10.0" AnchorPane.leftAnchor="0.0">
+                     <children>
+                        <MFXTextField fx:id="maPXTextField" borderGap="6.0" floatMode="DISABLED" prefWidth="120.0" promptText="Mã phiếu thu" styleClass="filter-textField" />
+                        <MFXTextField fx:id="nvTextField" borderGap="6.0" floatMode="DISABLED" prefWidth="120.0" promptText="Mã nhân viên" styleClass="filter-textField" />
+                        <MFXTextField fx:id="dlTextField" borderGap="6.0" floatMode="DISABLED" prefWidth="120.0" promptText="Đại lý" styleClass="filter-textField" />
+                     </children>
+                  </HBox>
+               </children>
+            </AnchorPane>
          </children>
       </HBox>
       <MasterDetailPane fx:id="masterDetailPane" dividerSizeHint="1.0" stylesheets="@../../../css/masterDetailPane.css" VBox.vgrow="ALWAYS" />
       <HBox fx:id="masterPane" spacing="1.0" VBox.vgrow="ALWAYS">
          <children>
-            <TableView fx:id="mainTableView" HBox.hgrow="ALWAYS" />
-            <Button fx:id="toggleDetailButton" maxHeight="1000.0" mnemonicParsing="false" text="&gt;" />
+            <TableView fx:id="mainTableView" stylesheets="@../../../css/tableView.css" HBox.hgrow="ALWAYS" />
+            <Button fx:id="toggleDetailButton" maxHeight="1000.0" maxWidth="25.0" mnemonicParsing="false" styleClass="detail-button">
+               <graphic>
+                  <Pane maxHeight="200.0" maxWidth="5.0" minHeight="200.0" minWidth="5.0" prefHeight="40.0" prefWidth="5.0" styleClass="detail-surface" />
+               </graphic>
+            </Button>
          </children>
       </HBox>
-      <VBox fx:id="detailPane" spacing="5.0">
+      <VBox fx:id="detailPane" spacing="5.0" styleClass="detail-pane" VBox.vgrow="ALWAYS">
          <children>
-            <Label text="Thông tin chi tiết" />
-            <GridPane hgap="15.0" vgap="10.0" VBox.vgrow="ALWAYS">
-               <columnConstraints>
-                  <ColumnConstraints halignment="LEFT" hgrow="NEVER" />
-                  <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" minWidth="10.0" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints />
-                  <RowConstraints />
-                  <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
-                  <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
-                  <RowConstraints maxHeight="17.599999999999994" minHeight="0.0" prefHeight="17.599999999999994" valignment="TOP" vgrow="SOMETIMES" />
-                  <RowConstraints maxHeight="400.0" minHeight="345.5999755859375" prefHeight="359.20001220703125" valignment="TOP" />
-                  <RowConstraints maxHeight="16.0" minHeight="0.0" valignment="TOP" vgrow="SOMETIMES" />
-               </rowConstraints>
+            <Label styleClass="header-text" text="Thông tin chi tiết" />
+            <AnchorPane VBox.vgrow="ALWAYS">
                <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Nhân viên lập phiếu:" GridPane.rowIndex="2" />
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Ngày lập phiếu:" GridPane.rowIndex="4" />
-                  <Text fx:id="ngayLapPhieuText" strokeType="OUTSIDE" strokeWidth="0.0" text="Ngày lập phiếu" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Mã phiếu xuất:" GridPane.rowIndex="1" />
-                  <Text fx:id="maPXText" strokeType="OUTSIDE" strokeWidth="0.0" text="Mã phiếu xuất" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <HBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                  <ScrollPane fitToWidth="true" maxHeight="1.7976931348623157E308" styleClass="background" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <content>
+                        <GridPane hgap="15.0" maxHeight="1.7976931348623157E308" vgap="15.0">
+                           <columnConstraints>
+                              <ColumnConstraints halignment="LEFT" hgrow="NEVER" />
+                              <ColumnConstraints halignment="RIGHT" hgrow="NEVER" minWidth="10.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
+                              <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
+                              <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
+                              <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
+                              <RowConstraints valignment="TOP" vgrow="SOMETIMES" />
+                              <RowConstraints maxHeight="16.0" minHeight="0.0" valignment="TOP" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="0.0" valignment="TOP" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text-header" text="Nhân viên lập phiếu:" GridPane.rowIndex="1" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text-header" text="Ngày lập phiếu:" GridPane.rowIndex="3" />
+                              <Text fx:id="ngayLapPhieuText" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text" text="Ngày lập phiếu" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text-header" text="Mã phiếu xuất:" />
+                              <Text fx:id="maPXText" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text" text="Mã phiếu xuất" GridPane.columnIndex="1" />
+                              <HBox alignment="TOP_RIGHT" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                 <children>
+                                    <Text fx:id="maNVText" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text" text="Mã" />
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="-" />
+                                    <Text fx:id="tenNVText" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text" text="Tên" />
+                                 </children>
+                              </HBox>
+                              <TableView fx:id="detailTableView" prefHeight="200.0" stylesheets="@../../../css/tableView.css" GridPane.columnSpan="2" GridPane.hgrow="NEVER" GridPane.rowIndex="4" />
+                              <HBox alignment="CENTER_RIGHT" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                 <children>
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text-header" text="Tổng tiền:" />
+                                    <Text fx:id="tongTienText" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text-header" text="12000" />
+                                 </children>
+                              </HBox>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text-header" text="Đại lý:" GridPane.rowIndex="2" />
+                              <HBox alignment="TOP_RIGHT" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                 <children>
+                                    <Text fx:id="maDLText" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text" text="Mã" />
+                                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="-" />
+                                    <Text fx:id="tenDLText" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text" text="Tên" />
+                                 </children>
+                              </HBox>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text" text="Ghi chú:" GridPane.rowIndex="6" />
+                              <TextArea fx:id="ghiChuTextArea" editable="false" prefHeight="50.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                           </children>
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="10.0" />
+                           </padding>
+                        </GridPane>
+                     </content>
+                  </ScrollPane>
+                  <FlowPane fx:id="emptySelectionPane" alignment="CENTER" columnHalignment="CENTER" style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <Text fx:id="maNVText" strokeType="OUTSIDE" strokeWidth="0.0" text="Mã" />
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="-" />
-                        <Text fx:id="tenNVText" strokeType="OUTSIDE" strokeWidth="0.0" text="Tên" />
+                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../../image/eye.png" />
+                           </image>
+                        </ImageView>
+                        <Label maxWidth="170.0" styleClass="header-text" text="Vui lòng chọn phiếu xuất để xem chi tiết" textAlignment="CENTER" wrapText="true" />
                      </children>
-                  </HBox>
-                  <TableView fx:id="detailTableView" GridPane.columnSpan="2" GridPane.rowIndex="5" />
-                  <HBox alignment="CENTER_RIGHT" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
-                     <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Tổng tiền:" />
-                        <Text fx:id="tongTienText" strokeType="OUTSIDE" strokeWidth="0.0" text="12000" />
-                     </children>
-                  </HBox>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Đại lý:" GridPane.rowIndex="3" />
-                  <HBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                     <children>
-                        <Text fx:id="maDLText" strokeType="OUTSIDE" strokeWidth="0.0" text="Mã" />
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="-" />
-                        <Text fx:id="tenDLText" strokeType="OUTSIDE" strokeWidth="0.0" text="Tên" />
-                     </children>
-                  </HBox>
+                  </FlowPane>
                </children>
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-               <padding>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </padding>
-            </GridPane>
+            </AnchorPane>
          </children>
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -127,6 +163,6 @@
       </VBox>
    </children>
    <padding>
-      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+      <Insets bottom="10.0" left="10.0" right="10.0" />
    </padding>
 </VBox>

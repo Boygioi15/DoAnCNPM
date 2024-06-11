@@ -5,7 +5,9 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import org.doancnpm.Models.DatabaseDriver;
 import org.doancnpm.Models.DonViTinh;
+import org.doancnpm.Models.LoaiDaiLy;
 import org.doancnpm.Models.Quan;
+import org.doancnpm.Ultilities.CheckExist;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -33,7 +35,7 @@ public class DonViTinhDAO implements Idao<DonViTinh> {
         assert conn != null;
         PreparedStatement pstmt = conn.prepareStatement(sql);
         pstmt.setString(1, donViTinh.getTenDVT());
-        pstmt.setString(1, donViTinh.getGhiChu());
+        pstmt.setString(2, donViTinh.getGhiChu());
 
         int rowsAffected = pstmt.executeUpdate();
         if (rowsAffected > 0) {
@@ -107,6 +109,23 @@ public class DonViTinhDAO implements Idao<DonViTinh> {
         pstmt.close();
         return donViTinh;
     }
+    public DonViTinh QueryName(String name) throws SQLException {
+        ArrayList<DonViTinh> allDVT = QueryAll();
+        String normalizedDVTName = CheckExist.normalize(name);
+
+        // Duyệt qua danh sách tất cả các đơn vị tính và kiểm tra xem đơn vị tính đã tồn tại hay không
+        for (DonViTinh dvt : allDVT) {
+            // Chuẩn hóa tên đơn vị tính từ danh sách (loại bỏ dấu và chuyển thành chữ thường)
+            String normalizedDVT = CheckExist.normalize(dvt.getTenDVT());
+
+            if (normalizedDVT.equals(normalizedDVTName)) {
+                return dvt;
+            }
+        }
+
+        return null;
+    }
+
 
     @Override
     public ArrayList<DonViTinh> QueryAll() throws SQLException {

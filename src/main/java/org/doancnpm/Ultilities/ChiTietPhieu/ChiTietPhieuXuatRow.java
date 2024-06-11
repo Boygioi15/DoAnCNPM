@@ -18,6 +18,7 @@ import org.doancnpm.DAO.MatHangDAO;
 import org.doancnpm.Models.ChiTietPhieuXuat;
 import org.doancnpm.Models.DonViTinh;
 import org.doancnpm.Models.MatHang;
+import org.doancnpm.Ultilities.MoneyFormatter;
 import org.doancnpm.Ultilities.PopDialog;
 
 import java.io.IOException;
@@ -37,14 +38,16 @@ public class ChiTietPhieuXuatRow extends HBox {
         loadFXML();
         initMHComboBox();
         initBinding();
+        MoneyFormatter.MoneyFormatTextField(thanhTienTextField);
+        MoneyFormatter.MoneyFormatTextField(slTextField);
     }
-    public double getThanhTienDouble(){
+    public Long getThanhTien(){
 
         try{
-            Double result = Double.parseDouble(thanhTienTextField.getText());;
+            Long result = MoneyFormatter.getLongValueFromTextField(thanhTienTextField);;
             return  result;
         }catch (Exception e){
-            return 0;
+            return 0L;
         }
 
     }
@@ -95,7 +98,7 @@ public class ChiTietPhieuXuatRow extends HBox {
             DonViTinh dvt = DonViTinhDAO.getInstance().QueryID(matHang.getMaDVT());
             dvtTextField.setText(dvt.getTenDVT());
             slTextField.setText(Integer.toString(cptx.getSoLuong()));
-            donGiaTextField.setText(Double.toString(matHang.getDonGiaXuat()));
+            donGiaTextField.setText(MoneyFormatter.convertLongToString(matHang.getDonGiaXuat()));
             thanhTienTextField.setText(Double.toString(cptx.getThanhTien()));
         } catch (SQLException _) {}
 
@@ -115,7 +118,7 @@ public class ChiTietPhieuXuatRow extends HBox {
             try {
                 DonViTinh dvt = DonViTinhDAO.getInstance().QueryID(mhComboBox.getValue().getMaDVT());
                 dvtTextField.setText(dvt.getTenDVT());
-                donGiaTextField.setText(Double.toString(mhComboBox.getValue().getDonGiaNhap()));
+                donGiaTextField.setText(MoneyFormatter.convertLongToString(mhComboBox.getValue().getDonGiaXuat()));
             }catch (SQLException _) {}
 
             slTextField.setDisable(false);
@@ -123,8 +126,8 @@ public class ChiTietPhieuXuatRow extends HBox {
         slTextField.textProperty().addListener(ob -> {
             try{
                 Integer sl = Integer.parseInt(slTextField.getText());
-                double thanhTien = sl*mhComboBox.getValue().getDonGiaNhap();
-                thanhTienTextField.setText(Double.toString(thanhTien));
+                Long thanhTien = sl*mhComboBox.getValue().getDonGiaXuat();
+                thanhTienTextField.setText(MoneyFormatter.convertLongToString(thanhTien));
             }catch (Exception e){}
         });
     }
@@ -132,6 +135,7 @@ public class ChiTietPhieuXuatRow extends HBox {
         ChiTietPhieuXuat chiTietPhieuXuat = new ChiTietPhieuXuat();
         chiTietPhieuXuat.setMaMatHang(mhComboBox.getValue().getID());
         chiTietPhieuXuat.setSoLuong(Integer.parseInt(slTextField.getText()));
+        chiTietPhieuXuat.setDonGiaXuat(mhComboBox.getValue().getDonGiaXuat());
         return chiTietPhieuXuat;
     }
 

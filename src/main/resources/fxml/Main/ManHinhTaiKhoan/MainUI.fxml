@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import io.github.palexdev.materialfx.controls.MFXPasswordField?>
-<?import io.github.palexdev.materialfx.controls.MFXTextField?>
+<?import java.net.URL?>
 <?import javafx.geometry.Insets?>
 <?import javafx.geometry.Rectangle2D?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -17,7 +17,7 @@
 <?import javafx.scene.text.Text?>
 <?import org.controlsfx.control.textfield.CustomTextField?>
 
-<VBox fx:id="manHinhTaiKhoan" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="672.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.doancnpm.ManHinhTaiKhoan.ManHinhTaiKhoanController">
+<VBox fx:id="manHinhTaiKhoan" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="672.0" styleClass="background" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.doancnpm.ManHinhTaiKhoan.ManHinhTaiKhoanController">
     <children>
         <AnchorPane maxHeight="223.0" minHeight="200.0" prefHeight="223.0" prefWidth="652.0">
             <children>
@@ -34,49 +34,88 @@
                      <image>
                         <Image url="@../../../image/profileimg.png" />
                      </image></ImageView>
-                        <Text fx:id="nameText" strokeType="OUTSIDE" strokeWidth="0.0" text="Tên người dùng" />
+                        <Text fx:id="nameText" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="body-text" text="Tên người dùng" />
                     </children>
                 </HBox>
             </children>
         </AnchorPane>
-        <GridPane gridLinesVisible="true" hgap="10.0" VBox.vgrow="ALWAYS">
+        <GridPane hgap="10.0" VBox.vgrow="ALWAYS">
             <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" />
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints />
                 <RowConstraints vgrow="ALWAYS" />
             </rowConstraints>
             <children>
-                <AnchorPane GridPane.rowIndex="1">
-                    <children>
-                        <Button mnemonicParsing="false" text="Cập nhật" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0" />
-                        <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                            <children>
-                        <Label text="Số điện thoại" />
-                        <CustomTextField fx:id="phonenumberText" text="0123456" />
-                        <Label text="Email" />
-                        <CustomTextField fx:id="emailText" text="mail" />
-                            </children>
+            <AnchorPane GridPane.columnIndex="1">
+               <children>
+                  <VBox prefHeight="200.0" prefWidth="100.0" styleClass="detail-pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                            <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="header-text" text="Mật khẩu" />
+                        <VBox spacing="10.0">
+                           <children>
+                              <VBox spacing="5.0">
+                                 <children>
+                                    <Label styleClass="body-text" text="Mật khẩu mới" />
+                                    <PasswordField fx:id="newPasswordTextField" />
+                                 </children>
+                              </VBox>
+                              <VBox spacing="5.0">
+                                 <children>
+                                    <Label styleClass="body-text" text="Xác nhận mật khẩu mới" />
+                                    <PasswordField fx:id="confirmNewPasswordTextField" />
+                                 </children>
+                              </VBox>
+                              <VBox fx:id="errorBox" prefHeight="40.0" prefWidth="305.0" />
+                           </children>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
                         </VBox>
-                    </children>
-                </AnchorPane>
-                <AnchorPane GridPane.columnIndex="1" GridPane.rowIndex="1">
-                    <children>
-                        <VBox spacing="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                            <children>
-                                <MFXPasswordField fx:id="currentPasswordTextField" allowEdit="false" disable="true" floatingText="Mật khẩu cũ" maxWidth="1.7976931348623157E308" minHeight="40.0" text="Mật khẩu cũ" />
-                                <MFXTextField fx:id="newPasswordTextField" floatingText="Mật khẩu mới" maxWidth="1.7976931348623157E308" minHeight="40.0" />
-                                <MFXPasswordField fx:id="confirmNewPasswordTextField" floatingText="Xác nhận mật khẩu mới" maxWidth="1.7976931348623157E308" minHeight="40.0" />
-                            </children>
-                        </VBox>
-                        <Button fx:id="confirmButton" mnemonicParsing="false" text="Xác nhận" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0" />
-                  <VBox fx:id="errorBox" layoutX="7.0" layoutY="137.0" prefHeight="40.0" prefWidth="305.0" />
-                    </children>
-                </AnchorPane>
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Thông tin liên lạc" />
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Mật khẩu" GridPane.columnIndex="1" />
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </VBox>
+                        <Button fx:id="confirmButton" mnemonicParsing="false" styleClass="action-button" text="Xác nhận" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0" />
+               </children>
+            </AnchorPane>
+            <AnchorPane>
+               <children>
+                  <VBox prefHeight="200.0" prefWidth="100.0" styleClass="detail-pane" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                            <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="header-text" text="Thông tin liên lạc" />
+                              <VBox spacing="10.0">
+                                  <children>
+                              <VBox spacing="5.0">
+                                 <children>
+                                    <Label styleClass="body-text" text="Số điện thoại" />
+                                    <CustomTextField fx:id="phonenumberText" styleClass="body-text" text="0123456" />
+                                 </children>
+                              </VBox>
+                              <VBox spacing="5.0">
+                                 <children>
+                                    <Label styleClass="body-text" text="Email" />
+                                    <CustomTextField fx:id="emailText" styleClass="body-text" text="mail" />
+                                 </children>
+                              </VBox>
+                                  </children>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                              </VBox>
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </VBox>
+                  <Button mnemonicParsing="false" styleClass="action-button" text="Cập nhật" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0" />
+               </children>
+            </AnchorPane>
             </children>
             <VBox.margin>
                 <Insets top="10.0" />
@@ -86,4 +125,8 @@
     <padding>
         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
     </padding>
+   <stylesheets>
+      <URL value="@../../../css/Screen.css" />
+      <URL value="@../../../css/addForm.css" />
+   </stylesheets>
 </VBox>

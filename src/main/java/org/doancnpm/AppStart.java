@@ -16,7 +16,7 @@ public class AppStart extends Application {
     public void start(Stage stage) throws IOException {
         Scene scene = new Scene(new StackPane());
 
-        NavController loginManager = new NavController(scene);
+        NavController loginManager = new NavController(scene,stage);
         loginManager.showLoginScreen();
 
         stage.setTitle("Quản lý đại lý");

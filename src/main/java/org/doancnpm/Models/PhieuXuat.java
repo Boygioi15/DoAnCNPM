@@ -12,8 +12,9 @@ public class PhieuXuat {
     Integer maDaiLy;
     Integer maNhanVien;
     Date ngayLapPhieu;
-    Double tongTien;
+    Long tongTien;
     String ghiChu;
+
 
     public Integer getID() {
         return ID;
@@ -55,11 +56,11 @@ public class PhieuXuat {
         this.ngayLapPhieu = ngayLapPhieu;
     }
 
-    public Double getTongTien() {
+    public Long getTongTien() {
         return tongTien;
     }
 
-    public void setTongTien(Double tongTien) {
+    public void setTongTien(Long tongTien) {
         this.tongTien = tongTien;
     }
 

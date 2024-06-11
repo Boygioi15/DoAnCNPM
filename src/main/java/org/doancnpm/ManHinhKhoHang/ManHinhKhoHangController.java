@@ -2,6 +2,7 @@ package org.doancnpm.ManHinhKhoHang;
 
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import javafx.animation.TranslateTransition;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -9,16 +10,22 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 
 import javafx.scene.layout.Region;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
 
+import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -33,7 +40,9 @@ import org.doancnpm.Filters.MatHangFilter;
 import org.doancnpm.Filters.PhieuThuFilter;
 import org.doancnpm.ManHinhDaiLy.TiepNhanDaiLyDialog;
 import org.doancnpm.Models.*;
+import org.doancnpm.Ultilities.CheckExist;
 import org.doancnpm.Ultilities.DayFormat;
+import org.doancnpm.Ultilities.MoneyFormatter;
 import org.doancnpm.Ultilities.PopDialog;
 import javafx.scene.text.Text;
 
@@ -41,40 +50,63 @@ import java.io.*;
 import java.net.URL;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.List;
+import java.text.SimpleDateFormat;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class ManHinhKhoHangController implements Initializable {
     @FXML private Region manHinhKhoHang;
+    @FXML private Button filterButton;
+
     @FXML private TableView mainTableView;
-    @FXML private Button refreshButton;
     @FXML private MFXTextField maMHTextField;
     @FXML private MFXTextField tenMHTextField;
     @FXML private MFXComboBox<DonViTinh> dvtComboBox;
     @FXML private MFXComboBox<String> soLuongComboBox;
+    @FXML private Region filterPane;
+    @FXML private Region filterPaneContainer;
+    @FXML private Button toggleFilterButton;
 
-    @FXML private MenuItem addDirectButton;
-    @FXML private MenuItem addExcelButton;
+    @FXML
+    private MenuItem addDirectButton;
+    @FXML
+    private MenuItem addExcelButton;
+    @FXML
+    private MenuItem exportExcelButton;
 
-    @FXML private Text maMHText;
-    @FXML private Text tenMHText;
-    @FXML private Text dvtText;
-    @FXML private Text donGiaNhapText;
-    @FXML private Text donGiaXuatText;
-    @FXML private Text soLuongText;
-    @FXML private TextArea ghiChuTextArea;
+    @FXML
+    private Text maMHText;
+    @FXML
+    private Text tenMHText;
+    @FXML
+    private Text dvtText;
+    @FXML
+    private Text donGiaNhapText;
+    @FXML
+    private Text donGiaXuatText;
+    @FXML
+    private Text soLuongText;
+    @FXML
+    private TextArea ghiChuTextArea;
+
+    @FXML private FlowPane emptySelectionPane;
 
     @FXML private MasterDetailPane masterDetailPane;
 
-    @FXML private Region masterPane;
-    @FXML private Button toggleDetailButton;
-    @FXML private Region detailPane;
+    @FXML
+    private Region masterPane;
+    @FXML
+    private Button toggleDetailButton;
+    @FXML
+    private Region detailPane;
 
     private final ObservableList<MatHang> dsMatHang = FXCollections.observableArrayList();
     private final ObservableList<MatHang> dsMatHangFiltered = FXCollections.observableArrayList();
     private final MatHangFilter filter = new MatHangFilter();
 
     NhanVien nhanVienLoggedIn = null;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initTableView();
@@ -87,55 +119,80 @@ public class ManHinhKhoHangController implements Initializable {
 
         updateListFromDatabase();
         initDetailPane();
+
+        initFilterPane();
         //init data
     }
+
     public void setVisibility(boolean visibility) {
         manHinhKhoHang.setVisible(visibility);
     }
+
     public void setNhanVienLoggedIn(NhanVien nhanVienLoggedIn) {
         this.nhanVienLoggedIn = nhanVienLoggedIn;
     }
+
     //init
-    private void initDetailPane(){
+    private void initDetailPane() {
         masterDetailPane.setDetailNode(detailPane);
         masterDetailPane.setMasterNode(masterPane);
 
-        masterDetailPane.widthProperty().addListener(ob ->{
-            detailPane.setMinWidth(masterDetailPane.getWidth()*0.3);
-            detailPane.setMaxWidth(masterDetailPane.getWidth()*0.3);
+        masterDetailPane.widthProperty().addListener(ob -> {
+            detailPane.setMinWidth(masterDetailPane.getWidth() * 0.3);
+            detailPane.setMaxWidth(masterDetailPane.getWidth() * 0.3);
         });
         mainTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, matHang) -> {
             UpdateDetailPane((MatHang) matHang);
         });
+
+        manHinhKhoHang.widthProperty().addListener(ob -> {
+            if(manHinhKhoHang.getWidth()>1030){
+                toggleDetailButton.setDisable(false);
+                OpenDetailPanel();
+            }else{
+                toggleDetailButton.setDisable(true);
+                CloseDetailPanel();
+            }
+        });
     }
+
     private void initEvent() {
         addDirectButton.setOnAction(_ -> {
             OpenDirectAddDialog();
         });
-        refreshButton.setOnAction(_ -> {
-            resetFilter();
+        addExcelButton.setOnAction(_ -> {
+            importDialog();
         });
-        addExcelButton.setOnAction(_ ->{
+        exportExcelButton.setOnAction(_ -> {
             exportDialog();
         });
-        toggleDetailButton.setOnAction(ob ->{
-            if(masterDetailPane.isShowDetailNode()){
+        toggleDetailButton.setOnAction(ob -> {
+            if (masterDetailPane.isShowDetailNode()) {
                 CloseDetailPanel();
-            }
-            else{
+            } else {
                 OpenDetailPanel();
             }
         });
+        toggleFilterButton.setOnAction(ob ->{
+            if(filterPane.isVisible()){
+                CloseFilterPanel();
+            }
+            else{
+                OpenFilterPanel();
+            }
+        });
     }
+
     private void initDatabaseBinding() {
         MatHangDAO.getInstance().AddDatabaseListener(_ -> updateListFromDatabase());
-
     }
+
     private void initUIDataBinding() {
         mainTableView.setItems(dsMatHangFiltered);
         initFilterBinding();
     }
-    private void initFilterBinding(){
+
+    private void initFilterBinding() {
         filter.setInput(dsMatHang);
 
         maMHTextField.textProperty().addListener(_ -> {
@@ -147,29 +204,28 @@ public class ManHinhKhoHangController implements Initializable {
             filterList();
         });
         dvtComboBox.valueProperty().addListener(_ -> {
-            if(dvtComboBox.getValue() == null){
+            if (dvtComboBox.getValue() == null) {
                 filter.setMaDVT(null);
-            }
-            else {
+            } else {
                 filter.setMaDVT(dvtComboBox.getValue().getId());
             }
             filterList();
         });
-        soLuongComboBox.valueProperty().addListener(_ ->{
-            if(soLuongComboBox.getValue() == null){
+        soLuongComboBox.valueProperty().addListener(_ -> {
+            if (soLuongComboBox.getValue() == null) {
                 filter.setTonKho(null);
-            }else{
-                if(soLuongComboBox.getValue().equals("Hết hàng")){
+            } else {
+                if (soLuongComboBox.getValue().equals("Hết hàng")) {
                     filter.setTonKho(true);
-                }
-                else{
+                } else {
                     filter.setTonKho(false);
                 }
             }
 
         });
     }
-    private void initFilterComboboxData(){
+
+    private void initFilterComboboxData() {
         try {
             ObservableList<DonViTinh> donViTinhs = FXCollections.observableArrayList(DonViTinhDAO.getInstance().QueryAll());
 
@@ -190,18 +246,23 @@ public class ManHinhKhoHangController implements Initializable {
             dvtComboBox.setConverter(quanStringConverter);
             // Đặt DataSource cho ComboBox
             dvtComboBox.setItems(donViTinhs);
-        }
-        catch (SQLException e) {
-            PopDialog.popErrorDialog("Lấy dữ liệu các đơn vị tính thất bại",e.getMessage());
+        } catch (SQLException e) {
+            PopDialog.popErrorDialog("Lấy dữ liệu các đơn vị tính thất bại", e.getMessage());
         }
         soLuongComboBox.getItems().addAll("Hết hàng", "Còn hàng");
     }
+    private void initFilterPane(){
+        Rectangle clip = new Rectangle();
+        clip.widthProperty().bind(filterPaneContainer.widthProperty());
+        clip.heightProperty().bind(filterPaneContainer.heightProperty());
+        filterPaneContainer.setClip(clip);
+    }
     private void initTableView() {
         // Tạo các cột cho TableView
-        TableColumn<MatHang, String> maMHCol = new TableColumn<>("Mã mặt hàng");
+        TableColumn<MatHang, String> maMHCol = new TableColumn<>("Mã");
         maMHCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getMaMatHang()));
 
-        TableColumn<MatHang, String> tenMHCol = new TableColumn<>("Mã mặt hàng");
+        TableColumn<MatHang, String> tenMHCol = new TableColumn<>("Tên mặt hàng");
         tenMHCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getTenMatHang()));
 
         TableColumn<MatHang, String> dvtCol = new TableColumn<>("Đơn vị tính");
@@ -209,19 +270,56 @@ public class ManHinhKhoHangController implements Initializable {
             DonViTinh dvt = null;
             try {
                 dvt = DonViTinhDAO.getInstance().QueryID(data.getValue().getMaDVT());
-            } catch (SQLException _) {}
+            } catch (SQLException _) {
+            }
             return new SimpleObjectProperty<>(dvt.getTenDVT());
         });
 
-        TableColumn<MatHang, Double> donGiaNhapCol = new TableColumn<>("Đơn giá nhập");
-        donGiaNhapCol.setCellValueFactory(new PropertyValueFactory<>("donGiaNhap"));
+        TableColumn<MatHang, String> donGiaNhapCol = new TableColumn<>("Đơn giá nhập");
+        donGiaNhapCol.setCellValueFactory(data ->{
+            return  new SimpleStringProperty(MoneyFormatter.convertLongToString(data.getValue().getDonGiaNhap()));
+        });
+        TableColumn<MatHang, String> donGiaXuatCol = new TableColumn<>("Đơn giá xuất");
+        donGiaXuatCol.setCellValueFactory(data ->{
+            return  new SimpleStringProperty(MoneyFormatter.convertLongToString(data.getValue().getDonGiaXuat()));
+        });
 
         TableColumn<MatHang, Integer> soLuongCol = new TableColumn<>("Số lượng");
-        soLuongCol.setCellValueFactory(new PropertyValueFactory<>("soLuong"));
+        soLuongCol.setCellValueFactory(data ->{
+            return new SimpleObjectProperty<>(data.getValue().getSoLuong());
+        });
 
-        TableColumn<PhieuThu, Boolean> selectedCol = new TableColumn<>("Selected");
-        selectedCol.setCellValueFactory(new PropertyValueFactory<>("selected"));
-        selectedCol.setCellFactory(tc -> new CheckBoxTableCell<>());
+        TableColumn<MatHang, Boolean> selectedCol = new TableColumn<>( );
+        HBox headerBox = new HBox();
+        CheckBox headerCheckBox = new CheckBox();
+        headerBox.getChildren().add(headerCheckBox);
+        headerBox.setAlignment(Pos.CENTER); // Center align the content
+        headerCheckBox.setDisable(true);
+        selectedCol.setGraphic(headerBox);
+        selectedCol.setSortable(false);
+        selectedCol.setCellValueFactory( new PropertyValueFactory<>( "selected" ));
+        selectedCol.setCellFactory(new Callback<TableColumn<MatHang, Boolean>, TableCell<MatHang, Boolean>>() {
+            @Override
+            public TableCell<MatHang, Boolean> call(TableColumn<MatHang, Boolean> param) {
+                TableCell<MatHang, Boolean> cell = new TableCell<MatHang, Boolean>() {
+                    @Override
+                    protected void updateItem(Boolean item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty || item == null) {
+                            setGraphic(null);
+                        } else {
+                            CheckBox checkBox = new CheckBox();
+                            checkBox.selectedProperty().bindBidirectional(((MatHang) getTableRow().getItem()).selectedProperty());
+                            checkBox.getStyleClass().add("cell-center");
+                            setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+                            setGraphic(checkBox);
+                        }
+                    }
+                };
+                cell.getStyleClass().add("cell-center");
+                return cell;
+            }
+        });
 
         //action column
         TableColumn actionCol = new TableColumn("Action");
@@ -232,8 +330,8 @@ public class ManHinhKhoHangController implements Initializable {
                     @Override
                     public TableCell call(final TableColumn<MatHang, String> param) {
                         final TableCell<MatHang, String> cell = new TableCell<MatHang, String>() {
-                            final Button suaBtn = new javafx.scene.control.Button("Sửa");
-                            final Button xoaBtn = new javafx.scene.control.Button("Xóa");
+                            final Button suaBtn = new javafx.scene.control.Button();
+                            final Button xoaBtn = new javafx.scene.control.Button();
 
                             @Override
                             public void updateItem(String item, boolean empty) {
@@ -243,46 +341,46 @@ public class ManHinhKhoHangController implements Initializable {
                                     setText(null);
                                 }
                                 else {
+                                    Image trashCan = new Image(getClass().getResourceAsStream("/image/trash_can.png"));
+                                    ImageView trashImage = new ImageView(trashCan);
+                                    Image edit = new Image(getClass().getResourceAsStream("/image/edit.png"));
+                                    ImageView editImage = new ImageView(edit);
+                                    trashImage.setFitWidth(20);
+                                    trashImage.setFitHeight(20);
+
+                                    editImage.setFitWidth(20);
+                                    editImage.setFitHeight(20);
+
+                                    xoaBtn.setGraphic(trashImage);
+                                    suaBtn.setGraphic(editImage);
+
                                     xoaBtn.setOnAction(event -> {
                                         MatHang mh = getTableView().getItems().get(getIndex());
                                         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                                         alert.setTitle("Xóa đại lý");
-                                        alert.setHeaderText("Xác nhận xóa mặt hàng " + mh.getTenMatHang()+ " ?");
+                                        alert.setHeaderText("Xác nhận xóa mặt hàng " + mh.getTenMatHang() + " ?");
 
                                         Optional<ButtonType> result = alert.showAndWait();
-                                        if (result.get() == ButtonType.OK){
+                                        if (result.get() == ButtonType.OK) {
                                             try {
                                                 MatHangDAO.getInstance().Delete(mh.getID());
                                                 PopDialog.popSuccessDialog("Xóa mặt hàng "+ mh.getTenMatHang() + " thành công");
                                             }
                                             catch (SQLException e) {
-                                                PopDialog.popErrorDialog("Xóa mặt hàng "+ mh.getTenMatHang() + " thành công",e.getMessage());
+                                                PopDialog.popErrorDialog("Xóa mặt hàng "+ mh.getTenMatHang() + " thất bại",e.getMessage());
                                             }
                                         }
                                     });
                                     suaBtn.setOnAction(_ -> {
                                         try {
                                             MatHang matHang = getTableView().getItems().get(getIndex());
-                                            new ThemMoiMatHangDialog(matHang).showAndWait().ifPresent(matHangInfo -> {
-                                                //set "database" info
-                                                matHangInfo.setID(matHang.getID());
-                                                matHangInfo.setDonGiaXuat(matHang.getDonGiaXuat());
-                                                matHangInfo.setSoLuong(matHang.getSoLuong());
-                                                try {
-                                                    MatHangDAO.getInstance().Update(matHang.getID(),matHangInfo);
-                                                    PopDialog.popSuccessDialog("Cập nhật mặt hàng "+matHangInfo.getMaMatHang()+" thành công");
-                                                } catch (SQLException e) {
-                                                    PopDialog.popErrorDialog("Cập nhật mặt hàng "+matHangInfo.getMaMatHang()+" thất bại",
-                                                            e.getMessage());
-                                                }
-                                                //mainTableView.getItems().set(selectedIndex, response);
-                                            });
+                                            new ThemMoiMatHangDialog(matHang).showAndWait();
                                         } catch(IOException exc) {
                                             PopDialog.popErrorDialog("Không thể mở dialog thêm mặt hàng");
                                         }
                                     });
                                     HBox hbox = new HBox();
-                                    hbox.getChildren().addAll(suaBtn,xoaBtn);
+                                    hbox.getChildren().addAll(suaBtn, xoaBtn);
                                     hbox.setSpacing(5);
                                     hbox.setPrefWidth(USE_COMPUTED_SIZE);
                                     hbox.setPrefHeight(USE_COMPUTED_SIZE);
@@ -307,18 +405,28 @@ public class ManHinhKhoHangController implements Initializable {
                 soLuongCol,
                 actionCol
         );
+
+        maMHCol.getStyleClass().add("column-header-left");
+        tenMHCol.getStyleClass().add("column-header-left");
+        dvtCol.getStyleClass().add("column-header-left");
+        donGiaNhapCol.getStyleClass().add("column-header-left");
+        soLuongCol.getStyleClass().add("column-header-left");
+
+        selectedCol.getStyleClass().add("column-header-center");
+        actionCol.getStyleClass().add("column-header-center");
+
         mainTableView.setEditable(true);
         mainTableView.widthProperty().addListener(ob -> {
             double width = mainTableView.getWidth();
             selectedCol.setPrefWidth(width*0.1);
-            maMHCol.setPrefWidth(width*0.1);
-            dvtCol.setPrefWidth(width*0.1);
-            tenMHCol.setPrefWidth(width*0.3);
+            maMHCol.setPrefWidth(width*0.12);
+            dvtCol.setPrefWidth(width*0.12);
+            tenMHCol.setPrefWidth(width*0.24);
             donGiaNhapCol.setPrefWidth(width*0.15);
-            soLuongCol.setPrefWidth(width*0.1);
+            soLuongCol.setPrefWidth(width*0.12);
             actionCol.setPrefWidth(width*0.15);
         });
-        mainTableView.setEditable( true );
+        mainTableView.setEditable(true);
         mainTableView.setPrefWidth(1100);
 
     }
@@ -326,29 +434,47 @@ public class ManHinhKhoHangController implements Initializable {
     //detail pane
     public void UpdateDetailPane(MatHang matHang){
         if(matHang==null){
-            CloseDetailPanel();
+            emptySelectionPane.setVisible(true);
             return;
         }
+        emptySelectionPane.setVisible(false);
         maMHText.setText(matHang.getMaMatHang());
         tenMHText.setText(matHang.getTenMatHang());
-        try{
+        try {
             DonViTinh dvt = DonViTinhDAO.getInstance().QueryID(matHang.getMaDVT());
             dvtText.setText(dvt.getTenDVT());
-            donGiaNhapText.setText(Double.toString(matHang.getDonGiaNhap()));
-            donGiaXuatText.setText(Double.toString(matHang.getDonGiaXuat()));
+            donGiaNhapText.setText(MoneyFormatter.convertLongToString(matHang.getDonGiaNhap()));
+            donGiaXuatText.setText(MoneyFormatter.convertLongToString(matHang.getDonGiaXuat()));
             soLuongText.setText(Integer.toString(matHang.getSoLuong()));
             ghiChuTextArea.setText(matHang.getGhiChu());
+        } catch (SQLException _) {
         }
-        catch (SQLException _){}
     }
     public void OpenDetailPanel(){
-        toggleDetailButton.setText(">");
         masterDetailPane.setShowDetailNode(true);
 
     }
-    public void CloseDetailPanel(){
+
+    public void CloseDetailPanel() {
         masterDetailPane.setShowDetailNode(false);
-        toggleDetailButton.setText("<");
+    }
+
+    public void OpenFilterPanel(){
+        TranslateTransition tt = new TranslateTransition(Duration.seconds(0.2), filterPane);
+        tt.setToX(0);
+        tt.play();
+        filterPane.setVisible(true);
+        tt.setOnFinished(e -> {
+        });
+    }
+    public void CloseFilterPanel(){
+        TranslateTransition tt = new TranslateTransition(Duration.seconds(0.2), filterPane);
+        tt.setToX(-filterPane.getWidth());
+        tt.play();
+
+        tt.setOnFinished(e -> {
+            filterPane.setVisible(false);
+        });
     }
 
     //import - export
@@ -366,13 +492,13 @@ public class ManHinhKhoHangController implements Initializable {
             importFromExcel(selectedFile.getAbsolutePath());
         }
     }
-    public void importFromExcel(String filePath)  {
+
+    public void importFromExcel(String filePath) {
         File file = new File(filePath);
         FileInputStream fis = null;
         try {
             fis = new FileInputStream(file);
-        }
-        catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             PopDialog.popErrorDialog("Không thể mở file excel");
             return;
         }
@@ -380,54 +506,44 @@ public class ManHinhKhoHangController implements Initializable {
         XSSFWorkbook workbook = null;
         try {
             workbook = new XSSFWorkbook(fis);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             PopDialog.popErrorDialog("Có lỗi trong quá trình thực hiện", e.getMessage());
             return;
         }
         XSSFSheet sheet = workbook.getSheetAt(0); // Assuming data is in the first sheet
-
-        Date ngayLapPhieu = new Date(System.currentTimeMillis());
-
-        for (int i = 1; i <= sheet.getLastRowNum()-1; i++) {
+        boolean hasError = true; // Biến để theo dõi nếu có lỗi xảy ra
+        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
             if (row != null) { // Kiểm tra xem dòng có tồn tại hay không
-                Cell maDaiLyCell = row.getCell(0);
-                Cell maNhanVienCell = row.getCell(1);
-                Cell tienThuCell = row.getCell(2);
+                Cell tenMatHangCell = row.getCell(0);
+                Cell donViTinhCell = row.getCell(1);
+                Cell donGiaNhapCell = row.getCell(2);
                 Cell ghiChuCell = row.getCell(3);
 
-                PhieuThu phieuThu = new PhieuThu();
-                String maDaiLy = maDaiLyCell.getStringCellValue();
-                String maNhanVien = maNhanVienCell.getStringCellValue();
-                int idDL, idNV;
+                MatHang matHang = new MatHang();
+                String donViTinh = donViTinhCell.getStringCellValue().trim();
 
-                try{
-                    idNV = Integer.parseInt(maNhanVien.substring(2));
+                Integer dvtID = handleDVT(donViTinh);
+                if (dvtID == null) {
+                   continue;
                 }
-                catch (NumberFormatException e){
-                    PopDialog.popErrorDialog("Định dạng mã nhân viên không đúng");
-                    return;
+                else{
+                    hasError = false;
                 }
-                try{
-                    idDL = Integer.parseInt(maDaiLy.substring(2));
-                }
-                catch (NumberFormatException e){
-                    PopDialog.popErrorDialog("Định dạng mã đại lý không đúng");
-                    return;
-                }
+                matHang.setMaDVT(dvtID);
 
-                phieuThu.setMaDaiLy(idDL);
-                phieuThu.setMaNhanVien(idNV);
-                //phieuThu.setSoTienThu((int) tienThuCell.getNumericCellValue());
-                phieuThu.setGhiChu(ghiChuCell.getStringCellValue());
-
-                phieuThu.setNgayLap(ngayLapPhieu);
+                matHang.setTenMatHang(tenMatHangCell.getStringCellValue());
+                matHang.setDonGiaNhap((long)(donGiaNhapCell.getNumericCellValue()));
+                if (ghiChuCell != null) {
+                    matHang.setGhiChu(ghiChuCell.getStringCellValue());
+                } else {
+                    matHang.setGhiChu(null);
+                }
+                matHang.setSoLuong(0);
                 try {
-                    PhieuThuDAO.getInstance().Insert(phieuThu); // Thêm đối tượng vào cơ sở dữ liệu
-                }
-                catch (SQLException e) {
-                    PopDialog.popErrorDialog("Thêm mới phiếu thu thất bại", e.getMessage());
+                    MatHangDAO.getInstance().Insert(matHang); // Thêm đối tượng vào cơ sở dữ liệu
+                } catch (SQLException e) {
+                    PopDialog.popErrorDialog("Thêm mới mặt hàng thất bại", e.getMessage());
                     return;
                 }
             }
@@ -436,12 +552,47 @@ public class ManHinhKhoHangController implements Initializable {
         try {
             workbook.close();
             fis.close();
-            PopDialog.popSuccessDialog("Thêm danh sách phiếu thu từ file excel thành công");
-        }
-        catch (IOException e) {
+            if (!hasError) { // Chỉ hiển thị dialog thành công nếu không có lỗi nào
+                PopDialog.popSuccessDialog("Thêm danh sách mặt hàng từ file excel thành công");
+            }
+            else{
+                PopDialog.popErrorDialog("Thêm danh sách mặt hàng từ file excel không thành công");
+            }
+        } catch (IOException e) {
             PopDialog.popErrorDialog("Có lỗi trong quá trình thực hiện", e.getMessage());
         }
+    }
 
+    private Integer handleDVT(String dvtName) {
+        try {
+            if (!CheckExist.checkDVT(dvtName)) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Xác nhận");
+                alert.setHeaderText(null);
+                alert.setContentText("Loại đơn vị tính: " + dvtName + " không tồn tại. Bạn có muốn thêm đơn vị tính mới không?");
+
+                ButtonType result = alert.showAndWait().orElse(ButtonType.CANCEL);
+
+                if (result == ButtonType.OK) {
+                    DonViTinh dvt = new DonViTinh();
+                    dvt.setTenDVT(dvtName);// Tạo một đối tượng mới cho đơn vị tính
+                    DonViTinhDAO.getInstance().Insert(dvt); // Thêm đơn vị tính mới vào cơ sở dữ liệu
+                    Alert infoAlert = new Alert(Alert.AlertType.INFORMATION);
+                    infoAlert.setTitle("Thông báo");
+                    infoAlert.setHeaderText(null);
+                    infoAlert.setContentText("Đơn vị tính " + dvtName + " đã được thêm thành công!");
+                    infoAlert.showAndWait();
+                    return DonViTinhDAO.getInstance().QueryMostRecent().getId(); // Trả về ID của đơn vị tính mới
+                } else {
+                    return null;
+                }
+            } else {
+                return DonViTinhDAO.getInstance().QueryName(dvtName).getId(); // Trả về ID của đơn vị tính đã tồn tại
+            }
+        } catch (SQLException e) {
+            PopDialog.popErrorDialog("Có lỗi trong quá trình xử lý đơn vị tính", e.getMessage());
+            return null;
+        }
     }
 
     public void exportDialog() {
@@ -451,7 +602,8 @@ public class ManHinhKhoHangController implements Initializable {
 
         // Tạo tên file với định dạng "Export_ngay_thang_nam.xlsx"
         Date ngayHienTai = new Date(System.currentTimeMillis());
-        String fileName = "DsPhieuThu_" + DayFormat.GetDayStringFormatted(ngayHienTai) + ".xlsx";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd_MM_yyyy");
+        String fileName = "DsMatHang_" + dateFormat.format(ngayHienTai) + ".xlsx";
 
         // Thiết lập tên file mặc định cho hộp thoại lưu
         File initialDirectory = new File(System.getProperty("user.home"));
@@ -469,89 +621,63 @@ public class ManHinhKhoHangController implements Initializable {
         }
 
     }
+
     public void exportToExcel(String filePath) {
-        /*
         // Tạo hoặc mở tệp Excel
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = workbook.createSheet("PhieuThuData"); // Tạo một sheet mới hoặc sử dụng sheet hiện có
+        XSSFSheet sheet = workbook.createSheet("MatHangData"); // Tạo một sheet mới hoặc sử dụng sheet hiện có
 
         // Tạo hàng đầu tiên với các tiêu đề cột
         Row headerRow = sheet.createRow(0);
-        String[] columnTitles = {"Mã phiếu thu", "Mã đại lý", "Mã nhân viên", "Số tiền thu", "Ngày lập phiếu"};
+        String[] columnTitles = {"Mã mặt hàng", "Tên mặt hàng", "Đơn vị tính", "Đơn giá nhập", "Đơn giá xuất", "Số lượng", "Ghi chú"};
         int cellnum = 0;
         for (String title : columnTitles) {
             Cell cell = headerRow.createCell(cellnum++);
             cell.setCellValue(title);
         }
 
-        // Tạo CellStyle cho định dạng ngày
-        CreationHelper createHelper = workbook.getCreationHelper();
-        CellStyle dateCellStyle = workbook.createCellStyle();
-        dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("dd/MM/yyyy"));
-
         int rownum = 1; // Bắt đầu từ hàng thứ 2 sau tiêu đề
-        for (PhieuThu phieuThu : dsMatHangFiltered) {
+        for (MatHang matHang : dsMatHangFiltered) {
             Row row = sheet.createRow(rownum++);
             cellnum = 0;
-            row.createCell(cellnum++).setCellValue(phieuThu.getMaPhieuThu());
+            row.createCell(cellnum++).setCellValue(matHang.getMaMatHang());
+            row.createCell(cellnum++).setCellValue(matHang.getTenMatHang());
 
-            DaiLy daiLy = null;
+            DonViTinh donViTinh = new DonViTinh();
             try {
-                daiLy = DaiLyDAO.getInstance().QueryID(phieuThu.getMaDaiLy());
-            } catch (SQLException _) {}
-            if (daiLy != null) {
-                row.createCell(cellnum++).setCellValue(daiLy.getMaDaiLy());
+                donViTinh = DonViTinhDAO.getInstance().QueryID(matHang.getMaDVT());
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            if (donViTinh != null) {
+                row.createCell(cellnum++).setCellValue(donViTinh.getTenDVT());
             } else {
-                row.createCell(cellnum++).setCellValue("???"); // Or handle the null case appropriately
+                row.createCell(cellnum++).setCellValue("???");
             }
 
-            NhanVien nhanVien = null;
-            try {
-                nhanVien = NhanVienDAO.getInstance().QueryID(phieuThu.getMaNhanVien());
-            } catch (SQLException _) {}
-            if (nhanVien != null) {
-                row.createCell(cellnum++).setCellValue(nhanVien.getMaNhanVien());
-            } else {
-                row.createCell(cellnum++).setCellValue("???"); // Or handle the null case appropriately
-            }
-
-            row.createCell(cellnum++).setCellValue(phieuThu.getSoTienThu());
-
-            // Định dạng ngày
-            Cell dateCell = row.createCell(cellnum++);
-            if (phieuThu.getNgayLap() != null) {
-                dateCell.setCellValue(phieuThu.getNgayLap());
-                dateCell.setCellStyle(dateCellStyle);
-            } else {
-                dateCell.setCellValue("???"); // Or handle the null case appropriately
-            }
+            row.createCell(cellnum++).setCellValue(matHang.getDonGiaNhap());
+            row.createCell(cellnum++).setCellValue(matHang.getDonGiaXuat());
+            row.createCell(cellnum++).setCellValue(matHang.getSoLuong());
+            row.createCell(cellnum++).setCellValue(matHang.getGhiChu());
         }
-
+        // Tự động điều chỉnh độ rộng của các cột
+        for (int i = 0; i < columnTitles.length; i++) {
+            sheet.autoSizeColumn(i);
+        }
         // Lưu tệp Excel
         try (FileOutputStream fos = new FileOutputStream(filePath)) {
             workbook.write(fos);
             workbook.close();
+            PopDialog.popSuccessDialog("Xuất file excel thành công");
         } catch (IOException e) {
             PopDialog.popErrorDialog("Xuất file excel thất bại", e.getMessage());
         }
-
-         */
     }
 
     //functionalities
     public void OpenDirectAddDialog() {
         try {
-            new ThemMoiMatHangDialog().showAndWait().ifPresent(
-                    matHangAdded -> {
-                        try {
-                            MatHangDAO.getInstance().Insert(matHangAdded);
-                            PopDialog.popSuccessDialog("Thêm mới mặt hàng thành công");
-                        }
-                        catch (SQLException e) {
-                            PopDialog.popErrorDialog("Thêm mới mặt hàng thất bại", e.getMessage());
-                        }
-                    }
-            );
+            new ThemMoiMatHangDialog().showAndWait();
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -570,11 +696,13 @@ public class ManHinhKhoHangController implements Initializable {
             throw new RuntimeException(e);
         }
     }
-    private void filterList(){
+
+    private void filterList() {
         dsMatHangFiltered.clear();
         dsMatHangFiltered.addAll(filter.Filter());
     }
-    private void resetFilter(){
+
+    private void resetFilter() {
         maMHTextField.clear();
         tenMHTextField.clear();
         dvtComboBox.clearSelection();

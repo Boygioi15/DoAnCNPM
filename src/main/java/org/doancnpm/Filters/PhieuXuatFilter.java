@@ -3,6 +3,7 @@ package org.doancnpm.Filters;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.doancnpm.Models.PhieuXuat;
+import org.doancnpm.Ultilities.CheckExist;
 
 public class PhieuXuatFilter implements IFilter{
     ObservableList<PhieuXuat> input;
@@ -31,7 +32,7 @@ public class PhieuXuatFilter implements IFilter{
 
         for (PhieuXuat phieuXuat : input) {
             boolean matches = true;
-            if (maPhieuXuat != null && !maPhieuXuat.isEmpty() && !phieuXuat.getMaPhieuXuat().contains(maPhieuXuat)) {
+            if (maPhieuXuat != null && !maPhieuXuat.isEmpty() && !CheckExist.normalize(phieuXuat.getMaPhieuXuat()).contains(CheckExist.normalize(maPhieuXuat))) {
                 matches = false;
             }
             if (maDaiLy != null && !phieuXuat.getMaDaiLy().equals(maDaiLy)) {

@@ -2,3 +2,8 @@
     -fx-padding: 0 1 0 1;
     visibility: false;
 }
+.split-pane {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+}

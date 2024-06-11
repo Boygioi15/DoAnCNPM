@@ -11,6 +11,7 @@ import javafx.util.StringConverter;
 import org.controlsfx.control.SearchableComboBox;
 import org.doancnpm.DAO.DonViTinhDAO;
 import org.doancnpm.Models.*;
+import org.doancnpm.Ultilities.MoneyFormatter;
 import org.doancnpm.Ultilities.PopDialog;
 
 import java.net.URL;
@@ -25,15 +26,32 @@ public class ThemMoiMatHangDialogController implements Initializable {
     @FXML private TextField donGiaNhapTextField;
     @FXML private TextArea ghiChuTextArea;
 
+    MatHang initialValue;
+
+
+    public String getValidData() {
+        if (tenMHTextField.getText().isEmpty()) {
+            return "Tên mặt hàng không được để trống";
+        }
+        if (dvtComboBox.getValue() == null) {
+            return "Đơn vị tính không được để trống";
+        }
+        if (donGiaNhapTextField.getText().isEmpty()) {
+            return "Đơn giá nhập không được để trống";
+        }
+            return "";
+    }
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         displayDataInCb();
+        MoneyFormatter.MoneyFormatTextField(donGiaNhapTextField);
     }
 
     public void setInitialValue(MatHang matHang){
         if(matHang==null){
             return;
         }
+        initialValue = matHang;
         try {
             DonViTinh donViTinh = DonViTinhDAO.getInstance().QueryID(matHang.getMaDVT());
             dvtComboBox.setValue(donViTinh);
@@ -41,7 +59,7 @@ public class ThemMoiMatHangDialogController implements Initializable {
             PopDialog.popErrorDialog("Không thể lấy dữ liệu đơn vị tính");
         }
         tenMHTextField.setText(matHang.getTenMatHang());
-        donGiaNhapTextField.setText(Double.toString(matHang.getDonGiaNhap()));
+        donGiaNhapTextField.setText(MoneyFormatter.convertLongToString(matHang.getDonGiaNhap()));
         ghiChuTextArea.setText(matHang.getGhiChu());
     }
     //validator
@@ -78,11 +96,16 @@ public class ThemMoiMatHangDialogController implements Initializable {
 
     public MatHang getMatHang(){
         MatHang matHang = new MatHang();
+        if(initialValue!=null){
+            matHang.setID(initialValue.getID());
+            matHang.setMaMatHang(initialValue.getMaMatHang());
+        }
         matHang.setTenMatHang(tenMHTextField.getText());
-        matHang.setDonGiaNhap(Double.parseDouble(donGiaNhapTextField.getText()));
+        matHang.setDonGiaNhap(MoneyFormatter.getLongValueFromTextField(donGiaNhapTextField));
         matHang.setMaDVT(dvtComboBox.getValue().getId());
         matHang.setGhiChu( ghiChuTextArea.getText());
         return matHang;
     }
+
 
 }

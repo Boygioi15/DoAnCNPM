@@ -2,7 +2,6 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -13,44 +12,39 @@
 <?import javafx.scene.layout.VBox?>
 <?import org.controlsfx.control.SearchableComboBox?>
 
-<VBox
-        fx:id="ThemMoiMatHangDialog"
-        maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-        prefWidth="500.0" spacing="10.0" style="-fx-background-color: #ffffff;"
-        xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-        fx:controller="org.doancnpm.ManHinhKhoHang.ThemMoiMatHangDialogController">
+<VBox fx:id="ThemMoiMatHangDialog" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="500.0" spacing="20.0" styleClass="background" stylesheets="@../../../css/addForm.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.doancnpm.ManHinhKhoHang.ThemMoiMatHangDialogController">
     <children>
-        <Label text="Thêm mới mặt hàng" />
+        <Label styleClass="title-text" text="Thêm mới mặt hàng" />
+      <HBox styleClass="separator" />
         <AnchorPane>
             <children>
                 <HBox alignment="CENTER" prefWidth="200.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
             </children>
         </AnchorPane>
-        <Separator prefWidth="200.0" />
-        <GridPane alignment="CENTER_LEFT" hgap="20.0" vgap="20.0">
+        <GridPane alignment="CENTER_LEFT" hgap="25.0" vgap="20.0">
             <columnConstraints>
-                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="15.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" />
                 <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-                <Label text="Tên:" />
-                <Label text="Đơn vị tính:" GridPane.rowIndex="1" />
-                <Label text="Đơn giá nhập:" GridPane.rowIndex="2" />
-                <SearchableComboBox fx:id="dvtComboBox" promptText="-Chọn đơn vị tính-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <Label styleClass="body-text-header" text="Tên mặt hàng:" />
+                <Label styleClass="body-text-header" text="Đơn vị tính:" GridPane.rowIndex="1" />
+                <Label styleClass="body-text-header" text="Đơn giá nhập:" GridPane.rowIndex="2" />
+                <SearchableComboBox fx:id="dvtComboBox" promptText="-Chọn đơn vị tính-" styleClass="combobox" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                 <TextField fx:id="donGiaNhapTextField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                <Label text="Ghi chú:" GridPane.rowIndex="3" />
+                <Label styleClass="body-text-header" text="Ghi chú:" GridPane.rowIndex="3" />
             <VBox GridPane.columnIndex="1">
                <children>
                   <TextField fx:id="tenMHTextField" />
                </children>
             </VBox>
-            <TextArea fx:id="ghiChuTextArea" prefHeight="100.0" prefRowCount="5" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <TextArea fx:id="ghiChuTextArea" prefHeight="60.0" prefRowCount="5" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
             </children>
         </GridPane>
         <AnchorPane VBox.vgrow="ALWAYS">
@@ -60,6 +54,6 @@
         </AnchorPane>
     </children>
     <padding>
-        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
     </padding>
 </VBox>

@@ -4,7 +4,16 @@ public class ChiTietPhieuNhap {
     Integer maPhieuNhap;
     Integer maMatHang;
     Integer soLuong;
-    Double thanhTien;
+    Long thanhTien;
+    Long donGiaNhap;
+
+    public Long getDonGiaNhap() {
+        return donGiaNhap;
+    }
+
+    public void setDonGiaNhap(Long donGiaNhap) {
+        this.donGiaNhap = donGiaNhap;
+    }
 
     public Integer getMaPhieuNhap() {
         return maPhieuNhap;
@@ -30,11 +39,11 @@ public class ChiTietPhieuNhap {
         this.soLuong = soLuong;
     }
 
-    public Double getThanhTien() {
+    public Long getThanhTien() {
         return thanhTien;
     }
 
-    public void setThanhTien(Double thanhTien) {
+    public void setThanhTien(Long thanhTien) {
         this.thanhTien = thanhTien;
     }
 

@@ -2,20 +2,27 @@ package org.doancnpm.ManHinhNhanVien;
 
 import io.github.palexdev.materialfx.controls.MFXComboBox;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import javafx.animation.TranslateTransition;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.util.Callback;
+import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -23,19 +30,26 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.controlsfx.control.MasterDetailPane;
 import org.doancnpm.DAO.ChucVuDAO;
+import org.doancnpm.DAO.DonViTinhDAO;
 import org.doancnpm.DAO.NhanVienDAO;
 import org.doancnpm.DAO.QuanDAO;
 import org.doancnpm.Filters.NhanVienFilter;
 import org.doancnpm.Models.ChucVu;
+import org.doancnpm.Models.DaiLy;
+import org.doancnpm.Models.DonViTinh;
 import org.doancnpm.Models.NhanVien;
 import org.doancnpm.Models.Quan;
+import org.doancnpm.Ultilities.CheckExist;
 import org.doancnpm.Ultilities.DayFormat;
+import org.doancnpm.Ultilities.MoneyFormatter;
 import org.doancnpm.Ultilities.PopDialog;
 
 import java.io.*;
 import java.net.URL;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -45,7 +59,7 @@ import java.util.Set;
 public class ManHinhNhanVienController implements Initializable {
 
     @FXML private Region manHinhNhanVien;
-    @FXML private Button refreshButton;
+    @FXML private Button filterButton;
     @FXML private MenuItem addDirectButton;
     @FXML private MenuItem addExcelButton;
     @FXML private MenuItem deleteSelectedButton;
@@ -54,7 +68,9 @@ public class ManHinhNhanVienController implements Initializable {
     @FXML private MFXTextField maNVTextField;
     @FXML private MFXTextField tenNVTextField;
     @FXML private MFXComboBox<ChucVu> chucVuComboBox;
-
+    @FXML private Region filterPane;
+    @FXML private Region filterPaneContainer;
+    @FXML private Button toggleFilterButton;
 
     @FXML private TableView mainTableView;
 
@@ -75,6 +91,8 @@ public class ManHinhNhanVienController implements Initializable {
     @FXML private Text luongText;
     @FXML private TextArea ghiChuTextArea;
 
+    @FXML private FlowPane emptySelectionPane;
+
     //model part
     private final ObservableList<NhanVien> dsNhanVien = FXCollections.observableArrayList();
     private final ObservableList<NhanVien> dsNhanVienFiltered = FXCollections.observableArrayList();
@@ -94,6 +112,7 @@ public class ManHinhNhanVienController implements Initializable {
         //init data
         updateListFromDatabase();
         initDetailPane();
+        initFilterPane();
     }
     public void setVisibility(boolean visibility){
         manHinhNhanVien.setVisible(visibility);
@@ -111,6 +130,15 @@ public class ManHinhNhanVienController implements Initializable {
         mainTableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, nhanVien) -> {
             UpdateDetailPane((NhanVien) nhanVien);
         });
+        manHinhNhanVien.widthProperty().addListener(ob -> {
+            if(manHinhNhanVien.getWidth()>1030){
+                toggleDetailButton.setDisable(false);
+                OpenDetailPanel();
+            }else{
+                toggleDetailButton.setDisable(true);
+                CloseDetailPanel();
+            }
+        });
     }
     private void initTableView(){
         // Tạo các cột cho TableView
@@ -124,7 +152,9 @@ public class ManHinhNhanVienController implements Initializable {
         gioiTinhCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getGioiTinh()));
 
         TableColumn<NhanVien, String> luongCol = new TableColumn<>("Lương");
-        luongCol.setCellValueFactory(new PropertyValueFactory<>("luong"));
+        luongCol.setCellValueFactory(data->{
+            return new SimpleStringProperty(MoneyFormatter.convertLongToString(data.getValue().getLuong()));
+        });
 
         TableColumn<NhanVien, String> chucVuCol = new TableColumn<>("Chức vụ");
         chucVuCol.setCellValueFactory(data -> {
@@ -135,9 +165,37 @@ public class ManHinhNhanVienController implements Initializable {
             return new SimpleObjectProperty<>(chucVu.getTenCV());
         });
         //selected collumn:
-        TableColumn<NhanVien, Boolean> selectedCol = new TableColumn<>( "Selected" );
+        TableColumn<NhanVien, Boolean> selectedCol = new TableColumn<>( );
+        HBox headerBox = new HBox();
+        CheckBox headerCheckBox = new CheckBox();
+        headerBox.getChildren().add(headerCheckBox);
+        headerBox.setAlignment(Pos.CENTER); // Center align the content
+        headerCheckBox.setDisable(true);
+        selectedCol.setGraphic(headerBox);
+        selectedCol.setSortable(false);
         selectedCol.setCellValueFactory( new PropertyValueFactory<>( "selected" ));
-        selectedCol.setCellFactory( tc -> new CheckBoxTableCell<>());
+        selectedCol.setCellFactory(new Callback<TableColumn<NhanVien, Boolean>, TableCell<NhanVien, Boolean>>() {
+            @Override
+            public TableCell<NhanVien, Boolean> call(TableColumn<NhanVien, Boolean> param) {
+                TableCell<NhanVien, Boolean> cell = new TableCell<NhanVien, Boolean>() {
+                    @Override
+                    protected void updateItem(Boolean item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty || item == null) {
+                            setGraphic(null);
+                        } else {
+                            CheckBox checkBox = new CheckBox();
+                            checkBox.selectedProperty().bindBidirectional(((NhanVien) getTableRow().getItem()).selectedProperty());
+                            checkBox.getStyleClass().add("cell-center");
+                            setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+                            setGraphic(checkBox);
+                        }
+                    }
+                };
+                cell.getStyleClass().add("cell-center");
+                return cell;
+            }
+        });
 
         //action column
         TableColumn actionCol = new TableColumn("Action");
@@ -148,8 +206,8 @@ public class ManHinhNhanVienController implements Initializable {
                     @Override
                     public TableCell call(final TableColumn<NhanVien, String> param) {
                         final TableCell<NhanVien, String> cell = new TableCell<NhanVien, String>() {
-                            final Button suaBtn = new Button("Sửa");
-                            final Button xoaBtn = new Button("Xóa");
+                            final Button suaBtn = new Button();
+                            final Button xoaBtn = new Button();
 
                             @Override
                             public void updateItem(String item, boolean empty) {
@@ -159,6 +217,19 @@ public class ManHinhNhanVienController implements Initializable {
                                     setText(null);
                                 }
                                 else {
+                                    Image trashCan = new Image(getClass().getResourceAsStream("/image/trash_can.png"));
+                                    ImageView trashImage = new ImageView(trashCan);
+                                    Image edit = new Image(getClass().getResourceAsStream("/image/edit.png"));
+                                    ImageView editImage = new ImageView(edit);
+                                    trashImage.setFitWidth(20);
+                                    trashImage.setFitHeight(20);
+
+                                    editImage.setFitWidth(20);
+                                    editImage.setFitHeight(20);
+
+                                    xoaBtn.setGraphic(trashImage);
+                                    suaBtn.setGraphic(editImage);
+
                                     xoaBtn.setOnAction(event -> {
                                         NhanVien nv = getTableView().getItems().get(getIndex());
                                         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -179,19 +250,7 @@ public class ManHinhNhanVienController implements Initializable {
                                     suaBtn.setOnAction(_ -> {
                                         try {
                                             NhanVien nhanVien = getTableView().getItems().get(getIndex());
-                                            new TiepNhanNhanVienDialog(nhanVien).showAndWait().ifPresent(nhanVienInfo -> {
-                                                //set "database" info
-                                                nhanVienInfo.setID(nhanVien.getID());
-                                                nhanVienInfo.setMaNhanVien(nhanVien.getMaNhanVien());
-                                                try {
-                                                    NhanVienDAO.getInstance().Update(nhanVien.getID(),nhanVienInfo);
-                                                    PopDialog.popSuccessDialog("Cập nhật nhân viên "+nhanVienInfo.getMaNhanVien()+" thành công");
-                                                } catch (SQLException e) {
-                                                    PopDialog.popErrorDialog("Cập nhật nhân viên "+nhanVienInfo.getMaNhanVien()+" thất bại",
-                                                            e.getMessage());
-                                                }
-                                                //mainTableView.getItems().set(selectedIndex, response);
-                                            });
+                                            new TiepNhanNhanVienDialog(nhanVien).showAndWait();
                                         } catch(IOException exc) {
                                             exc.printStackTrace();
                                         }
@@ -229,13 +288,22 @@ public class ManHinhNhanVienController implements Initializable {
         chucVuCol.setResizable(false);
         actionCol.setResizable(false);
 
+        maNVCol.getStyleClass().add("column-header-left");
+        tenNVCol.getStyleClass().add("column-header-left");
+        gioiTinhCol.getStyleClass().add("column-header-left");
+        luongCol.getStyleClass().add("column-header-left");
+        chucVuCol.getStyleClass().add("column-header-left");
+
+        selectedCol.getStyleClass().add("column-header-center");
+        actionCol.getStyleClass().add("column-header-center");
+
         mainTableView.widthProperty().addListener(ob -> {
             double width = mainTableView.getWidth();
             selectedCol.setPrefWidth(width*0.1);
-            maNVCol.setPrefWidth(width*0.1);
-            tenNVCol.setPrefWidth(width*0.3);
+            maNVCol.setPrefWidth(width*0.13);
+            tenNVCol.setPrefWidth(width*0.24);
             gioiTinhCol.setPrefWidth(width*0.1);
-            chucVuCol.setPrefWidth(width*0.1);
+            chucVuCol.setPrefWidth(width*0.13);
             luongCol.setPrefWidth(width*0.15);
             actionCol.setPrefWidth(width*0.15);
         });
@@ -245,9 +313,6 @@ public class ManHinhNhanVienController implements Initializable {
     private void initEvent(){
         addDirectButton.setOnAction(_ -> {
             OpenDirectAddDialog();
-        });
-        refreshButton.setOnAction(_ -> {
-            resetFilter();
         });
         deleteSelectedButton.setOnAction(_ -> DeleteSelectedRow());
 
@@ -263,6 +328,14 @@ public class ManHinhNhanVienController implements Initializable {
             }
             else{
                 OpenDetailPanel();
+            }
+        });
+        toggleFilterButton.setOnAction(ob ->{
+            if(filterPane.isVisible()){
+                CloseFilterPanel();
+            }
+            else{
+                OpenFilterPanel();
             }
         });
     }
@@ -320,14 +393,38 @@ public class ManHinhNhanVienController implements Initializable {
             PopDialog.popErrorDialog("Lấy dữ liệu chức vụ thất bại",e.getMessage());
         }
     }
+    private void initFilterPane(){
+        Rectangle clip = new Rectangle();
+        clip.widthProperty().bind(filterPaneContainer.widthProperty());
+        clip.heightProperty().bind(filterPaneContainer.heightProperty());
+        filterPaneContainer.setClip(clip);
+    }
+    public void OpenFilterPanel(){
+        TranslateTransition tt = new TranslateTransition(Duration.seconds(0.2), filterPane);
+        tt.setToX(0);
+        tt.play();
+        filterPane.setVisible(true);
+        tt.setOnFinished(e -> {
+        });
+    }
+    public void CloseFilterPanel(){
+        TranslateTransition tt = new TranslateTransition(Duration.seconds(0.2), filterPane);
+        tt.setToX(-filterPane.getWidth());
+        tt.play();
+
+        tt.setOnFinished(e -> {
+            filterPane.setVisible(false);
+        });
+    }
 
     //detail pane
     public void UpdateDetailPane(NhanVien nhanVien){
         if(nhanVien==null){
-            CloseDetailPanel();
+            emptySelectionPane.setVisible(true);
             return;
         }
         try{
+            emptySelectionPane.setVisible(false);
             ChucVu chucVu = ChucVuDAO.getInstance().QueryID(nhanVien.getMaChucVu());
 
             tenNVText.setText(nhanVien.getHoTen());
@@ -335,7 +432,7 @@ public class ManHinhNhanVienController implements Initializable {
             chucVuText.setText(chucVu.getTenCV());
             sdtText.setText(nhanVien.getSDT());
             emailText.setText(nhanVien.getEmail());
-            luongText.setText(Double.toString(nhanVien.getLuong()));
+            luongText.setText(MoneyFormatter.convertLongToString(nhanVien.getLuong()));
             ngaySinhText.setText(DayFormat.GetDayStringFormatted(nhanVien.getNgaySinh()));
             gioiTinhText.setText(nhanVien.getGioiTinh());
             ghiChuTextArea.setText(nhanVien.getGhiChu());
@@ -344,13 +441,11 @@ public class ManHinhNhanVienController implements Initializable {
 
     }
     public void OpenDetailPanel(){
-        toggleDetailButton.setText(">");
         masterDetailPane.setShowDetailNode(true);
 
     }
     public void CloseDetailPanel(){
         masterDetailPane.setShowDetailNode(false);
-        toggleDetailButton.setText("<");
     }
 
 
@@ -370,7 +465,6 @@ public class ManHinhNhanVienController implements Initializable {
         }
     }
     private void importFromExcel(String filePath)  {
-        /*
         File file = new File(filePath);
         FileInputStream fis = null;
         try {
@@ -391,29 +485,61 @@ public class ManHinhNhanVienController implements Initializable {
         }
         XSSFSheet sheet = workbook.getSheetAt(0); // Assuming data is in the first sheet
 
-
-        Date ngayTiepNhan = new Date(System.currentTimeMillis());
-
-        for (int i = 1; i <= sheet.getLastRowNum()-1; i++) {
+        boolean hasError = true; // Biến để theo dõi nếu có lỗi xảy ra
+        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
             if (row != null) { // Kiểm tra xem dòng có tồn tại hay không
-                Cell quanCell = row.getCell(0);
-                Cell loaiNhanVienCell = row.getCell(1);
-                Cell tenNhanVienCell = row.getCell(2);
-                Cell dienThoaiCell = row.getCell(3);
+                Cell hoTenCell = row.getCell(0);
+                Cell gioiTinhCell = row.getCell(1);
+                Cell ngaySinhCell = row.getCell(2);
+                Cell SDTCell = row.getCell(3);
                 Cell emailCell = row.getCell(4);
-                Cell diaChiCell = row.getCell(5);
-                Cell ghiChuCell = row.getCell(6);
+                Cell chucVuCell = row.getCell(5);
+                Cell luongCell = row.getCell(6);
+                Cell ghiChuCell = row.getCell(7);
 
                 NhanVien nhanVien = new NhanVien();
-                nhanVien.setMaQuan((int) quanCell.getNumericCellValue());
-                nhanVien.setMaLoaiNhanVien((int) loaiNhanVienCell.getNumericCellValue());
-                nhanVien.setTenNhanVien(tenNhanVienCell.getStringCellValue());
-                nhanVien.setDienThoai(dienThoaiCell.getStringCellValue());
+                nhanVien.setHoTen(hoTenCell.getStringCellValue());
+                nhanVien.setGioiTinh(gioiTinhCell.getStringCellValue());
+                // Assuming ngaySinhCell is already defined and contains a date string
+                String ngaySinh = ngaySinhCell.getStringCellValue();
+
+                // Define the date format according to the format in the Excel file
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");// Adjust format as needed
+
+                try {
+                    // Parse the string into a java.util.Date object
+                    java.util.Date utilDate = dateFormat.parse(ngaySinh);
+
+                    // Convert the java.util.Date object into a java.sql.Date object
+                    java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+
+                    // Set the date to the nhanVien object
+                    nhanVien.setNgaySinh(sqlDate);
+
+                } catch (ParseException e) {
+                    // Handle the exception if the date format is incorrect
+                    e.printStackTrace();
+                }
+                nhanVien.setSDT(SDTCell.getStringCellValue());
                 nhanVien.setEmail(emailCell.getStringCellValue());
-                nhanVien.setDiaChi(diaChiCell.getStringCellValue());
-                nhanVien.setGhiChu(ghiChuCell.getStringCellValue());
-                nhanVien.setNgayTiepNhan(ngayTiepNhan);
+
+                String chucVuName = chucVuCell.getStringCellValue().trim();
+                Integer chucVuID = handleChucVu(chucVuName);
+                if (chucVuID == null) {
+                    continue;
+                }
+                else{
+                    hasError = false;
+                }
+                nhanVien.setMaChucVu(chucVuID);
+
+                nhanVien.setLuong((long)luongCell.getNumericCellValue());
+                if (ghiChuCell != null) {
+                    nhanVien.setGhiChu(ghiChuCell.getStringCellValue());
+                } else {
+                    nhanVien.setGhiChu(null);
+                }
                 try {
                     NhanVienDAO.getInstance().Insert(nhanVien); // Thêm đối tượng vào cơ sở dữ liệu
                 }
@@ -423,19 +549,52 @@ public class ManHinhNhanVienController implements Initializable {
                 }
             }
         }
-
         try {
             workbook.close();
             fis.close();
-            PopDialog.popSuccessDialog("Thêm danh sách nhân viên từ file excel thành công");
+            if (!hasError) { // Chỉ hiển thị dialog thành công nếu không có lỗi nào
+                PopDialog.popSuccessDialog("Thêm danh sách nhân viên từ file excel thành công");
+            }
+            else{
+                PopDialog.popErrorDialog("Thêm danh sách nhân viên từ file excel không thành công");
+            }
         }
         catch (IOException e) {
             PopDialog.popErrorDialog("Có lỗi trong quá trình thực hiện", e.getMessage());
         }
-
-         */
     }
+    private Integer handleChucVu(String chucVuName) {
+        try {
+            if (!CheckExist.checkChucVu(chucVuName)) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Xác nhận");
+                alert.setHeaderText(null);
+                alert.setContentText("Chức vụ '"+chucVuName + "' không tồn tại. Bạn có muốn thêm chức vụ mới không?");
 
+                ButtonType result = alert.showAndWait().orElse(ButtonType.CANCEL);
+
+                if (result == ButtonType.OK) {
+                    ChucVu CV = new ChucVu();
+                    CV.setTenCV(chucVuName);// Tạo một đối tượng mới cho đơn vị tính
+                    ChucVuDAO.getInstance().Insert(CV); // Thêm đơn vị tính mới vào cơ sở dữ liệu
+                    Alert infoAlert = new Alert(Alert.AlertType.INFORMATION);
+                    infoAlert.setTitle("Thông báo");
+                    infoAlert.setHeaderText(null);
+                    infoAlert.setContentText("Chức vụ '" + chucVuName + "' đã được thêm thành công!");
+                    infoAlert.showAndWait();
+                    return ChucVuDAO.getInstance().QueryMostRecent().getId(); // Trả về ID của đơn vị tính mới
+                } else {
+                    PopDialog.popErrorDialog("Chức vụ '" + chucVuName + "' không tồn tại");
+                    return null;
+                }
+            } else {
+                return ChucVuDAO.getInstance().QueryName(chucVuName).getId(); // Trả về ID của đơn vị tính đã tồn tại
+            }
+        } catch (SQLException e) {
+            PopDialog.popErrorDialog("Có lỗi trong quá trình xử lý chức vụ", e.getMessage());
+            return null;
+        }
+    }
     public void OpenExportDialog() {
         // Hiển thị hộp thoại lưu tệp Excel
         FileChooser fileChooser = new FileChooser();
@@ -443,7 +602,8 @@ public class ManHinhNhanVienController implements Initializable {
 
         // Tạo tên file với định dạng "Export_ngay_thang_nam.xlsx"
         Date ngayHienTai = new Date(System.currentTimeMillis());
-        String fileName = "DsNhanVien_" + DayFormat.GetDayStringFormatted(ngayHienTai) + ".xlsx";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd_MM_yyyy");
+        String fileName = "DsNhanVien_" + dateFormat.format(ngayHienTai) + ".xlsx";
 
         // Thiết lập tên file mặc định cho hộp thoại lưu
         File initialDirectory = new File(System.getProperty("user.home"));
@@ -462,14 +622,13 @@ public class ManHinhNhanVienController implements Initializable {
 
     }
     public void exportToExcel(String filePath) {
-        /*
         // Tạo hoặc mở tệp Excel
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet("NhanVienData"); // Tạo một sheet mới hoặc sử dụng sheet hiện có
 
         // Tạo hàng đầu tiên với các tiêu đề cột
         Row headerRow = sheet.createRow(0);
-        String[] columnTitles = {"Mã nhân viên", "Quận", "Loại nhân viên", "Tên nhân viên", "Số điện thoại", "Email", "Địa chỉ", "Nợ hiện tại", "Ghi chú"};
+        String[] columnTitles = {"Mã nhân viên", "Họ tên", "Giới tính", "Ngày sinh", "Số điện thoại", "Email", "Chức vụ", "Lương", "Ghi chú"};
         int cellnum = 0;
         for (String title : columnTitles) {
             Cell cell = headerRow.createCell(cellnum++);
@@ -482,42 +641,46 @@ public class ManHinhNhanVienController implements Initializable {
             Row row = sheet.createRow(rownum++);
             cellnum = 0;
             row.createCell(cellnum++).setCellValue(nhanVien.getMaNhanVien());
-            row.createCell(cellnum++).setCellValue(nhanVien.getMaQuan());
-            row.createCell(cellnum++).setCellValue(nhanVien.getMaLoaiNhanVien());
-            row.createCell(cellnum++).setCellValue(nhanVien.getTenNhanVien());
-            row.createCell(cellnum++).setCellValue(nhanVien.getDienThoai());
+            row.createCell(cellnum++).setCellValue(nhanVien.getHoTen());
+            row.createCell(cellnum++).setCellValue(nhanVien.getGioiTinh());
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            row.createCell(cellnum++).setCellValue(dateFormat.format(nhanVien.getNgaySinh()));
+            row.createCell(cellnum++).setCellValue(nhanVien.getSDT());
             row.createCell(cellnum++).setCellValue(nhanVien.getEmail());
-            row.createCell(cellnum++).setCellValue(nhanVien.getDiaChi());
-            row.createCell(cellnum++).setCellValue(nhanVien.getNoHienTai());
+            ChucVu chucVu;
+            try{
+                chucVu=ChucVuDAO.getInstance().QueryID(nhanVien.getMaChucVu());
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            if (chucVu!=null){
+                row.createCell(cellnum++).setCellValue(chucVu.getTenCV());
+            }
+            else{
+                row.createCell(cellnum++).setCellValue("???");
+            }
+            row.createCell(cellnum++).setCellValue(nhanVien.getLuong());
             row.createCell(cellnum++).setCellValue(nhanVien.getGhiChu());
         }
-
+        // Tự động điều chỉnh độ rộng của các cột
+        for (int i = 0; i < columnTitles.length; i++) {
+            sheet.autoSizeColumn(i);
+        }
         // Lưu tệp Excel
         try (FileOutputStream fos = new FileOutputStream(filePath)) {
             workbook.write(fos);
             workbook.close();
+            PopDialog.popSuccessDialog("Xuất file excel thành công");
         }
         catch (IOException e){
             PopDialog.popErrorDialog("Xuất file excel thất bại",e.getMessage());
         }
-
-         */
     }
 
     //functionalities
     public void OpenDirectAddDialog(){
         try {
-            new TiepNhanNhanVienDialog().showAndWait().ifPresent(
-                    nhanVienAdded -> {
-                        try {
-                            NhanVienDAO.getInstance().Insert(nhanVienAdded);
-                            PopDialog.popSuccessDialog("Thêm mới nhân viên "+nhanVienAdded.getHoTen()+" thành công");
-                        }
-                        catch (SQLException e) {
-                            PopDialog.popErrorDialog("Thêm mới nhân viên thất bại", e.getMessage());
-                        }
-                    }
-            );
+            new TiepNhanNhanVienDialog().showAndWait();
         }
         catch (IOException e) {
             PopDialog.popErrorDialog("Không thể mở dialog thêm nhân viên");
@@ -565,11 +728,5 @@ public class ManHinhNhanVienController implements Initializable {
     private void filterList(){
         dsNhanVienFiltered.clear();
         dsNhanVienFiltered.addAll(filter.Filter());
-    }
-    private void resetFilter(){
-        chucVuComboBox.clearSelection();
-        chucVuComboBox.clear();
-        maNVTextField.clear();
-        tenNVTextField.clear();
     }
 }

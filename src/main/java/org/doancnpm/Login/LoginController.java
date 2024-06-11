@@ -11,6 +11,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
@@ -22,6 +23,7 @@ import org.doancnpm.Models.TaiKhoan;
 import org.doancnpm.NavController;
 import org.doancnpm.Ultilities.CurrentNVInfor;
 import org.doancnpm.Ultilities.PopDialog;
+import org.doancnpm.Ultilities.SHA256;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -93,7 +95,6 @@ public class LoginController implements Initializable {
     public Button confirmButton;
 
     StringProperty currentScreenString = new SimpleStringProperty("");
-    private TaiKhoanDAO taiKhoanDAO = TaiKhoanDAO.getInstance();
 
 
     @Override
@@ -106,6 +107,11 @@ public class LoginController implements Initializable {
         initializeEmailInputPane();
         initializeVerifyOtpPane();
         initializeResetPasswordPane();
+        initEvent();
+    }
+
+    private void initEvent() {
+
     }
 
 
@@ -132,7 +138,7 @@ public class LoginController implements Initializable {
 
     // main login pane
     private void initializeMainLoginPane() {
-      //  loginButton.setOnAction(_ -> handleLogin(null));
+        //  loginButton.setOnAction(_ -> handleLogin(null));
         forgotPasswordLabel.setOnMouseClicked(mouseEvent -> {
             currentScreenString.setValue("EMAIL_INPUT_PANE");
         });
@@ -140,6 +146,11 @@ public class LoginController implements Initializable {
 
     public void initManager(final NavController loginManager) {
         loginButton.setOnAction(_ -> handleLogin(loginManager));
+        password.setOnKeyPressed(keyEvent -> {
+            if (keyEvent.getCode() == KeyCode.ENTER) {
+                    handleLogin(loginManager);
+            }
+        });
     }
 
     public void handleLogin(NavController loginManager) {
@@ -162,18 +173,19 @@ public class LoginController implements Initializable {
     }
 
     private NhanVien authorize() {
-        String userName = user.getText();
-        String pass = password.getText();
+        String userName = user.getText().trim();
+        String pass = password.getText().trim();
         try {
             ArrayList<TaiKhoan> taiKhoanList = TaiKhoanDAO.getInstance().QueryAll();
             boolean userFound = false;
             for (TaiKhoan taiKhoan : taiKhoanList) {
                 if (taiKhoan.getUserName().equals(userName)) {
                     userFound = true;
-                    if (taiKhoan.getPassword().equals(pass)) {
+                    if (taiKhoan.getPassword().equals(SHA256.getSHA256Hash(pass))) {
                         // Authorized
                         int maNhanVien = taiKhoan.getMaNhanVien();
                         CurrentNVInfor.getInstance().setTaiKhoanOfNhanien(taiKhoan);
+                        CurrentNVInfor.getInstance().setPassword(pass);
                         CurrentNVInfor.getInstance().setLoggedInNhanVien(NhanVienDAO.getInstance().QueryID(maNhanVien));
                         return NhanVienDAO.getInstance().QueryID(maNhanVien);
                     } else {
@@ -326,7 +338,7 @@ public class LoginController implements Initializable {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 handleSendOtp();
-                startCountdown(reSendOtpLabel,OTP_VALIDITY_SECONDS);
+                startCountdown(reSendOtpLabel, OTP_VALIDITY_SECONDS);
             }
         });
     }
@@ -396,19 +408,18 @@ public class LoginController implements Initializable {
         });
 
     }
-    private void handleConfirm(){
+
+    private void handleConfirm() {
         clearErrorBox(errorConfirmPasswordBox);
         clearErrorBox(errorPasswordBox);
-        if(!validatePassword()){
+        if (!validatePassword()) {
             return;
         }
-        try{
-            NhanVienDAO.getInstance().updatePasswordByEmail(emailText.getText(),enterPasswordText.getText());
+        try {
+            NhanVienDAO.getInstance().updatePasswordByEmail(emailText.getText(), enterPasswordText.getText());
             PopDialog.popSuccessDialog("Đổi mật khẩu thành công");
             currentScreenString.setValue("");
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             PopDialog.popSuccessDialog("Đổi mật khẩu that bai");
         }
 

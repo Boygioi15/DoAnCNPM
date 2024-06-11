@@ -16,7 +16,7 @@ public class NhanVien {
     private String SDT;
     private String email;
     private Integer maChucVu;
-    private double luong;
+    private Long luong;
     private String ghiChu;
 
     public NhanVien() {
@@ -86,11 +86,11 @@ public class NhanVien {
         this.maChucVu = maChucVu;
     }
 
-    public double getLuong() {
+    public Long getLuong() {
         return luong;
     }
 
-    public void setLuong(double luong) {
+    public void setLuong(Long luong) {
         this.luong = luong;
     }
 

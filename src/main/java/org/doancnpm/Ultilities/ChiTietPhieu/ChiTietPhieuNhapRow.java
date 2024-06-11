@@ -20,36 +20,51 @@ import org.controlsfx.control.SearchableComboBox;
 import org.doancnpm.DAO.DonViTinhDAO;
 import org.doancnpm.DAO.MatHangDAO;
 import org.doancnpm.Models.*;
+import org.doancnpm.Ultilities.MoneyFormatter;
 import org.doancnpm.Ultilities.PopDialog;
 
 public class ChiTietPhieuNhapRow extends HBox {
-    @FXML SearchableComboBox<MatHang> mhComboBox;
-    @FXML TextField dvtTextField;
-    @FXML TextField slTextField;
-    @FXML TextField donGiaTextField;
-    @FXML public TextField thanhTienTextField;
+    @FXML
+    SearchableComboBox<MatHang> mhComboBox;
+    @FXML
+    TextField dvtTextField;
+    @FXML
+    TextField slTextField;
+    @FXML
+    TextField donGiaTextField;
+    @FXML
+    public TextField thanhTienTextField;
 
-    @FXML Button xoaBtn;
+    @FXML
+    Button xoaBtn;
     VBox container;
+
     public ChiTietPhieuNhapRow(VBox container) {
         this.container = container;
         loadFXML();
         initMHComboBox();
         initBinding();
-    }
-    public double getThanhTienDouble(){
+        MoneyFormatter.MoneyFormatTextField(thanhTienTextField);
+        MoneyFormatter.MoneyFormatTextField(slTextField);
 
-        try{
-            Double result = Double.parseDouble(thanhTienTextField.getText());;
-            return  result;
-        }catch (Exception e){
-            return 0;
+    }
+
+    public Long getThanhTien() {
+
+        try {
+            Long result = MoneyFormatter.getLongValueFromTextField(thanhTienTextField);
+            ;
+            return result;
+        } catch (Exception e) {
+            return 0L;
         }
 
     }
-    public void SetOnXoa(EventHandler<ActionEvent> eventHandle){
+
+    public void SetOnXoa(EventHandler<ActionEvent> eventHandle) {
         xoaBtn.setOnAction(eventHandle);
     }
+
     private void initMHComboBox() {
         try {
             ObservableList<MatHang> matHangs = FXCollections.observableArrayList(MatHangDAO.getInstance().QueryAll());
@@ -58,7 +73,7 @@ public class ChiTietPhieuNhapRow extends HBox {
             StringConverter<MatHang> matHangStringConverter = new StringConverter<MatHang>() {
                 @Override
                 public String toString(MatHang mh) {
-                    return mh == null ? null : mh.getMaMatHang()+" - " + mh.getTenMatHang(); //lên hình
+                    return mh == null ? null : mh.getMaMatHang() + " - " + mh.getTenMatHang(); //lên hình
                 }
 
                 @Override
@@ -72,11 +87,11 @@ public class ChiTietPhieuNhapRow extends HBox {
 
             // Đặt DataSource cho ComboBox
             mhComboBox.setItems(matHangs);
-        }
-        catch (SQLException e) {
-            PopDialog.popErrorDialog("Lấy dữ liệu các quận/ loại đại lý thất bại",e.toString());
+        } catch (SQLException e) {
+            PopDialog.popErrorDialog("Lấy dữ liệu các quận/ loại đại lý thất bại", e.toString());
         }
     }
+
     private void loadFXML() {
         try {
             FXMLLoader mainLoader = new FXMLLoader(getClass().getResource("/fxml/Ultilities/ChiTietPhieuNhapRowUI.fxml"));
@@ -87,7 +102,8 @@ public class ChiTietPhieuNhapRow extends HBox {
             throw new RuntimeException(exception);
         }
     }
-    public void loadFromChiTietPhieuNhap(ChiTietPhieuNhap ctpn){
+
+    public void loadFromChiTietPhieuNhap(ChiTietPhieuNhap ctpn) {
         try {
             MatHang matHang = MatHangDAO.getInstance().QueryID(ctpn.getMaMatHang());
             mhComboBox.setValue(matHang);
@@ -96,17 +112,19 @@ public class ChiTietPhieuNhapRow extends HBox {
             slTextField.setText(Integer.toString(ctpn.getSoLuong()));
             donGiaTextField.setText(Double.toString(matHang.getDonGiaNhap()));
             thanhTienTextField.setText(Double.toString(ctpn.getThanhTien()));
-        } catch (SQLException _) {}
+        } catch (SQLException _) {
+        }
 
 
     }
-    private void initBinding(){
+
+    private void initBinding() {
         slTextField.setDisable(true);
         dvtTextField.setDisable(true);
         donGiaTextField.setDisable(true);
         thanhTienTextField.setDisable(true);
         mhComboBox.valueProperty().addListener(ob -> {
-            if(mhComboBox.getValue()==null){
+            if (mhComboBox.getValue() == null) {
                 slTextField.clear();
                 slTextField.setDisable(true);
                 return;
@@ -114,45 +132,51 @@ public class ChiTietPhieuNhapRow extends HBox {
             try {
                 DonViTinh dvt = DonViTinhDAO.getInstance().QueryID(mhComboBox.getValue().getMaDVT());
                 dvtTextField.setText(dvt.getTenDVT());
-                donGiaTextField.setText(Double.toString(mhComboBox.getValue().getDonGiaNhap()));
-            }catch (SQLException _) {}
+                donGiaTextField.setText(MoneyFormatter.convertLongToString(mhComboBox.getValue().getDonGiaNhap()));
+            } catch (SQLException _) {
+            }
 
             slTextField.setDisable(false);
         });
         slTextField.textProperty().addListener(ob -> {
-            try{
+            try {
                 Integer sl = Integer.parseInt(slTextField.getText());
-                double thanhTien = sl*mhComboBox.getValue().getDonGiaNhap();
-                thanhTienTextField.setText(Double.toString(thanhTien));
-            }catch (Exception e){}
+                Long thanhTien = sl * mhComboBox.getValue().getDonGiaNhap();
+                thanhTienTextField.setText(MoneyFormatter.convertLongToString(thanhTien));
+            } catch (Exception e) {
+            }
         });
     }
-    public ChiTietPhieuNhap getChiTietPhieuNhap(){
+
+    public ChiTietPhieuNhap getChiTietPhieuNhap() {
         ChiTietPhieuNhap chiTietPhieuNhap = new ChiTietPhieuNhap();
         chiTietPhieuNhap.setMaMatHang(mhComboBox.getValue().getID());
         chiTietPhieuNhap.setSoLuong(Integer.parseInt(slTextField.getText()));
+        chiTietPhieuNhap.setDonGiaNhap(mhComboBox.getValue().getDonGiaNhap());
+
         return chiTietPhieuNhap;
     }
 
-    public String GetValid(){
-        Boolean emptyMh = mhComboBox.getValue()==null;
+    public String GetValid() {
+        Boolean emptyMh = mhComboBox.getValue() == null;
         Boolean emptySL = slTextField.getText().isEmpty();
         Boolean saiSL = false;
-        try{
+        try {
             Long.parseLong(slTextField.getText());
+        } catch (Exception _) {
+            saiSL = true;
         }
-        catch (Exception _){saiSL = true;}
 
         String validate = "";
-        if(emptyMh){
+        if (emptyMh) {
             validate = validate.concat("Mặt hàng không được để trống. ");
         }
-        if(emptySL){
+        if (emptySL) {
             validate = validate.concat("Số lượng không được để trống. ");
         }
-        if(!emptySL && saiSL){
+        if (!emptySL && saiSL) {
             validate = validate.concat("Định dạng số lượng sai. ");
         }
-        return  validate;
+        return validate;
     }
 }

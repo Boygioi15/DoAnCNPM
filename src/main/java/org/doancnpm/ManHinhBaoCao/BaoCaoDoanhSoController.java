@@ -15,10 +15,12 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Popup;
 import org.doancnpm.DAO.DaiLyDAO;
 import org.doancnpm.Models.BaoCaoDoanhSo;
 import org.doancnpm.Models.DaiLy;
 import org.doancnpm.SQLUltilities.CalculateSQL;
+import org.doancnpm.Ultilities.PopDialog;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -35,14 +37,27 @@ public class BaoCaoDoanhSoController {
     protected TableView<BaoCaoDoanhSo> createTableViewForMonth(Map<Integer, Integer> soPhieuXuatData, Map<Integer, Double> tongGiaTriData) {
         ObservableList<BaoCaoDoanhSo> baoCaoDoanhSoItems = FXCollections.observableArrayList();
         int stt = 0;
+        int totalSoPhieuXuat = 0;
+        double totalTongGiaTri = 0.0;
+
         for (Map.Entry<Integer, Integer> entry : soPhieuXuatData.entrySet()) {
             stt++;
             int maDaiLy = entry.getKey();
             int soPhieuXuat = entry.getValue();
             double tongGiaTri = tongGiaTriData.getOrDefault(maDaiLy, 0.0);
+            totalSoPhieuXuat += soPhieuXuat;
+            totalTongGiaTri += tongGiaTri;
             BaoCaoDoanhSo item = new BaoCaoDoanhSo(stt, maDaiLy, new Date(), soPhieuXuat, tongGiaTri, 0);
             baoCaoDoanhSoItems.add(item);
         }
+
+        // Adding the total row
+        BaoCaoDoanhSo totalItem = new BaoCaoDoanhSo();
+        totalItem.setSoPhieuXuat(totalSoPhieuXuat);
+        totalItem.setTongTriGia(totalTongGiaTri);
+        totalItem.setTyLe(1.0); // 100% of the total
+        totalItem.setSTT(0); // Mark as total row
+        baoCaoDoanhSoItems.add(totalItem);
 
         TableView<BaoCaoDoanhSo> tableView = new TableView<>();
         tableView.setMaxHeight(300.0);
@@ -52,70 +67,76 @@ public class BaoCaoDoanhSoController {
         tableView.setPrefHeight(300.0);
         tableView.setPrefWidth(500.0);
 
-        TableColumn<BaoCaoDoanhSo, Integer> sttCol = new TableColumn<>("STT");
-        sttCol.setCellValueFactory(new PropertyValueFactory<>("STT"));
-        sttCol.setPrefWidth(37.599966645240784);
-
+        TableColumn<BaoCaoDoanhSo, String> sttCol = new TableColumn<>("STT");
+        sttCol.setCellValueFactory(data -> {
+            Integer sttValue = data.getValue().getSTT();
+            return new SimpleObjectProperty<>(sttValue == 0 ? "" : sttValue.toString());
+        });
+        sttCol.setPrefWidth(37.6);
 
         TableColumn<BaoCaoDoanhSo, String> tenDaiLyCol = new TableColumn<>("Đại lý");
         tenDaiLyCol.setCellValueFactory(data -> {
-            DaiLy daiLy = null;
-            try {
-                daiLy = DaiLyDAO.getInstance().QueryID(data.getValue().getMaDaiLy());
-            } catch (SQLException _) {
-
+            if (data.getValue().getMaDaiLy() == 0) {
+                return new SimpleObjectProperty<>("Tổng doanh số");
+            } else {
+                DaiLy daiLy = null;
+                try {
+                    daiLy = DaiLyDAO.getInstance().QueryID(data.getValue().getMaDaiLy());
+                } catch (SQLException _) {
+                }
+                return new SimpleObjectProperty<>(daiLy != null ? daiLy.getTenDaiLy() : "");
             }
-            return new SimpleObjectProperty<>(daiLy.getTenDaiLy());
         });
-        tenDaiLyCol.setPrefWidth(152.00006484985352);
+        tenDaiLyCol.setPrefWidth(152.0);
 
         TableColumn<BaoCaoDoanhSo, Integer> soPhieuXuatCol = new TableColumn<>("Số phiếu xuất");
         soPhieuXuatCol.setCellValueFactory(new PropertyValueFactory<>("soPhieuXuat"));
-        soPhieuXuatCol.setPrefWidth(96.80000305175781);
+        soPhieuXuatCol.setPrefWidth(96.8);
 
         TableColumn<BaoCaoDoanhSo, String> tongTriGiaCol = new TableColumn<>("Tổng trị giá");
         DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
         symbols.setGroupingSeparator('.');
         DecimalFormat df = new DecimalFormat("#,##0", symbols);
         df.setMaximumFractionDigits(8);
-        tongTriGiaCol.setCellValueFactory(data -> {
-            return new SimpleObjectProperty<>(df.format(data.getValue().getTongTriGia()));
-        });
-
-        tongTriGiaCol.setPrefWidth(119.20001220703125);
-
+        tongTriGiaCol.setCellValueFactory(data -> new SimpleObjectProperty<>(df.format(data.getValue().getTongTriGia())));
+        tongTriGiaCol.setPrefWidth(119.2);
 
         TableColumn<BaoCaoDoanhSo, Double> tyLeCol = new TableColumn<>("Tỷ lệ");
         tyLeCol.setCellValueFactory(data -> {
             double tongGiaTri = 0.0;
             for (BaoCaoDoanhSo item : baoCaoDoanhSoItems) {
-                tongGiaTri += item.getTongTriGia();
+                if(item.getSTT()!=0) {
+                    tongGiaTri += item.getTongTriGia();
+                }
             }
-            if (data.getValue().getSTT() != baoCaoDoanhSoItems.size()) {
+            if (data.getValue().getSTT() != baoCaoDoanhSoItems.size()&&data.getValue().getSTT()!=0) {
                 double tyLe = data.getValue().getTongTriGia() / tongGiaTri;
                 tyLe = Math.round(tyLe * 100.0) / 100.0;
                 data.getValue().setTyLe(tyLe);
 
                 return new SimpleObjectProperty<>(tyLe);
-            } else {
+            } else if(data.getValue().getSTT()!=0){
                 double tongtyLe = 0;
                 for (int i = 0; i < data.getValue().getSTT() - 1; i++) {
-                    tongtyLe += baoCaoDoanhSoItems.get(i).getTyLe();
+                    if(baoCaoDoanhSoItems.get(i).getSTT()!=0) {
+                        tongtyLe += baoCaoDoanhSoItems.get(i).getTyLe();
+                    }
                 }
                 double tyLe = 1 - tongtyLe;
                 tyLe = Math.round(tyLe * 100.0) / 100.0;
                 data.getValue().setTyLe(tyLe);
                 return new SimpleObjectProperty<>(tyLe);
             }
+            else return new SimpleObjectProperty<>((double)1);
         });
-        tyLeCol.setPrefWidth(92.79998779296875);
+        tyLeCol.setPrefWidth(92.8);
 
         tableView.getColumns().addAll(sttCol, tenDaiLyCol, soPhieuXuatCol, tongTriGiaCol, tyLeCol);
-
         tableView.setItems(baoCaoDoanhSoItems);
 
         return tableView;
     }
+
 
     protected ObservableList<TitledPane> createTitledPanesForMonths(int year) {
         ObservableList<TitledPane> titledPanes = FXCollections.observableArrayList();
@@ -141,7 +162,7 @@ public class BaoCaoDoanhSoController {
 
                 Button exportButton = new Button("Xuất PDF");
                 exportButton.setOnAction(event -> {
-                    exportBaoCaoDoanhSoToPDF(tableView.getItems());
+                    exportBaoCaoDoanhSoToPDF(tableView.getItems(), monthValue, year);
                 });
                 HBox buttonContainer = new HBox(10);
                 buttonContainer.setAlignment(Pos.CENTER_RIGHT);
@@ -160,12 +181,13 @@ public class BaoCaoDoanhSoController {
         return titledPanes;
     }
 
-    private static void exportBaoCaoDoanhSoToPDF(List<BaoCaoDoanhSo> data) {
+    private static void exportBaoCaoDoanhSoToPDF(List<BaoCaoDoanhSo> data, int month, int year) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Lưu báo cáo doanh số");
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
-        fileChooser.setInitialFileName("BaoCaoDoanhSo.pdf");
+        String initialFileName = String.format("BaoCaoDoanhSo_%02d_%d.pdf", month, year);
+        fileChooser.setInitialFileName(initialFileName);
 
         File selectedFile = fileChooser.showSaveDialog(null);
 
@@ -180,31 +202,26 @@ public class BaoCaoDoanhSoController {
                 document.open();
 
                 // Add header
-                addHeader(document, titleFont, contentFont);
+                addHeader(document, titleFont, contentFont, month, year);
 
-                // Add customer and company details
-                addCustomerAndCompanyDetails(document, boldFont, contentFont);
+                // Add company details
+                addDetails(document, boldFont, contentFont);
 
                 // Create and add table
                 PdfPTable table = createTable(data, contentFont, boldFont);
                 document.add(table);
 
-                // Add total revenue
-                addTotalRevenue(document, data, boldFont);
-
-                // Add footer
-                addFooter(document, contentFont);
-
                 document.close();
+                PopDialog.popSuccessDialog("Xuất báo cáo doanh số tháng "+month+" năm "+year+ " thành công.");
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private static void addHeader(Document document, Font titleFont, Font contentFont) throws DocumentException {
+    private static void addHeader(Document document, Font titleFont, Font contentFont, int month, int year) throws DocumentException {
         // Add title
-        Paragraph reportTitle = new Paragraph("BÁO CÁO DOANH SỐ", titleFont);
+        Paragraph reportTitle = new Paragraph("BÁO CÁO DOANH SỐ THÁNG " + month + " NĂM " + year, titleFont);
         reportTitle.setAlignment(Element.ALIGN_CENTER);
         document.add(reportTitle);
 
@@ -216,38 +233,17 @@ public class BaoCaoDoanhSoController {
         document.add(Chunk.NEWLINE);
     }
 
-    private static void addCustomerAndCompanyDetails(Document document, Font boldFont, Font contentFont) throws DocumentException {
-        PdfPTable detailsTable = new PdfPTable(2);
-        detailsTable.setWidthPercentage(100);
-        detailsTable.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+    private static void addDetails(Document document, Font boldFont, Font contentFont) throws DocumentException {
+        Paragraph company = new Paragraph();
+        company.setFont(contentFont);
+        company.add(Chunk.NEWLINE);
+        company.add(new Phrase("Thông tin liên hệ\n", contentFont));
+        company.add(new Phrase("Nhóm 27\n", boldFont));
+        company.add(new Phrase("SE104.O27\n", contentFont));
+        company.add(new Phrase("Địa chỉ: 123 Đường ABC, Thành phố DEF\n", contentFont));
+        company.setAlignment(Element.ALIGN_LEFT);
 
-        // Customer details
-        PdfPCell customerDetailsCell = new PdfPCell();
-        customerDetailsCell.setBorder(Rectangle.NO_BORDER);
-        customerDetailsCell.setHorizontalAlignment(Element.ALIGN_LEFT);
-        Paragraph customerDetails = new Paragraph();
-        customerDetails.add(new Phrase("KHÁCH SẠN TRE XANH\n", boldFont));
-        customerDetails.add(new Phrase("Số điện thoại khách hàng: +84 912 345 678\n", contentFont));
-        customerDetails.add(new Phrase("Địa chỉ khách hàng: 148 Hồ Tùng Mậu, Bắc Từ Liêm, Hà Nội\n", contentFont));
-        customerDetails.add(new Phrase("Hóa đơn #12345\n", contentFont));
-        customerDetails.add(new Phrase("Ngày: 01/06/2025\n", contentFont));
-        customerDetailsCell.addElement(customerDetails);
-
-        // Company details
-        PdfPCell companyDetailsCell = new PdfPCell();
-        companyDetailsCell.setBorder(Rectangle.NO_BORDER);
-        companyDetailsCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-        Paragraph companyDetails = new Paragraph();
-        companyDetails.add(new Phrase("Công ty XNK Thanh Hà\n", boldFont));
-        companyDetails.add(new Phrase("Email: xinchao@trangwebhay.vn\n", contentFont));
-        companyDetails.add(new Phrase("Địa chỉ: 123 Đường ABC, Thành phố DEF\n", contentFont));
-        companyDetails.add(new Phrase("Hotline: +84 912 345 678\n", contentFont));
-        companyDetailsCell.addElement(companyDetails);
-
-        detailsTable.addCell(customerDetailsCell);
-        detailsTable.addCell(companyDetailsCell);
-
-        document.add(detailsTable);
+        document.add(company);
         document.add(Chunk.NEWLINE);
     }
 
@@ -271,55 +267,90 @@ public class BaoCaoDoanhSoController {
 
         // Add table data
         for (BaoCaoDoanhSo item : data) {
-            table.addCell(createCell(String.valueOf(item.getSTT()), contentFont));
-            DaiLy daiLy = null;
-            try {
-                daiLy = DaiLyDAO.getInstance().QueryID(item.getMaDaiLy());
-            } catch (SQLException _) {
+            if (item.getSTT() != 0) {
+                table.addCell(createCell(String.valueOf(item.getSTT()), contentFont));
+            } else {
+                table.addCell(createCell("", contentFont));
             }
-            table.addCell(createCell(daiLy != null ? daiLy.getTenDaiLy() : "", contentFont));
+
+            if (item.getSTT() == 0) {
+                table.addCell(createCell("Tổng doanh số", contentFont));
+            } else {
+                DaiLy daiLy = null;
+                try {
+                    daiLy = DaiLyDAO.getInstance().QueryID(item.getMaDaiLy());
+                } catch (SQLException _) {
+                }
+                table.addCell(createCell(daiLy != null ? daiLy.getTenDaiLy() : "", contentFont));
+            }
             table.addCell(createCell(String.valueOf(item.getSoPhieuXuat()), contentFont));
             table.addCell(createCell(df.format(item.getTongTriGia()), contentFont));
-            table.addCell(createCell(String.valueOf(item.getTyLe()), contentFont));
+            if (item.getSTT() != 0) {
+                table.addCell(createCell(String.valueOf(item.getTyLe()), contentFont));
+            } else {
+                table.addCell(createCell("", contentFont)); // Add an empty cell for the total row
+            }
         }
 
         return table;
-    }
-
-    private static void addTotalRevenue(Document document, List<BaoCaoDoanhSo> data, Font boldFont) throws DocumentException {
-        double totalRevenue = data.stream().mapToDouble(BaoCaoDoanhSo::getTongTriGia).sum();
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
-        symbols.setGroupingSeparator('.');
-        DecimalFormat df = new DecimalFormat("#,##0", symbols);
-        df.setMaximumFractionDigits(8);
-        Paragraph totalRevenueParagraph = new Paragraph("TỔNG DOANH SỐ: " + df.format(totalRevenue) + " VNĐ", boldFont);
-        totalRevenueParagraph.setAlignment(Element.ALIGN_RIGHT);
-        document.add(totalRevenueParagraph);
-
-        document.add(Chunk.NEWLINE);
-    }
-
-    private static void addFooter(Document document, Font contentFont) throws DocumentException {
-        Paragraph footer = new Paragraph();
-        footer.setFont(contentFont);
-        footer.add(new Phrase("Thông tin thanh toán\n", contentFont));
-        footer.add(new Phrase("Ngân hàng VIB\n", contentFont));
-        footer.add(new Phrase("Tên tài khoản: Công ty XNK Thanh Hà\n", contentFont));
-        footer.add(new Phrase("Số tài khoản: 123-456-7890\n", contentFont));
-        footer.add(new Phrase("Hạn thanh toán: 01/07/2025\n", contentFont));
-        footer.add(Chunk.NEWLINE);
-        footer.add(new Phrase("Thông tin liên hệ\n", contentFont));
-        footer.add(new Phrase("Email: xinchao@trangwebhay.vn\n", contentFont));
-        footer.add(new Phrase("Địa chỉ: 123 Đường ABC, Thành phố DEF\n", contentFont));
-        footer.add(new Phrase("Hotline: +84 912 345 678\n", contentFont));
-        footer.setAlignment(Element.ALIGN_LEFT);
-
-        document.add(footer);
     }
 
     private static PdfPCell createCell(String content, Font font) {
         PdfPCell cell = new PdfPCell(new Phrase(content, font));
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         return cell;
+    }
+
+    private static void addHeaderNam(Document document, Font titleFont, Font contentFont, int year) throws DocumentException {
+        // Add title
+        Paragraph reportTitle = new Paragraph("BÁO CÁO DOANH SỐ NĂM " + year, titleFont);
+        reportTitle.setAlignment(Element.ALIGN_CENTER);
+        document.add(reportTitle);
+
+        // Add creation date
+        Paragraph dateParagraph = new Paragraph("Ngày tạo: " + LocalDate.now().toString(), contentFont);
+        dateParagraph.setAlignment(Element.ALIGN_RIGHT);
+        document.add(dateParagraph);
+
+        document.add(Chunk.NEWLINE);
+    }
+
+    protected static void exportBaoCaoDoanhSoNamPDF(List<BaoCaoDoanhSo> data, int year) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Lưu báo cáo doanh số");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("PDF Files", "*.pdf"));
+        String initialFileName = String.format("BaoCaoDoanhSo_%d.pdf", year);
+        fileChooser.setInitialFileName(initialFileName);
+
+        File selectedFile = fileChooser.showSaveDialog(null);
+
+        if (selectedFile != null) {
+            Document document = new Document();
+            try {
+                BaseFont baseFont = BaseFont.createFont("src/main/resources/vuArial.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+                Font titleFont = new Font(baseFont, 16, Font.BOLD);
+                Font contentFont = new Font(baseFont, 12);
+                Font boldFont = new Font(baseFont, 12, Font.BOLD);
+                PdfWriter.getInstance(document, new FileOutputStream(selectedFile.getAbsolutePath()));
+                document.open();
+
+                // Add header
+                addHeaderNam(document, titleFont, contentFont, year);
+
+                // Add company details
+                addDetails(document, boldFont, contentFont);
+
+                // Create and add table
+                PdfPTable table = createTable(data, contentFont, boldFont);
+                document.add(table);
+
+
+                document.close();
+                PopDialog.popSuccessDialog("Xuất báo cáo doanh số năm "+year+" thành công.");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

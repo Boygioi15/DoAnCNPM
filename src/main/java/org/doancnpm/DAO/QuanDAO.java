@@ -5,6 +5,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import org.doancnpm.Models.DatabaseDriver;
 import org.doancnpm.Models.Quan;
+import org.doancnpm.Ultilities.CheckExist;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -103,6 +104,22 @@ public class QuanDAO implements Idao<Quan> {
             return quan;
         }
         return null; // No record found with the given ID
+    }
+    public Quan QueryName(String name) throws SQLException {
+        ArrayList<Quan> allQuan = QueryAll();
+        String normalizedQuan = CheckExist.normalize(name);
+
+        // Duyệt qua danh sách tất cả các Quận và kiểm tra xem Quận đã tồn tại hay không
+        for (Quan q : allQuan) {
+            // Chuẩn hóa tên Quận từ danh sách (loại bỏ dấu và chuyển thành chữ thường)
+            String normalizedQuanName = CheckExist.normalize(q.getTenQuan());
+
+            if (normalizedQuanName.equals(normalizedQuan)) {
+                return q;
+            }
+        }
+
+        return null;
     }
 
     @Override

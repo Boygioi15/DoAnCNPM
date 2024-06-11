@@ -1,8 +1,16 @@
 @import url("ColorSource.css");
 
 .background {
-    -fx-background-color: #FFFFFF;
+    -fx-background-color: white;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
 }
+
+.scroll-pane > .viewport{
+    -fx-background-color: transparent;
+}
+
+
 .title-text{
     -fx-font-size: 24;
     -fx-font-family: Arial;
@@ -23,19 +31,27 @@
     -fx-font-family: Arial;
 }
 
+
+
 .add-button{
     -fx-background-color: #4DB14E;
     -fx-font-family: Arial;
     -fx-font-size: 14;
     -fx-font-weight: bold;
+    -fx-text-fill: White;
 
     -fx-min-height: 30;
     -fx-max-height: 30;
 }
+.add-button: hover {
+    -fx-background-color: #449C45;
+}
+.add-button: pressed {
+    -fx-background-color: #3E8F3F;
+}
 .add-button .label {
     -fx-text-fill: White;
 }
-
 .add-button .arrow {
     -fx-background-color: transparent;
     -fx-border-color: white;
@@ -47,6 +63,8 @@
     -fx-shape: "M0,0 L4,-3 L8,0";
 }
 
+
+
 .action-button{
     -fx-background-color: #2496EF;
     -fx-font-family: Arial;
@@ -57,6 +75,12 @@
     -fx-min-height: 30;
     -fx-max-height: 30;
 
+}
+.action-button: hover {
+    -fx-background-color: #228EE3;
+}
+.action-button: pressed {
+    -fx-background-color: #2086D6;
 }
 .action-button .label {
     -fx-text-fill: White;
@@ -71,7 +95,25 @@
 .action-button:showing .arrow {
     -fx-shape: "M0,0 L4,-3 L8,0";
 }
-.filter-button{
+
+
+
+.menu-item .label{
+    -font-family: Arial;
+    -fx-font-size: 12.0 pt;
+    -fx-font-weight: normal;
+    -fx-text-fill: black;
+}
+.menu-item: hover .label {
+    -fx-text-fill: white;
+}
+.menu-item: focused .label {
+    -fx-text-fill: white;
+}
+
+
+
+.filter-button {
     -fx-background-color: #D4F1F4;
 
     -fx-min-height: 30;
@@ -80,40 +122,89 @@
     -fx-min-width: 30;
     -fx-max-width: 30;
 }
+.filter-button: hover {
+    -fx-background-color: #CAE5E8;
+}
+.filter-button: pressed {
+    -fx-background-color: #BFD9DB;
+}
+
+
 
 .detail-button{
     -fx-background-color: #f0f0f0;
     -fx-border-width: 0;
-    -fx-background-radius: 5;
+    -fx-background-radius: 2;
 }
-.detail-surface: hover {
+.detail-button: hover {
     -fx-background-color: #e0e0e0;
     -fx-background-radius: 5;
 }
-.detail-surface: click {
-    -fx-background-color: #e0e0e0;
-    -fx-background-radius: 5;
-}
-.detail-surface{
+.detail-button: click {
     -fx-background-color: #d0d0d0;
     -fx-background-radius: 5;
 }
-.filter-textField{
-    -fx-background-color: White;
-    -fx-font-size: 13;
-    -fx-border-color: lightGray;
-    -fx-border-radius: 2;
-
-    -fx-min-height: 30;
-    -fx-max-height: 30;
+.detail-surface{
+    -fx-background-color: #b0b0b0;
+    -fx-background-radius: 5;
 }
-.filter-comboBox{
-    -fx-background-color: White;
+
+
+.detail-pane{
+    -fx-background-color: transparent;
+    -fx-border-color: lightgray;
+    -fx-border-insets: 1;
+    -fx-border-width: 1;
+    -fx-border-radius: 2 2 0 0;
+}
+
+
+.filter-textField {
+    -fx-background-color: white;
     -fx-font-size: 13;
-    -fx-border-color: lightGray;
-    -fx-border-radius: 2;
+    -fx-border-color: lightgray;
+    -fx-border-radius: 3;
+    -fx-border-width: 1;
+    -fx-border-insets: 0;
+}
 
+.filter-textField:hover {
+    -fx-border-color: #28B1DE;
+    -fx-border-radius: 3;
+    -fx-border-width: 1;
+    -fx-border-insets: 0;
+}
 
-    -fx-min-height: 30;
-    -fx-max-height: 30;
+.filter-textField:focused {
+    -fx-border-color: #26A8D2;
+    -fx-border-radius: 3;
+    -fx-border-width: 1;
+    -fx-border-insets: 0;
+}
+
+.scroll-pane .column-header-background .filler {
+    -fx-background-color: transparent;
+}
+.scroll-pane .corner {
+    -fx-background-color: transparent;
+}
+.scroll-bar:vertical,
+.scroll-bar:vertical .track,
+.scroll-bar:vertical .track-background,
+.scroll-bar:horizontal,
+.scroll-bar:horizontal .track,
+.scroll-bar:horizontal .track-background {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-opacity: 0;
+    -fx-padding: 2;
+}
+.scroll-bar:vertical .thumb{
+    -fx-background-color:  #b0b0b0;
+}
+.scroll-bar:horizontal .thumb {
+    -fx-background-color:  #b0b0b0;
 }

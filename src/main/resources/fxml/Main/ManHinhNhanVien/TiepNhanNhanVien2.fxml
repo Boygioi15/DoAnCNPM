@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import org.controlsfx.control.SearchableComboBox?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="550.0" spacing="20.0" styleClass="background" stylesheets="@../../../css/addForm.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.doancnpm.ManHinhNhanVien.TiepNhanNhanVienDialogController">
+   <children>
+      <Label styleClass="title-text" text="Thêm mới nhân viên" />
+      <HBox styleClass="separator" />
+      <VBox spacing="5.0">
+         <children>
+            <Label styleClass="body-text-header" text="Họ tên:" />
+            <TextField fx:id="hoTenTextField" maxWidth="250.0" />
+         </children>
+      </VBox>
+      <GridPane hgap="20.0">
+        <columnConstraints>
+          <ColumnConstraints />
+          <ColumnConstraints minWidth="10.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints />
+        </rowConstraints>
+         <children>
+            <VBox spacing="5.0">
+               <children>
+                  <Label styleClass="body-text-header" text="Giới tính:" />
+                  <SearchableComboBox fx:id="gioiTinhComboBox" prefWidth="130.0" promptText="Giới tính" styleClass="combobox" />
+               </children>
+            </VBox>
+            <VBox spacing="5.0" GridPane.columnIndex="1">
+               <children>
+                  <Label styleClass="body-text-header" text="Ngày sinh:" />
+                  <DatePicker fx:id="ngaySinhDatePicker" prefWidth="130.0" promptText="Ngày sinh" styleClass="body-text" stylesheets="@../../../css/datePicker.css" />
+               </children>
+            </VBox>
+         </children>
+      </GridPane>
+      <GridPane hgap="20.0">
+         <columnConstraints>
+            <ColumnConstraints />
+            <ColumnConstraints />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints />
+         </rowConstraints>
+         <children>
+            <VBox prefWidth="145.0" spacing="5.0">
+               <children>
+                  <Label styleClass="body-text-header" text="SDT:" />
+                  <TextField fx:id="sdtTextField" prefWidth="130.0" />
+               </children>
+            </VBox>
+            <VBox spacing="5.0" GridPane.columnIndex="1">
+               <children>
+                  <Label styleClass="body-text-header" text="Email:" />
+                  <TextField fx:id="emailTextField" prefWidth="180.0" />
+               </children>
+            </VBox>
+         </children>
+      </GridPane>
+      <GridPane hgap="20.0">
+         <columnConstraints>
+            <ColumnConstraints minWidth="10.0" />
+            <ColumnConstraints minWidth="10.0" prefWidth="120.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints />
+         </rowConstraints>
+         <children>
+            <VBox prefWidth="170.0" spacing="5.0">
+               <children>
+                  <Label styleClass="body-text-header" text="Lương:" />
+                  <TextField fx:id="luongTextField" />
+               </children>
+            </VBox>
+            <VBox spacing="5.0" GridPane.columnIndex="1">
+               <children>
+                  <Label styleClass="body-text-header" text="Chức vụ:" />
+                  <SearchableComboBox fx:id="chucVuComboBox" promptText="Chức vụ" styleClass="combobox" />
+               </children>
+            </VBox>
+         </children>
+      </GridPane>
+      <VBox spacing="5.0">
+         <children>
+            <Label styleClass="body-text-header" text="Ghi chú:" />
+            <TextArea fx:id="ghiChuTextArea" prefHeight="80.0" prefRowCount="5" />
+         </children>
+      </VBox>
+   </children>
+   <padding>
+      <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+   </padding>
+</VBox>

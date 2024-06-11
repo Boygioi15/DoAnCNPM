@@ -3,6 +3,7 @@ package org.doancnpm.Filters;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.doancnpm.Models.NhanVien;
+import org.doancnpm.Ultilities.CheckExist;
 
 public class NhanVienFilter implements IFilter<NhanVien> {
     ObservableList<NhanVien> input;
@@ -21,7 +22,7 @@ public class NhanVienFilter implements IFilter<NhanVien> {
         }
         output.addAll(input);
         for (NhanVien nhanVien : input) {
-            if (maNhanVien != null && !maNhanVien.isEmpty() && !nhanVien.getMaNhanVien().contains(maNhanVien)) {
+            if (maNhanVien != null && !maNhanVien.isEmpty() && !CheckExist.normalize(nhanVien.getMaNhanVien()).contains(CheckExist.normalize(maNhanVien))) {
                 output.remove(nhanVien);
                 continue;
             }
@@ -31,7 +32,7 @@ public class NhanVienFilter implements IFilter<NhanVien> {
                 continue;
             }
 
-            if (tenNhanVien != null && !tenNhanVien.isEmpty() && !nhanVien.getHoTen().contains(tenNhanVien)) {
+            if (tenNhanVien != null && !tenNhanVien.isEmpty() && !CheckExist.normalize(nhanVien.getHoTen()).contains(CheckExist.normalize(tenNhanVien))) {
                 output.remove(nhanVien);
             }
         }
