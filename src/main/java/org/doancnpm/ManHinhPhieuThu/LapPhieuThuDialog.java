@@ -80,17 +80,16 @@ public class LapPhieuThuDialog extends Dialog<PhieuThu> {
                     PhieuThuDAO.getInstance().Insert(pt);
                     PopDialog.popSuccessDialog("Thêm mới phiếu thu thành công");
                 } catch (SQLException e) {
-                    PopDialog.popErrorDialog("Thêm mới phiếu thu thất bại", e.toString());
+                    PopDialog.popErrorDialog("Thêm mới phiếu thu thất bại", e.getMessage());
                     ob.consume();
                 }
             }else {
                 try {
-
                     PhieuThuDAO.getInstance().Update(pt.getID(),pt);
-                    PopDialog.popSuccessDialog("Cập nhật phiếu thu tiền "+pt.getMaPhieuThu()+" thành công");
+                    PopDialog.popSuccessDialog("Cập nhật phiếu thu thành công");
                 }
                 catch (SQLException e) {
-                    PopDialog.popErrorDialog("Cập nhật phiếu thu tiền "+pt.getMaPhieuThu()+" thất bại",
+                    PopDialog.popErrorDialog("Cập nhật phiếu thu thất bại",
                             e.getMessage());
                     ob.consume();
                 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import io.github.palexdev.materialfx.controls.MFXComboBox?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.LineChart?>
@@ -26,10 +27,20 @@
             <Insets />
          </VBox.margin>
       </Label>
-      <HBox alignment="CENTER_LEFT" spacing="5.0">
+      <HBox alignment="CENTER_LEFT" spacing="20.0">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="header-text" text="Năm:" />
-            <ComboBox fx:id="CbYear" prefWidth="100.0" styleClass="combobox" stylesheets="@../../../css/addForm.css" />
+            <HBox alignment="CENTER_LEFT" spacing="5.0">
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="header-text" text="Năm:" />
+                  <ComboBox fx:id="CbYear" prefWidth="100.0" styleClass="combobox" stylesheets="@../../../css/addForm.css" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="5.0">
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="header-text" text="Tháng:" />
+                  <MFXComboBox fx:id="thangComboBox" floatMode="DISABLED" maxHeight="30.0" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" styleClass="combobox" />
+               </children>
+            </HBox>
          </children>
          <padding>
             <Insets left="10.0" />
@@ -37,7 +48,7 @@
       </HBox>
       <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
         <tabs>
-          <Tab text="Biểu đồ">
+          <Tab fx:id="chartTab" text="Biểu đồ">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0">
                      <children>
@@ -49,7 +60,8 @@
                             <NumberAxis side="LEFT" />
                           </yAxis>
                         </LineChart>
-                     </children></AnchorPane>
+                     </children>
+                  </AnchorPane>
             </content>
           </Tab>
           <Tab styleClass="ac" text="Chi tiết doanh số">

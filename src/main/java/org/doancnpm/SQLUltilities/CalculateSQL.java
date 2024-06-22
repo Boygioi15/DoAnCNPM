@@ -136,7 +136,37 @@ public class CalculateSQL {
         }
         return totalDebts;
     }
+    public double calTyLeMatHangTonKho(){
+        Connection conn = DatabaseDriver.getConnect();
+        int soMatHangTonKho = 0;
+        int soMatHangDaHet = 0;
+        if (conn != null) {
+            try {
+                String sql1 = "SELECT COUNT(*) AS SoMatHangTonKho FROM MATHANG WHERE SoLuong > 0";
+                Statement stmt1 = conn.createStatement();
+                ResultSet rs1 = stmt1.executeQuery(sql1);
 
+                if (rs1.next()) {
+                    soMatHangTonKho = rs1.getInt("SoMatHangTonKho");
+                }
+                String sql2 = "SELECT COUNT(*) AS SoMatHangTonKho FROM MATHANG WHERE SoLuong = 0";
+                Statement stmt2 = conn.createStatement();
+                ResultSet rs2 = stmt2.executeQuery(sql2);
+
+                if (rs2.next()) {
+                    soMatHangDaHet = rs2.getInt("SoMatHangTonKho");
+                }
+                rs2.close();
+                stmt2.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Không thể kết nối đến cơ sở dữ liệu.");
+        }
+        System.out.println(soMatHangDaHet+","+soMatHangTonKho);
+        return (double)(soMatHangTonKho)/(soMatHangDaHet+soMatHangTonKho);
+    }
     public int calSoMatHangTonKho() {
         Connection conn = DatabaseDriver.getConnect();
         int soMatHangTonKho = 0;

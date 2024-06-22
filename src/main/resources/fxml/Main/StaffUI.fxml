@@ -29,7 +29,7 @@
                         <Image url="@../../image/Logo.png" />
                      </image>
                   </ImageView>
-                  <Label styleClass="body-text" text="Nhóm 27 - SE104.O27" />
+                  <Label styleClass="body-text" text="Nhóm 26 - SE104.O27" />
                </children>
             </HBox>
          </left>

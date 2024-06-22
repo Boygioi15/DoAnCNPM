@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class LapPhieuNhapDialog extends Dialog<PhieuNhap> {
+    Boolean themHaySua;
     public LapPhieuNhapDialog(NhanVien nvLoggedIn) throws IOException {
         this(null,nvLoggedIn);
     }
@@ -31,10 +32,12 @@ public class LapPhieuNhapDialog extends Dialog<PhieuNhap> {
         if(initialValue==null){
             this.setTitle("Lập phiếu nhập hàng");
             saveButtonType = new ButtonType("Thêm mới", ButtonBar.ButtonData.OK_DONE);
+            themHaySua = true;
         }
         else{
             this.setTitle("Cập nhật phiếu nhập hàng");
             saveButtonType = new ButtonType("Cập nhật", ButtonBar.ButtonData.OK_DONE);
+            themHaySua = false;
         }
         ButtonType cancelButtonType = new ButtonType("Thoát", ButtonBar.ButtonData.CANCEL_CLOSE);
 
@@ -50,33 +53,42 @@ public class LapPhieuNhapDialog extends Dialog<PhieuNhap> {
         final Button btnOk = (Button)this.getDialogPane().lookupButton(saveButtonType);
         btnOk.addEventFilter(ActionEvent.ACTION,
                 event -> {
-                    String validString = c.GetValid();
-                    if(!validString.isEmpty()){
-                        PopDialog.popErrorDialog("Thêm mới phiếu nhập thất bại",validString);
-                        event.consume();
-                        return;
-                    }
-
-                    PhieuNhap phieuNhap = c.getPhieuNhap();
-                    List<ChiTietPhieuNhap> ctpns = c.getChiTietPhieuNhap();
-                    try{
-                        PhieuNhapDAO.getInstance().Insert(phieuNhap);
-                        phieuNhap = PhieuNhapDAO.getInstance().QueryMostRecent();
-                        for(ChiTietPhieuNhap ctpn: ctpns){
-                            ctpn.setMaPhieuNhap(phieuNhap.getID());
+                    if(themHaySua){
+                        String validString = c.GetValid();
+                        if(!validString.isEmpty()){
+                            PopDialog.popErrorDialog("Thêm mới phiếu nhập thất bại",validString);
+                            event.consume();
+                            return;
                         }
-                        CTPNDAO.getInstance().InsertBlock(ctpns);
-                        PopDialog.popSuccessDialog("Thêm mới phiếu nhập thành công");
+                        PhieuNhap phieuNhap = c.getPhieuNhap();
+                        List<ChiTietPhieuNhap> ctpns = c.getChiTietPhieuNhap();
+                        try{
+                            PhieuNhapDAO.getInstance().Insert(phieuNhap);
+                            phieuNhap = PhieuNhapDAO.getInstance().QueryMostRecent();
+                            for(ChiTietPhieuNhap ctpn: ctpns){
+                                ctpn.setMaPhieuNhap(phieuNhap.getID());
+                            }
+                            CTPNDAO.getInstance().InsertBlock(ctpns);
+                            PopDialog.popSuccessDialog("Thêm mới phiếu nhập thành công");
+                        }
+                        catch (SQLException e){
+                            try {
+                                PhieuNhapDAO.getInstance().Delete(phieuNhap.getID());
+                            } catch (SQLException _) {}
+                            PopDialog.popErrorDialog("Thêm phiếu nhập thất bại",e.getMessage());
+                            event.consume();
+                            return;
+                        }
                     }
-                    catch (SQLException e){
+                    else{
+                        PhieuNhap phieuNhap = c.getPhieuNhap();
                         try {
-                            PhieuNhapDAO.getInstance().Delete(phieuNhap.getID());
-                        } catch (SQLException _) {}
-                        PopDialog.popErrorDialog("Thêm phiếu nhập thất bại",e.getMessage());
-                        event.consume();
-                        return;
+                            PhieuNhapDAO.getInstance().Update(phieuNhap.getID(),phieuNhap);
+                            PopDialog.popSuccessDialog("Cập nhật phiếu nhập thành công");
+                        } catch (SQLException e) {
+                            PopDialog.popErrorDialog("Cập nhật phiếu nhập thất bại",e.getMessage());
+                        }
                     }
-
                 }
         );
         //this.getDialogPane().lookupButton(saveButtonType).disableProperty().bind(c.validProperty().not());

@@ -14,6 +14,8 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -651,7 +653,7 @@ public class ManHinhQuyDinhController implements Initializable {
                     @Override
                     public TableCell call(final TableColumn<Quan, String> param) {
                         final TableCell<Quan, String> cell = new TableCell<Quan, String>() {
-                            final Button xoaBtn = new javafx.scene.control.Button("Xóa");
+                            final Button xoaBtn = new javafx.scene.control.Button();
 
                             @Override
                             public void updateItem(String item, boolean empty) {
@@ -660,6 +662,13 @@ public class ManHinhQuyDinhController implements Initializable {
                                     setGraphic(null);
                                     setText(null);
                                 } else {
+                                    Image trashCan = new Image(getClass().getResourceAsStream("/image/trash_can.png"));
+                                    ImageView trashImage = new ImageView(trashCan);
+                                    trashImage.setFitWidth(20);
+                                    trashImage.setFitHeight(20);
+
+
+                                    xoaBtn.setGraphic(trashImage);
                                     xoaBtn.setOnAction(event -> {
                                         Quan qn = getTableView().getItems().get(getIndex());
                                         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -840,7 +849,7 @@ public class ManHinhQuyDinhController implements Initializable {
                     @Override
                     public TableCell call(final TableColumn<LoaiDaiLy, String> param) {
                         final TableCell<LoaiDaiLy, String> cell = new TableCell<LoaiDaiLy, String>() {
-                            final Button xoaBtn = new javafx.scene.control.Button("Xóa");
+                            final Button xoaBtn = new javafx.scene.control.Button();
 
                             @Override
                             public void updateItem(String item, boolean empty) {
@@ -849,6 +858,13 @@ public class ManHinhQuyDinhController implements Initializable {
                                     setGraphic(null);
                                     setText(null);
                                 } else {
+                                    Image trashCan = new Image(getClass().getResourceAsStream("/image/trash_can.png"));
+                                    ImageView trashImage = new ImageView(trashCan);
+                                    trashImage.setFitWidth(20);
+                                    trashImage.setFitHeight(20);
+
+
+                                    xoaBtn.setGraphic(trashImage);
                                     xoaBtn.setOnAction(event -> {
                                         LoaiDaiLy ldl = getTableView().getItems().get(getIndex());
                                         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -861,7 +877,7 @@ public class ManHinhQuyDinhController implements Initializable {
                                                 LoaiDaiLyDAO.getInstance().Delete(ldl.getId());
                                                 PopDialog.popSuccessDialog("Xóa loại đại lý " + ldl.getTenLoai() + " thành công");
                                             } catch (SQLException e) {
-                                                PopDialog.popErrorDialog("Xóa quận " + ldl.getTenLoai() + " thất bại", e.getMessage());
+                                                PopDialog.popErrorDialog("Xóa loại đại lý  " + ldl.getTenLoai() + " thất bại", e.getMessage());
                                             }
                                         }
                                     });
@@ -1038,7 +1054,7 @@ public class ManHinhQuyDinhController implements Initializable {
                     @Override
                     public TableCell call(final TableColumn<TaiKhoan, String> param) {
                         final TableCell<TaiKhoan, String> cell = new TableCell<TaiKhoan, String>() {
-                            final Button xoaBtn = new javafx.scene.control.Button("Xóa");
+                            final Button xoaBtn = new javafx.scene.control.Button();
 
                             @Override
                             public void updateItem(String item, boolean empty) {
@@ -1047,6 +1063,13 @@ public class ManHinhQuyDinhController implements Initializable {
                                     setGraphic(null);
                                     setText(null);
                                 } else {
+                                    Image trashCan = new Image(getClass().getResourceAsStream("/image/trash_can.png"));
+                                    ImageView trashImage = new ImageView(trashCan);
+                                    trashImage.setFitWidth(20);
+                                    trashImage.setFitHeight(20);
+
+
+                                    xoaBtn.setGraphic(trashImage);
                                     xoaBtn.setOnAction(event -> {
                                         TaiKhoan tk = getTableView().getItems().get(getIndex());
                                         NhanVien nv = null;
@@ -1176,7 +1199,7 @@ public class ManHinhQuyDinhController implements Initializable {
                     @Override
                     public TableCell call(final TableColumn<DonViTinh, String> param) {
                         final TableCell<DonViTinh, String> cell = new TableCell<DonViTinh, String>() {
-                            final Button xoaBtn = new javafx.scene.control.Button("Xóa");
+                            final Button xoaBtn = new javafx.scene.control.Button();
 
                             @Override
                             public void updateItem(String item, boolean empty) {
@@ -1185,6 +1208,14 @@ public class ManHinhQuyDinhController implements Initializable {
                                     setGraphic(null);
                                     setText(null);
                                 } else {
+                                    Image trashCan = new Image(getClass().getResourceAsStream("/image/trash_can.png"));
+                                    ImageView trashImage = new ImageView(trashCan);
+                                    trashImage.setFitWidth(20);
+                                    trashImage.setFitHeight(20);
+
+
+                                    xoaBtn.setGraphic(trashImage);
+
                                     xoaBtn.setOnAction(event -> {
                                         DonViTinh dvt = getTableView().getItems().get(getIndex());
                                         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);

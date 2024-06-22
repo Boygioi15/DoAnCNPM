@@ -197,7 +197,11 @@ public class ManHinhDieuKhienController implements Initializable {
             tongGiaTriKhoHangText.setText(String.valueOf(df.format(CalculateSQL.getInstance().calTongGiaTriKhoHang())));
 
             slMatHangText.setText(String.valueOf(CalculateSQL.getInstance().calSoLuongMatHang()));
-            soLuongHangTonKhoText.setText(String.valueOf(CalculateSQL.getInstance().calSoLuongHangTonKho()));
+            double number = CalculateSQL.getInstance().calTyLeMatHangTonKho();
+
+            number = Math.round(number * 100);
+
+            soLuongHangTonKhoText.setText(String.valueOf(number)+"%");
             initPieChart();
 
         });
@@ -220,7 +224,10 @@ public class ManHinhDieuKhienController implements Initializable {
         tongGiaTriKhoHangText.setText(String.valueOf(df.format(CalculateSQL.getInstance().calTongGiaTriKhoHang())));
 
         slMatHangText.setText(String.valueOf(CalculateSQL.getInstance().calSoLuongMatHang()));
-        soLuongHangTonKhoText.setText(String.valueOf(CalculateSQL.getInstance().calSoLuongHangTonKho()));
+        double number = CalculateSQL.getInstance().calTyLeMatHangTonKho();
+
+        number = Math.round(number * 100);
+        soLuongHangTonKhoText.setText(String.valueOf(number)+"%");
 
 
     }

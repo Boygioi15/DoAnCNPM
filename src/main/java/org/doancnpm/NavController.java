@@ -61,6 +61,7 @@ public class NavController {
 
         stage.setScene(loginScene);
         stage.show();
+        stage.setTitle("Quản lý đại lý");
     }
 
     public void showLoginScreen() {
@@ -70,6 +71,7 @@ public class NavController {
             );
             scene.setRoot((Parent) loader.load());
             stage.setResizable(false);
+            stage.setTitle("Quản lý đại lý");
             LoginController controller =
                     loader.<LoginController>getController();
             controller.initManager(this);
@@ -98,6 +100,7 @@ public class NavController {
             stage.setMinWidth(1300);
             stage.setMinHeight(700);
             scene.getWindow().centerOnScreen();
+            stage.setTitle("Quản lý đại lý");
         } catch (IOException ex) {
             Logger.getLogger(NavController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -123,6 +126,7 @@ public class NavController {
             stage.setMinWidth(1300);
             stage.setMinHeight(700);
             scene.getWindow().centerOnScreen();
+            stage.setTitle("Quản lý đại lý");
         } catch (IOException ex) {
             Logger.getLogger(NavController.class.getName()).log(Level.SEVERE, null, ex);
         }
