@@ -104,14 +104,19 @@ public class ManHinhBaoCaoController implements Initializable {
             if (newValue != null) {
                 int selectedYear = newValue;
                 thangComboBox.getItems().clear();
+                Set<Integer> activeMonths = CalculateSQL.getInstance().findActiveMonths(selectedYear);
                 if (selectedYear == currentYear) {
                     for (int i = 1; i <= currentMonth-1; i++) {
-                        thangComboBox.getItems().add(i);
+                        if(activeMonths.contains(i)) {
+                            thangComboBox.getItems().add(i);
+                        }
                     }
                 }
                 else{
                     for (int i = 1; i <= 12; i++) {
-                        thangComboBox.getItems().add(i);
+                        if(activeMonths.contains(i)) {
+                            thangComboBox.getItems().add(i);
+                        }
                     }
                 }
                 initLineChart(selectedYear);
@@ -142,7 +147,7 @@ public class ManHinhBaoCaoController implements Initializable {
 
 
     private void initLineChart(int selectedYear) {
-        mixlineChart.setTitle("Hoạt động doanh thu và nợ hàng tháng");
+        mixlineChart.setTitle("Hoạt động doanh thu và nợ hàng tháng trong năm "+selectedYear);
         CalculateSQL calculateSQL = CalculateSQL.getInstance();
 
         mixlineChart.getData().clear();
