@@ -135,6 +135,9 @@ public class ManHinhBaoCaoController implements Initializable {
                     }
                 }
             }
+            else {
+                initAccordion(0, CbYear.getValue());
+            }
         });
     }
 
