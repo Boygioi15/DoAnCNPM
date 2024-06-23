@@ -46,7 +46,7 @@
             <Insets left="10.0" />
          </padding>
       </HBox>
-      <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+      <TabPane fx:id="BaoCaoTabPane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
         <tabs>
           <Tab fx:id="chartTab" text="Biểu đồ">
             <content>

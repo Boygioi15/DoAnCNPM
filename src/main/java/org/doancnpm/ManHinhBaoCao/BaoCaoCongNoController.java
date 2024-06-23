@@ -103,11 +103,10 @@ public class BaoCaoCongNoController {
         return tableView;
     }
 
-    protected ObservableList<TitledPane> createTitledPanesForMonths(int monthValue, int year) {
+    protected ObservableList<TitledPane> createTitledPanesForMonths(int month, int year) {
         ObservableList<TitledPane> titledPanes = FXCollections.observableArrayList();
         Set<Integer> activeMonths = CalculateSQL.getInstance().findActiveMonths(year);
-
-        if (activeMonths.contains(monthValue)) {
+        if (month != 0) {
             try {
                 Map<Integer, Map<String, Pair<Double, Double>>> totalDebtsData = CalculateSQL.getInstance().calculateDebtUntilMonthWithDaiLy(year);
                 VBox container = new VBox(10);
@@ -121,11 +120,11 @@ public class BaoCaoCongNoController {
                 layout.setPadding(new Insets(10));
                 layout.setPrefWidth(600); // Set a preferred width for the layout
 
-                TableView<BaoCaoCongNo> tableView = createTableViewForMonth(totalDebtsData, monthValue, year);
+                TableView<BaoCaoCongNo> tableView = createTableViewForMonth(totalDebtsData, month, year);
                 layout.getChildren().add(tableView);
 
                 Button exportButton = new Button("Xuất PDF");
-                int finalMonthValue = monthValue;
+                int finalMonthValue = month;
                 exportButton.setOnAction(event -> {
                     exportBaoCaoCongNoToPDF(tableView.getItems(), finalMonthValue, year);
                 });
@@ -138,11 +137,54 @@ public class BaoCaoCongNoController {
                 container.getChildren().add(scrollPane);
 
                 TitledPane titledPane = new TitledPane();
-                titledPane.setText("Tháng " + monthValue);
+                titledPane.setText("Tháng " + month);
                 titledPane.setContent(container);
                 titledPanes.add(titledPane);
             } catch (SQLException e) {
                 e.printStackTrace();
+            }
+        } else {
+            for (int monthValue = 1; monthValue <= 12; monthValue++) {
+
+                if (activeMonths.contains(monthValue)) {
+                    try {
+                        Map<Integer, Map<String, Pair<Double, Double>>> totalDebtsData = CalculateSQL.getInstance().calculateDebtUntilMonthWithDaiLy(year);
+                        VBox container = new VBox(10);
+                        container.setAlignment(Pos.CENTER);
+
+                        ScrollPane scrollPane = new ScrollPane();
+                        scrollPane.setFitToWidth(true); // Ensure ScrollPane fits its content width
+
+                        VBox layout = new VBox(10);
+                        layout.setAlignment(Pos.CENTER);
+                        layout.setPadding(new Insets(10));
+                        layout.setPrefWidth(600); // Set a preferred width for the layout
+
+                        TableView<BaoCaoCongNo> tableView = createTableViewForMonth(totalDebtsData, monthValue, year);
+                        layout.getChildren().add(tableView);
+
+                        Button exportButton = new Button("Xuất PDF");
+                        int finalMonthValue = monthValue;
+                        exportButton.setOnAction(event -> {
+                            exportBaoCaoCongNoToPDF(tableView.getItems(), finalMonthValue, year);
+                        });
+                        HBox buttonContainer = new HBox(10);
+                        buttonContainer.setAlignment(Pos.CENTER_RIGHT);
+                        buttonContainer.getChildren().add(exportButton);
+                        layout.getChildren().add(buttonContainer);
+
+                        scrollPane.setContent(layout);
+                        container.getChildren().add(scrollPane);
+
+                        TitledPane titledPane = new TitledPane();
+                        titledPane.setText("Tháng " + monthValue);
+                        titledPane.setContent(container);
+                        titledPane.setExpanded(false);
+                        titledPanes.add(titledPane);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
         return titledPanes;

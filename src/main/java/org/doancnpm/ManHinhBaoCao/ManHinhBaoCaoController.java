@@ -48,6 +48,8 @@ public class ManHinhBaoCaoController implements Initializable {
     Button exportBaoCaoDSNam, exportBaoCaoCNNam;
     @FXML
     Tab chartTab, DSTab, CNTab;
+    @FXML
+    TabPane BaoCaoTabPane;
 
     public void setVisibility(boolean visibility) {
         manHinhBaoCao.setVisible(visibility);
@@ -68,7 +70,7 @@ public class ManHinhBaoCaoController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initLineChart(currentYear);
         initComboBox();
-        initAccordion(currentMonth, currentYear);
+        initAccordion(0, currentYear);
         exportBaoCaoDSNam.setOnAction(actionEvent -> {
             handleXuatBaoCaoDSNam(CbYear.getValue());
         });
@@ -84,12 +86,6 @@ public class ManHinhBaoCaoController implements Initializable {
             initLineChart(CbYear.getValue());
             initAccordion(thangComboBox.getValue(), CbYear.getValue());
         });
-
-        chartTab.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            thangComboBox.setDisable(newValue);
-        });
-
-        thangComboBox.setDisable(chartTab.isSelected());
     }
 
     private void initComboBox() {
@@ -103,9 +99,6 @@ public class ManHinhBaoCaoController implements Initializable {
         for (int i = 1; i <= currentMonth - 1; i++) {
             thangComboBox.getItems().add(i);
         }
-
-        thangComboBox.setValue(currentMonth);
-        thangComboBox.setText(String.valueOf(currentMonth));
 
         CbYear.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
@@ -121,6 +114,7 @@ public class ManHinhBaoCaoController implements Initializable {
                         thangComboBox.getItems().add(i);
                     }
                 }
+                thangComboBox.setValue(1);
                 initLineChart(selectedYear);
                 initAccordion(thangComboBox.getValue(), selectedYear);
             }
@@ -129,6 +123,13 @@ public class ManHinhBaoCaoController implements Initializable {
             if (newValue != null) {
                 int selectedMonth = newValue;
                 initAccordion(selectedMonth, CbYear.getValue());
+
+                if (BaoCaoTabPane != null) {
+                    Tab selectedTab = BaoCaoTabPane.getSelectionModel().getSelectedItem();
+                    if (selectedTab == chartTab) {
+                        BaoCaoTabPane.getSelectionModel().select(DSTab);
+                    }
+                }
             }
         });
     }

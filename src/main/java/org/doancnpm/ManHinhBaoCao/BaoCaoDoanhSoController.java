@@ -13,6 +13,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Popup;
@@ -51,14 +52,6 @@ public class BaoCaoDoanhSoController {
             baoCaoDoanhSoItems.add(item);
         }
 
-        // Adding the total row
-        BaoCaoDoanhSo totalItem = new BaoCaoDoanhSo();
-        totalItem.setSoPhieuXuat(totalSoPhieuXuat);
-        totalItem.setTongTriGia(totalTongGiaTri);
-        totalItem.setTyLe(1.0); // 100% of the total
-        totalItem.setSTT(0); // Mark as total row
-        baoCaoDoanhSoItems.add(totalItem);
-
         TableView<BaoCaoDoanhSo> tableView = new TableView<>();
         tableView.setMaxHeight(300.0);
         tableView.setMaxWidth(500.0);
@@ -77,7 +70,7 @@ public class BaoCaoDoanhSoController {
         TableColumn<BaoCaoDoanhSo, String> tenDaiLyCol = new TableColumn<>("Đại lý");
         tenDaiLyCol.setCellValueFactory(data -> {
             if (data.getValue().getMaDaiLy() == 0) {
-                return new SimpleObjectProperty<>("Tổng doanh số");
+                return new SimpleObjectProperty<>("");
             } else {
                 DaiLy daiLy = null;
                 try {
@@ -89,47 +82,64 @@ public class BaoCaoDoanhSoController {
         });
         tenDaiLyCol.setPrefWidth(152.0);
 
-        TableColumn<BaoCaoDoanhSo, Integer> soPhieuXuatCol = new TableColumn<>("Số phiếu xuất");
-        soPhieuXuatCol.setCellValueFactory(new PropertyValueFactory<>("soPhieuXuat"));
+        TableColumn<BaoCaoDoanhSo, String> soPhieuXuatCol = new TableColumn<>("Số phiếu xuất");
+        soPhieuXuatCol.setCellValueFactory(data -> {
+            Integer sttValue = data.getValue().getSTT();
+            if (sttValue != 0) {
+                return new SimpleObjectProperty<>(String.valueOf(data.getValue().getSoPhieuXuat()));
+            } else {
+                return new SimpleObjectProperty<>(""); // Return an empty string for STT == 0
+            }
+        });
         soPhieuXuatCol.setPrefWidth(96.8);
+
 
         TableColumn<BaoCaoDoanhSo, String> tongTriGiaCol = new TableColumn<>("Tổng trị giá");
         DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.getDefault());
         symbols.setGroupingSeparator('.');
         DecimalFormat df = new DecimalFormat("#,##0", symbols);
         df.setMaximumFractionDigits(8);
-        tongTriGiaCol.setCellValueFactory(data -> new SimpleObjectProperty<>(df.format(data.getValue().getTongTriGia())));
+        tongTriGiaCol.setCellValueFactory(data -> {
+            if (data.getValue().getSTT() == 0) {
+                return new SimpleObjectProperty<>("");
+            } else {
+                return new SimpleObjectProperty<>(df.format(data.getValue().getTongTriGia()));
+            }
+        });
         tongTriGiaCol.setPrefWidth(119.2);
 
-        TableColumn<BaoCaoDoanhSo, Double> tyLeCol = new TableColumn<>("Tỷ lệ");
-        tyLeCol.setCellValueFactory(data -> {
-            double tongGiaTri = 0.0;
-            for (BaoCaoDoanhSo item : baoCaoDoanhSoItems) {
-                if (item.getSTT() != 0) {
-                    tongGiaTri += item.getTongTriGia();
-                }
-            }
-            if (data.getValue().getSTT() != baoCaoDoanhSoItems.size() && data.getValue().getSTT() != 0) {
-                double tyLe = data.getValue().getTongTriGia() / tongGiaTri;
-                tyLe = Math.round(tyLe * 100.0) / 100.0;
-                data.getValue().setTyLe(tyLe);
 
-                return new SimpleObjectProperty<>(tyLe);
-            } else if (data.getValue().getSTT() != 0) {
-                double tongtyLe = 0;
-                for (int i = 0; i < data.getValue().getSTT() - 1; i++) {
-                    if (baoCaoDoanhSoItems.get(i).getSTT() != 0) {
-                        tongtyLe += baoCaoDoanhSoItems.get(i).getTyLe();
+        TableColumn<BaoCaoDoanhSo, String> tyLeCol = new TableColumn<>("Tỷ lệ");
+        tyLeCol.setCellValueFactory(data -> {
+            if (data.getValue().getSTT() == 0) {
+                return new SimpleObjectProperty<>(""); // Trả về chuỗi rỗng nếu STT = 0
+            } else {
+                double tongGiaTri = 0.0;
+                for (BaoCaoDoanhSo item : baoCaoDoanhSoItems) {
+                    if (item.getSTT() != 0) {
+                        tongGiaTri += item.getTongTriGia();
                     }
                 }
-                double tyLe = 1 - tongtyLe;
-                tyLe = Math.round(tyLe * 100.0) / 100.0;
-                data.getValue().setTyLe(tyLe);
-                return new SimpleObjectProperty<>(tyLe);
-            } else return new SimpleObjectProperty<>((double) 1);
+                if (data.getValue().getSTT() != baoCaoDoanhSoItems.size()) {
+                    double tyLe = data.getValue().getTongTriGia() / tongGiaTri;
+                    tyLe = Math.round(tyLe * 100.0) / 100.0;
+                    data.getValue().setTyLe(tyLe);
+                    return new SimpleObjectProperty<>(String.format("%.2f", tyLe)); // Định dạng lại thành chuỗi với 2 chữ số thập phân
+                } else {
+                    double tongtyLe = 0;
+                    for (int i = 0; i < data.getValue().getSTT() - 1; i++) {
+                        if (baoCaoDoanhSoItems.get(i).getSTT() != 0) {
+                            tongtyLe += baoCaoDoanhSoItems.get(i).getTyLe();
+                        }
+                    }
+                    double tyLe = 1 - tongtyLe;
+                    tyLe = Math.round(tyLe * 100.0) / 100.0;
+                    data.getValue().setTyLe(tyLe);
+                    return new SimpleObjectProperty<>(String.format("%.2f", tyLe)); // Định dạng lại thành chuỗi với 2 chữ số thập phân
+                }
+            }
         });
         tyLeCol.setPrefWidth(92.8);
-
         tableView.getColumns().addAll(sttCol, tenDaiLyCol, soPhieuXuatCol, tongTriGiaCol, tyLeCol);
         tableView.setItems(baoCaoDoanhSoItems);
 
@@ -137,47 +147,124 @@ public class BaoCaoDoanhSoController {
     }
 
 
-    protected ObservableList<TitledPane> createTitledPanesForMonths(int month, int year) {
+    protected ObservableList<TitledPane> createTitledPanesForMonths(int selectedMonth, int year) {
         ObservableList<TitledPane> titledPanes = FXCollections.observableArrayList();
-        int monthValue = month;
-        Map<Integer, Integer> soPhieuXuatData = CalculateSQL.getInstance().calSoPhieuXuatVoiDaiLyTheoThang(monthValue, year);
-        Map<Integer, Double> tongGiaTriData = CalculateSQL.getInstance().calTongGiaTriPhieuXuatVoiDaiLyTheoThang(monthValue, year);
+        if (selectedMonth != 0) {
+            Map<Integer, Integer> soPhieuXuatData = CalculateSQL.getInstance().calSoPhieuXuatVoiDaiLyTheoThang(selectedMonth, year);
+            Map<Integer, Double> tongGiaTriData = CalculateSQL.getInstance().calTongGiaTriPhieuXuatVoiDaiLyTheoThang(selectedMonth, year);
 
-        if (!soPhieuXuatData.isEmpty() || !tongGiaTriData.isEmpty()) {
-            VBox container = new VBox(10);
-            container.setAlignment(Pos.CENTER);
+            if (!soPhieuXuatData.isEmpty() || !tongGiaTriData.isEmpty()) {
+                VBox container = new VBox(10);
+                container.setAlignment(Pos.CENTER);
 
-            ScrollPane scrollPane = new ScrollPane();
-            scrollPane.setFitToWidth(true); // Ensure ScrollPane fits its content width
+                ScrollPane scrollPane = new ScrollPane();
+                scrollPane.setFitToWidth(true);
 
-            VBox layout = new VBox(10);
-            layout.setAlignment(Pos.CENTER);
-            layout.setPadding(new Insets(10));
-            layout.setPrefWidth(600); // Set a preferred width for the layout
+                VBox layout = new VBox(10);
+                layout.setAlignment(Pos.CENTER);
+                layout.setPadding(new Insets(10));
+                layout.setPrefWidth(600);
 
-            TableView<BaoCaoDoanhSo> tableView = createTableViewForMonth(soPhieuXuatData, tongGiaTriData);
-            layout.getChildren().add(tableView);
+                TableView<BaoCaoDoanhSo> tableView = createTableViewForMonth(soPhieuXuatData, tongGiaTriData);
 
-            Button exportButton = new Button("Xuất PDF");
-            exportButton.setOnAction(event -> {
-                exportBaoCaoDoanhSoToPDF(tableView.getItems(), monthValue, year);
-            });
-            HBox buttonContainer = new HBox(10);
-            buttonContainer.setAlignment(Pos.CENTER_RIGHT);
-            buttonContainer.getChildren().add(exportButton);
-            layout.getChildren().add(buttonContainer);
+                // Create the summary box
+                VBox summaryBox = createSummaryBox(soPhieuXuatData, tongGiaTriData);
+                summaryBox.prefWidthProperty().bind(tableView.widthProperty());
+                summaryBox.setMaxWidth(Region.USE_PREF_SIZE);
 
-            scrollPane.setContent(layout);
-            container.getChildren().add(scrollPane);
+                // Add components to the layout
+                layout.getChildren().addAll(tableView,summaryBox);
+                Button exportButton = new Button("Xuất PDF");
+                exportButton.setOnAction(event -> {
+                    exportBaoCaoDoanhSoToPDF(tableView.getItems(), selectedMonth, year);
+                });
+                HBox buttonContainer = new HBox(10);
+                buttonContainer.setAlignment(Pos.CENTER_RIGHT);
+                buttonContainer.getChildren().add(exportButton);
+                layout.getChildren().add(buttonContainer);
 
-            TitledPane titledPane = new TitledPane();
-            titledPane.setText("Tháng " + month);
-            titledPane.setContent(container);
-            titledPanes.add(titledPane);
+                scrollPane.setContent(layout);
+                container.getChildren().add(scrollPane);
+
+                TitledPane titledPane = new TitledPane();
+                titledPane.setText("Tháng " + selectedMonth);
+                titledPane.setContent(container);
+                titledPanes.add(titledPane);
+            }
+        } else {
+            for (int month = 1; month <= 12; month++) {
+                int monthValue = month;
+                Map<Integer, Integer> soPhieuXuatData = CalculateSQL.getInstance().calSoPhieuXuatVoiDaiLyTheoThang(monthValue, year);
+                Map<Integer, Double> tongGiaTriData = CalculateSQL.getInstance().calTongGiaTriPhieuXuatVoiDaiLyTheoThang(monthValue, year);
+
+                if (!soPhieuXuatData.isEmpty() || !tongGiaTriData.isEmpty()) {
+                    VBox container = new VBox(10);
+                    container.setAlignment(Pos.CENTER);
+
+                    ScrollPane scrollPane = new ScrollPane();
+                    scrollPane.setFitToWidth(true);
+
+                    VBox layout = new VBox(10);
+                    layout.setAlignment(Pos.CENTER);
+                    layout.setPadding(new Insets(10));
+                    layout.setPrefWidth(600);
+
+                    TableView<BaoCaoDoanhSo> tableView = createTableViewForMonth(soPhieuXuatData, tongGiaTriData);
+
+                    // Create the summary box
+                    VBox summaryBox = createSummaryBox(soPhieuXuatData, tongGiaTriData);
+                    summaryBox.prefWidthProperty().bind(tableView.widthProperty());
+                    summaryBox.setMaxWidth(Region.USE_PREF_SIZE);
+
+                    // Add components to the layout
+                    layout.getChildren().addAll(tableView,summaryBox);
+
+                    Button exportButton = new Button("Xuất PDF");
+                    exportButton.setOnAction(event -> {
+                        exportBaoCaoDoanhSoToPDF(tableView.getItems(), monthValue, year);
+                    });
+                    HBox buttonContainer = new HBox(10);
+                    buttonContainer.setAlignment(Pos.CENTER_RIGHT);
+                    buttonContainer.getChildren().add(exportButton);
+                    layout.getChildren().add(buttonContainer);
+
+                    scrollPane.setContent(layout);
+                    container.getChildren().add(scrollPane);
+
+                    TitledPane titledPane = new TitledPane();
+                    titledPane.setText("Tháng " + month);
+                    titledPane.setContent(container);
+                    titledPane.setExpanded(false);
+                    titledPanes.add(titledPane);
+                }
+            }
         }
         return titledPanes;
     }
+    private VBox createSummaryBox(Map<Integer, Integer> soPhieuXuatData, Map<Integer, Double> tongGiaTriData) {
+        VBox summaryBox = new VBox(5);
+        summaryBox.setAlignment(Pos.CENTER_LEFT);
+        summaryBox.setPadding(new Insets(10, 0, 10, 0));
 
+        Label lblTongDaiLy = new Label("Tổng số đại lý có hoạt động:");
+        Label lblTongPhieuXuat = new Label("Tổng số phiếu xuất:");
+        Label lblTongTriGia = new Label("Tổng trị giá:");
+
+        for (Label lbl : new Label[]{lblTongDaiLy, lblTongPhieuXuat, lblTongTriGia}) {
+            lbl.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
+        }
+
+        int tongDaiLy = soPhieuXuatData.size();
+        int tongPhieuXuat = soPhieuXuatData.values().stream().mapToInt(Integer::intValue).sum();
+        double tongTriGia = tongGiaTriData.values().stream().mapToDouble(Double::doubleValue).sum();
+
+        lblTongDaiLy.setText(lblTongDaiLy.getText() + " " + tongDaiLy);
+        lblTongPhieuXuat.setText(lblTongPhieuXuat.getText() + " " + tongPhieuXuat);
+        lblTongTriGia.setText(lblTongTriGia.getText() + " " + String.format("%,.0f", tongTriGia));
+
+        summaryBox.getChildren().addAll(lblTongDaiLy, lblTongPhieuXuat, lblTongTriGia);
+        return summaryBox;
+    }
     private static void exportBaoCaoDoanhSoToPDF(List<BaoCaoDoanhSo> data, int month, int year) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Lưu báo cáo doanh số");
