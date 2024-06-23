@@ -53,11 +53,11 @@ public class BaoCaoDoanhSoController {
         }
 
         TableView<BaoCaoDoanhSo> tableView = new TableView<>();
-        tableView.setMaxHeight(300.0);
+        tableView.setMaxHeight(200);
         tableView.setMaxWidth(500.0);
-        tableView.setMinHeight(300.0);
+        tableView.setMinHeight(200);
         tableView.setMinWidth(500.0);
-        tableView.setPrefHeight(300.0);
+        tableView.setPrefHeight(200);
         tableView.setPrefWidth(500.0);
 
         TableColumn<BaoCaoDoanhSo, String> sttCol = new TableColumn<>("STT");
