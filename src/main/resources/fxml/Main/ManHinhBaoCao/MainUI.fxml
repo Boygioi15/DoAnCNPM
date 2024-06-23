@@ -64,7 +64,7 @@
                   </AnchorPane>
             </content>
           </Tab>
-          <Tab styleClass="ac" text="Chi tiết doanh số">
+          <Tab fx:id="DSTab" styleClass="ac" text="Chi tiết doanh số">
                <content>
                   <VBox maxHeight="1.7976931348623157E308" spacing="20.0">
                      <children>
@@ -82,7 +82,7 @@
                   </VBox>
                </content>
           </Tab>
-            <Tab text="Chi tiết công nợ ">
+            <Tab fx:id="CNTab" text="Chi tiết công nợ ">
                <content>
                   <VBox maxHeight="1.7976931348623157E308" spacing="20.0">
                      <children>

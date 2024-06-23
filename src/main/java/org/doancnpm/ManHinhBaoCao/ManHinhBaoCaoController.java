@@ -37,6 +37,8 @@ public class ManHinhBaoCaoController implements Initializable {
     @FXML
     private ComboBox<Integer> CbYear;
     @FXML
+    private MFXComboBox<Integer> thangComboBox;
+    @FXML
     private VBox accorditionDoanhSo;
     @FXML
     private VBox accorditionCongNo;
@@ -44,6 +46,8 @@ public class ManHinhBaoCaoController implements Initializable {
     Region manHinhBaoCao;
     @FXML
     Button exportBaoCaoDSNam, exportBaoCaoCNNam;
+    @FXML
+    Tab chartTab, DSTab, CNTab;
 
     public void setVisibility(boolean visibility) {
         manHinhBaoCao.setVisible(visibility);
@@ -54,6 +58,7 @@ public class ManHinhBaoCaoController implements Initializable {
     BieuDoController bieuDoController = new BieuDoController();
 
     public int currentYear = LocalDate.now().getYear();
+    public int currentMonth = LocalDate.now().getMonthValue();
 
     public void setPrimaryStage(Stage stage) {
         this.stage = stage;
@@ -63,7 +68,7 @@ public class ManHinhBaoCaoController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         initLineChart(currentYear);
         initComboBox();
-        initAccordion(currentYear);
+        initAccordion(currentMonth, currentYear);
         exportBaoCaoDSNam.setOnAction(actionEvent -> {
             handleXuatBaoCaoDSNam(CbYear.getValue());
         });
@@ -73,12 +78,18 @@ public class ManHinhBaoCaoController implements Initializable {
 
         PhieuXuatDAO.getInstance().AddDatabaseListener(observable -> {
             initLineChart(CbYear.getValue());
-            initAccordion(CbYear.getValue());
+            initAccordion(thangComboBox.getValue(), CbYear.getValue());
         });
         PhieuThuDAO.getInstance().AddDatabaseListener(observable -> {
             initLineChart(CbYear.getValue());
-            initAccordion(CbYear.getValue());
+            initAccordion(thangComboBox.getValue(), CbYear.getValue());
         });
+
+        chartTab.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            thangComboBox.setDisable(newValue);
+        });
+
+        thangComboBox.setDisable(chartTab.isSelected());
     }
 
     private void initComboBox() {
@@ -89,21 +100,44 @@ public class ManHinhBaoCaoController implements Initializable {
 
         CbYear.setValue(currentYear);
 
+        for (int i = 1; i <= currentMonth - 1; i++) {
+            thangComboBox.getItems().add(i);
+        }
+
+        thangComboBox.setValue(currentMonth);
+        thangComboBox.setText(String.valueOf(currentMonth));
+
         CbYear.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 int selectedYear = newValue;
+                thangComboBox.getItems().clear();
+                if (selectedYear == currentYear) {
+                    for (int i = 1; i <= currentMonth-1; i++) {
+                        thangComboBox.getItems().add(i);
+                    }
+                }
+                else{
+                    for (int i = 1; i <= 12; i++) {
+                        thangComboBox.getItems().add(i);
+                    }
+                }
                 initLineChart(selectedYear);
-                initAccordion(selectedYear);
+                initAccordion(thangComboBox.getValue(), selectedYear);
             }
         });
-
+        thangComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                int selectedMonth = newValue;
+                initAccordion(selectedMonth, CbYear.getValue());
+            }
+        });
     }
 
-    private void initAccordion(int year) {
+    private void initAccordion(int month, int year) {
         accorditionDoanhSo.getChildren().clear();
-        accorditionDoanhSo.getChildren().addAll(baoCaoDoanhSoController.createTitledPanesForMonths(year));
+        accorditionDoanhSo.getChildren().addAll(baoCaoDoanhSoController.createTitledPanesForMonths(month, year));
         accorditionCongNo.getChildren().clear();
-        accorditionCongNo.getChildren().addAll(baoCaoCongNoController.createTitledPanesForMonths(year));
+        accorditionCongNo.getChildren().addAll(baoCaoCongNoController.createTitledPanesForMonths(month, year));
     }
 
 
@@ -198,6 +232,7 @@ public class ManHinhBaoCaoController implements Initializable {
         }
         BaoCaoDoanhSoController.exportBaoCaoDoanhSoNamPDF(baoCaoNamList, year);
     }
+
     private void handleXuatBaoCaoCNNam(int year) {
         ObservableList<BaoCaoCongNo> baoCaoCongNoItems = FXCollections.observableArrayList();
         Map<Integer, Map<String, Pair<Double, Double>>> totalDebtsData = null;
@@ -233,7 +268,7 @@ public class ManHinhBaoCaoController implements Initializable {
                     }
                 }
 
-                BaoCaoCongNo item = new BaoCaoCongNo(stt, maDaiLy, new Date(), noDau, noCuoi,0);
+                BaoCaoCongNo item = new BaoCaoCongNo(stt, maDaiLy, new Date(), noDau, noCuoi, 0);
                 baoCaoCongNoItems.add(item);
             }
         }

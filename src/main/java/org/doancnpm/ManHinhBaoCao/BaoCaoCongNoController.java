@@ -47,7 +47,7 @@ public class BaoCaoCongNoController {
                 double noDau = debtDetails.getKey();
                 double noCuoi = debtDetails.getValue();
 
-                BaoCaoCongNo item = new BaoCaoCongNo(stt, maDaiLy, new Date(), noDau, noCuoi,0);
+                BaoCaoCongNo item = new BaoCaoCongNo(stt, maDaiLy, new Date(), noDau, noCuoi, 0);
                 baoCaoCongNoItems.add(item);
             }
         }
@@ -96,62 +96,60 @@ public class BaoCaoCongNoController {
         });
         phatSinhCol.setPrefWidth(124.4);
 
-        tableView.getColumns().addAll(sttCol, tenDaiLyCol, noDauCol, noCuoiCol,phatSinhCol);
+        tableView.getColumns().addAll(sttCol, tenDaiLyCol, noDauCol, noCuoiCol, phatSinhCol);
 
         tableView.setItems(baoCaoCongNoItems);
 
         return tableView;
     }
-    protected ObservableList<TitledPane> createTitledPanesForMonths(int year) {
+
+    protected ObservableList<TitledPane> createTitledPanesForMonths(int monthValue, int year) {
         ObservableList<TitledPane> titledPanes = FXCollections.observableArrayList();
         Set<Integer> activeMonths = CalculateSQL.getInstance().findActiveMonths(year);
 
-        for (int monthValue = 1; monthValue <= 12; monthValue++) {
+        if (activeMonths.contains(monthValue)) {
+            try {
+                Map<Integer, Map<String, Pair<Double, Double>>> totalDebtsData = CalculateSQL.getInstance().calculateDebtUntilMonthWithDaiLy(year);
+                VBox container = new VBox(10);
+                container.setAlignment(Pos.CENTER);
 
-            if (activeMonths.contains(monthValue)) {
-                try {
-                    Map<Integer, Map<String, Pair<Double, Double>>> totalDebtsData = CalculateSQL.getInstance().calculateDebtUntilMonthWithDaiLy(year);
-                    VBox container = new VBox(10);
-                    container.setAlignment(Pos.CENTER);
+                ScrollPane scrollPane = new ScrollPane();
+                scrollPane.setFitToWidth(true); // Ensure ScrollPane fits its content width
 
-                    ScrollPane scrollPane = new ScrollPane();
-                    scrollPane.setFitToWidth(true); // Ensure ScrollPane fits its content width
+                VBox layout = new VBox(10);
+                layout.setAlignment(Pos.CENTER);
+                layout.setPadding(new Insets(10));
+                layout.setPrefWidth(600); // Set a preferred width for the layout
 
-                    VBox layout = new VBox(10);
-                    layout.setAlignment(Pos.CENTER);
-                    layout.setPadding(new Insets(10));
-                    layout.setPrefWidth(600); // Set a preferred width for the layout
+                TableView<BaoCaoCongNo> tableView = createTableViewForMonth(totalDebtsData, monthValue, year);
+                layout.getChildren().add(tableView);
 
-                    TableView<BaoCaoCongNo> tableView = createTableViewForMonth(totalDebtsData, monthValue, year);
-                    layout.getChildren().add(tableView);
+                Button exportButton = new Button("Xuất PDF");
+                int finalMonthValue = monthValue;
+                exportButton.setOnAction(event -> {
+                    exportBaoCaoCongNoToPDF(tableView.getItems(), finalMonthValue, year);
+                });
+                HBox buttonContainer = new HBox(10);
+                buttonContainer.setAlignment(Pos.CENTER_RIGHT);
+                buttonContainer.getChildren().add(exportButton);
+                layout.getChildren().add(buttonContainer);
 
-                    Button exportButton = new Button("Xuất PDF");
-                    int finalMonthValue = monthValue;
-                    exportButton.setOnAction(event -> {
-                        exportBaoCaoCongNoToPDF(tableView.getItems(), finalMonthValue,year);
-                    });
-                    HBox buttonContainer = new HBox(10);
-                    buttonContainer.setAlignment(Pos.CENTER_RIGHT);
-                    buttonContainer.getChildren().add(exportButton);
-                    layout.getChildren().add(buttonContainer);
+                scrollPane.setContent(layout);
+                container.getChildren().add(scrollPane);
 
-                    scrollPane.setContent(layout);
-                    container.getChildren().add(scrollPane);
-
-                    TitledPane titledPane = new TitledPane();
-                    titledPane.setText("Tháng " + monthValue);
-                    titledPane.setContent(container);
-                    titledPanes.add(titledPane);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                TitledPane titledPane = new TitledPane();
+                titledPane.setText("Tháng " + monthValue);
+                titledPane.setContent(container);
+                titledPanes.add(titledPane);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
         return titledPanes;
     }
 
 
-    private static void exportBaoCaoCongNoToPDF(List<BaoCaoCongNo> data,int month,int year) {
+    private static void exportBaoCaoCongNoToPDF(List<BaoCaoCongNo> data, int month, int year) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Lưu báo cáo công nợ");
         fileChooser.getExtensionFilters().addAll(
@@ -172,7 +170,7 @@ public class BaoCaoCongNoController {
                 document.open();
 
                 // Add header
-                addHeader(document, titleFont, contentFont,month,year);
+                addHeader(document, titleFont, contentFont, month, year);
 
                 // Add company details
                 addDetails(document, boldFont, contentFont);
@@ -183,16 +181,16 @@ public class BaoCaoCongNoController {
 
 
                 document.close();
-                PopDialog.popSuccessDialog("Xuất báo cáo công nợ tháng "+month+" năm "+year+ " thành công.");
+                PopDialog.popSuccessDialog("Xuất báo cáo công nợ tháng " + month + " năm " + year + " thành công.");
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private static void addHeader(Document document, Font titleFont, Font contentFont, int month,int year) throws DocumentException {
+    private static void addHeader(Document document, Font titleFont, Font contentFont, int month, int year) throws DocumentException {
         // Add title
-        Paragraph reportTitle = new Paragraph("BÁO CÁO CÔNG NỢ THÁNG "+month+" NĂM "+year,titleFont);
+        Paragraph reportTitle = new Paragraph("BÁO CÁO CÔNG NỢ THÁNG " + month + " NĂM " + year, titleFont);
         reportTitle.setAlignment(Element.ALIGN_CENTER);
         document.add(reportTitle);
 
@@ -221,7 +219,7 @@ public class BaoCaoCongNoController {
     private static PdfPTable createTable(List<BaoCaoCongNo> data, Font contentFont, Font boldFont) throws DocumentException {
         PdfPTable table = new PdfPTable(5); // 5 columns
         table.setWidthPercentage(100);
-        float[] columnWidths = {1, 3, 2.1F, 2.1F,1.8F};
+        float[] columnWidths = {1, 3, 2.1F, 2.1F, 1.8F};
         table.setWidths(columnWidths);
 
         // Add table headers
@@ -252,14 +250,16 @@ public class BaoCaoCongNoController {
 
         return table;
     }
-        private static PdfPCell createCell(String content, Font font) {
+
+    private static PdfPCell createCell(String content, Font font) {
         PdfPCell cell = new PdfPCell(new Phrase(content, font));
         cell.setHorizontalAlignment(Element.ALIGN_CENTER);
         return cell;
     }
-    private static void addHeaderNam(Document document, Font titleFont, Font contentFont,int year) throws DocumentException {
+
+    private static void addHeaderNam(Document document, Font titleFont, Font contentFont, int year) throws DocumentException {
         // Add title
-        Paragraph reportTitle = new Paragraph("BÁO CÁO CÔNG NỢ NĂM "+year,titleFont);
+        Paragraph reportTitle = new Paragraph("BÁO CÁO CÔNG NỢ NĂM " + year, titleFont);
         reportTitle.setAlignment(Element.ALIGN_CENTER);
         document.add(reportTitle);
 
@@ -270,7 +270,8 @@ public class BaoCaoCongNoController {
 
         document.add(Chunk.NEWLINE);
     }
-    protected static void exportBaoCaoCongNoNamPDF(List<BaoCaoCongNo> data,int year) {
+
+    protected static void exportBaoCaoCongNoNamPDF(List<BaoCaoCongNo> data, int year) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Lưu báo cáo công nợ");
         fileChooser.getExtensionFilters().addAll(
@@ -291,7 +292,7 @@ public class BaoCaoCongNoController {
                 document.open();
 
                 // Add header
-                addHeaderNam(document, titleFont, contentFont,year);
+                addHeaderNam(document, titleFont, contentFont, year);
 
                 // Add company details
                 addDetails(document, boldFont, contentFont);
@@ -302,7 +303,7 @@ public class BaoCaoCongNoController {
 
 
                 document.close();
-                PopDialog.popSuccessDialog("Xuất báo cáo công nợ năm "+year+" thành công.");
+                PopDialog.popSuccessDialog("Xuất báo cáo công nợ năm " + year + " thành công.");
             } catch (Exception e) {
                 e.printStackTrace();
             }

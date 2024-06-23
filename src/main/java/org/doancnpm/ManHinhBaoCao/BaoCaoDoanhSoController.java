@@ -105,20 +105,20 @@ public class BaoCaoDoanhSoController {
         tyLeCol.setCellValueFactory(data -> {
             double tongGiaTri = 0.0;
             for (BaoCaoDoanhSo item : baoCaoDoanhSoItems) {
-                if(item.getSTT()!=0) {
+                if (item.getSTT() != 0) {
                     tongGiaTri += item.getTongTriGia();
                 }
             }
-            if (data.getValue().getSTT() != baoCaoDoanhSoItems.size()&&data.getValue().getSTT()!=0) {
+            if (data.getValue().getSTT() != baoCaoDoanhSoItems.size() && data.getValue().getSTT() != 0) {
                 double tyLe = data.getValue().getTongTriGia() / tongGiaTri;
                 tyLe = Math.round(tyLe * 100.0) / 100.0;
                 data.getValue().setTyLe(tyLe);
 
                 return new SimpleObjectProperty<>(tyLe);
-            } else if(data.getValue().getSTT()!=0){
+            } else if (data.getValue().getSTT() != 0) {
                 double tongtyLe = 0;
                 for (int i = 0; i < data.getValue().getSTT() - 1; i++) {
-                    if(baoCaoDoanhSoItems.get(i).getSTT()!=0) {
+                    if (baoCaoDoanhSoItems.get(i).getSTT() != 0) {
                         tongtyLe += baoCaoDoanhSoItems.get(i).getTyLe();
                     }
                 }
@@ -126,8 +126,7 @@ public class BaoCaoDoanhSoController {
                 tyLe = Math.round(tyLe * 100.0) / 100.0;
                 data.getValue().setTyLe(tyLe);
                 return new SimpleObjectProperty<>(tyLe);
-            }
-            else return new SimpleObjectProperty<>((double)1);
+            } else return new SimpleObjectProperty<>((double) 1);
         });
         tyLeCol.setPrefWidth(92.8);
 
@@ -138,45 +137,43 @@ public class BaoCaoDoanhSoController {
     }
 
 
-    protected ObservableList<TitledPane> createTitledPanesForMonths(int year) {
+    protected ObservableList<TitledPane> createTitledPanesForMonths(int month, int year) {
         ObservableList<TitledPane> titledPanes = FXCollections.observableArrayList();
-        for (int month = 1; month <= 12; month++) {
-            int monthValue = month;
-            Map<Integer, Integer> soPhieuXuatData = CalculateSQL.getInstance().calSoPhieuXuatVoiDaiLyTheoThang(monthValue, year);
-            Map<Integer, Double> tongGiaTriData = CalculateSQL.getInstance().calTongGiaTriPhieuXuatVoiDaiLyTheoThang(monthValue, year);
+        int monthValue = month;
+        Map<Integer, Integer> soPhieuXuatData = CalculateSQL.getInstance().calSoPhieuXuatVoiDaiLyTheoThang(monthValue, year);
+        Map<Integer, Double> tongGiaTriData = CalculateSQL.getInstance().calTongGiaTriPhieuXuatVoiDaiLyTheoThang(monthValue, year);
 
-            if (!soPhieuXuatData.isEmpty() || !tongGiaTriData.isEmpty()) {
-                VBox container = new VBox(10);
-                container.setAlignment(Pos.CENTER);
+        if (!soPhieuXuatData.isEmpty() || !tongGiaTriData.isEmpty()) {
+            VBox container = new VBox(10);
+            container.setAlignment(Pos.CENTER);
 
-                ScrollPane scrollPane = new ScrollPane();
-                scrollPane.setFitToWidth(true); // Ensure ScrollPane fits its content width
+            ScrollPane scrollPane = new ScrollPane();
+            scrollPane.setFitToWidth(true); // Ensure ScrollPane fits its content width
 
-                VBox layout = new VBox(10);
-                layout.setAlignment(Pos.CENTER);
-                layout.setPadding(new Insets(10));
-                layout.setPrefWidth(600); // Set a preferred width for the layout
+            VBox layout = new VBox(10);
+            layout.setAlignment(Pos.CENTER);
+            layout.setPadding(new Insets(10));
+            layout.setPrefWidth(600); // Set a preferred width for the layout
 
-                TableView<BaoCaoDoanhSo> tableView = createTableViewForMonth(soPhieuXuatData, tongGiaTriData);
-                layout.getChildren().add(tableView);
+            TableView<BaoCaoDoanhSo> tableView = createTableViewForMonth(soPhieuXuatData, tongGiaTriData);
+            layout.getChildren().add(tableView);
 
-                Button exportButton = new Button("Xuất PDF");
-                exportButton.setOnAction(event -> {
-                    exportBaoCaoDoanhSoToPDF(tableView.getItems(), monthValue, year);
-                });
-                HBox buttonContainer = new HBox(10);
-                buttonContainer.setAlignment(Pos.CENTER_RIGHT);
-                buttonContainer.getChildren().add(exportButton);
-                layout.getChildren().add(buttonContainer);
+            Button exportButton = new Button("Xuất PDF");
+            exportButton.setOnAction(event -> {
+                exportBaoCaoDoanhSoToPDF(tableView.getItems(), monthValue, year);
+            });
+            HBox buttonContainer = new HBox(10);
+            buttonContainer.setAlignment(Pos.CENTER_RIGHT);
+            buttonContainer.getChildren().add(exportButton);
+            layout.getChildren().add(buttonContainer);
 
-                scrollPane.setContent(layout);
-                container.getChildren().add(scrollPane);
+            scrollPane.setContent(layout);
+            container.getChildren().add(scrollPane);
 
-                TitledPane titledPane = new TitledPane();
-                titledPane.setText("Tháng " + month);
-                titledPane.setContent(container);
-                titledPanes.add(titledPane);
-            }
+            TitledPane titledPane = new TitledPane();
+            titledPane.setText("Tháng " + month);
+            titledPane.setContent(container);
+            titledPanes.add(titledPane);
         }
         return titledPanes;
     }
@@ -212,7 +209,7 @@ public class BaoCaoDoanhSoController {
                 document.add(table);
 
                 document.close();
-                PopDialog.popSuccessDialog("Xuất báo cáo doanh số tháng "+month+" năm "+year+ " thành công.");
+                PopDialog.popSuccessDialog("Xuất báo cáo doanh số tháng " + month + " năm " + year + " thành công.");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -347,7 +344,7 @@ public class BaoCaoDoanhSoController {
 
 
                 document.close();
-                PopDialog.popSuccessDialog("Xuất báo cáo doanh số năm "+year+" thành công.");
+                PopDialog.popSuccessDialog("Xuất báo cáo doanh số năm " + year + " thành công.");
             } catch (Exception e) {
                 e.printStackTrace();
             }
