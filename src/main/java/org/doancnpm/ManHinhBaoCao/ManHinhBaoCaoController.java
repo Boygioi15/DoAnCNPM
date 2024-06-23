@@ -114,9 +114,8 @@ public class ManHinhBaoCaoController implements Initializable {
                         thangComboBox.getItems().add(i);
                     }
                 }
-                thangComboBox.setValue(1);
                 initLineChart(selectedYear);
-                initAccordion(thangComboBox.getValue(), selectedYear);
+                initAccordion(0, selectedYear);
             }
         });
         thangComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
