@@ -45,9 +45,9 @@ public class LoginController implements Initializable {
     public AnchorPane resetPasswordPane;
     public AnchorPane emailInputPane;
     public VBox mainLoginPane;
-    int randomCode;
+    public int randomCode;
     private final int OTP_VALIDITY_SECONDS = 120;
-    private long otpSentTime;
+    public long otpSentTime;
 
 
     // mainLoginPane
@@ -165,16 +165,18 @@ public class LoginController implements Initializable {
         }
     }
 
-    private boolean validateInput() {
+    public boolean validateInput() {
         String userName = user.getText();
         String pass = password.getText();
 
-        return !(userName == null || userName.trim().isEmpty() || pass == null || pass.trim().isEmpty());
+       return !(userName == null || userName.trim().isEmpty() || pass == null || pass.trim().isEmpty());
+
     }
 
-    private NhanVien authorize() {
+    public NhanVien authorize() {
         String userName = user.getText().trim();
         String pass = password.getText().trim();
+
         try {
             ArrayList<TaiKhoan> taiKhoanList = TaiKhoanDAO.getInstance().QueryAll();
             boolean userFound = false;
@@ -319,7 +321,7 @@ public class LoginController implements Initializable {
         return true;
     }
 
-    private boolean isValidEmailFormat(String email) {
+    public boolean isValidEmailFormat(String email) {
         String emailRegex = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
         Pattern pattern = Pattern.compile(emailRegex);
         Matcher matcher = pattern.matcher(email);
@@ -354,7 +356,7 @@ public class LoginController implements Initializable {
         currentScreenString.setValue("RESET_PASSWORD_PANE");
     }
 
-    private boolean validateOtp() {
+    public boolean validateOtp() {
         String otp = otpText.getText();
         if (otp.length() != 6) {
             addErrorMessage(errorOtpBox, "Mã OTP phải là mã có 6 chữ số");

@@ -41,4 +41,5 @@ module org.example.demofx {
     exports org.doancnpm.Ultilities.ChiTietPhieu;
     exports org.doancnpm.Models;
     exports org.doancnpm.Main;
+    exports org.doancnpm.Login;
 }
