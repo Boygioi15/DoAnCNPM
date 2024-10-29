@@ -94,7 +94,7 @@ public class LoginController implements Initializable {
     public VBox errorConfirmPasswordBox;
     public Button confirmButton;
 
-    StringProperty currentScreenString = new SimpleStringProperty("");
+    public StringProperty currentScreenString = new SimpleStringProperty("");
 
 
     @Override
@@ -168,8 +168,7 @@ public class LoginController implements Initializable {
     public boolean validateInput() {
         String userName = user.getText();
         String pass = password.getText();
-
-       return !(userName == null || userName.trim().isEmpty() || pass == null || pass.trim().isEmpty());
+      return !(userName == null || userName.trim().isEmpty() || pass == null || pass.trim().isEmpty());
 
     }
 
@@ -231,7 +230,89 @@ public class LoginController implements Initializable {
         });
     }
 
-    private void handleSendOtp() {
+//    private void handleSendOtp() {
+//        clearErrorBox(errorVailidateEmailBox);
+//        if (!validateEmailInput()) {
+//            return;
+//        }
+//        try {
+//            // Generate a random code
+//            Random rand = new Random();
+//            randomCode = rand.nextInt(900000) + 100000;
+//
+//
+//            // Email configuration
+//            String host = "smtp.gmail.com";
+//            String user = "managementagentse@gmail.com";
+//            String pass = "sqnn uwgv xoxh uhfv";
+//            String to = emailText.getText();
+//            String subject = "Resetting Code";
+//            String message = "Your reset code is " + randomCode;
+//
+//            Properties props = new Properties();
+//            props.put("mail.smtp.starttls.enable", "true");
+//            props.put("mail.smtp.host", host);
+//            props.put("mail.smtp.port", "587");
+//            props.put("mail.smtp.auth", "true");
+//            props.put("mail.smtp.starttls.required", "true");
+//
+//            // Create a session with an authenticator
+//            Session mailSession = Session.getInstance(props, new javax.mail.Authenticator() {
+//                protected PasswordAuthentication getPasswordAuthentication() {
+//                    return new PasswordAuthentication(user, pass);
+//                }
+//            });
+//
+//            Message msg = new MimeMessage(mailSession);
+//            msg.setFrom(new InternetAddress(user));
+//            msg.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
+//            msg.setSubject(subject);
+//            msg.setText(message);
+//
+//            Transport.send(msg);
+//
+//            otpSentTime = System.currentTimeMillis() / 1000;
+//            currentScreenString.setValue("VERIFY_OTP_PANE");
+//
+//        } catch (MessagingException e) {
+//            e.printStackTrace();
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//
+//        }
+//    }
+// Add a new method to handle sending email (to be mocked in the test)
+public void sendEmail(String to, String subject, String message) throws MessagingException {
+    // Email configuration
+    String host = "smtp.gmail.com";
+    String user = "managementagentse@gmail.com";
+    String pass = "sqnn uwgv xoxh uhfv";
+
+    Properties props = new Properties();
+    props.put("mail.smtp.starttls.enable", "true");
+    props.put("mail.smtp.host", host);
+    props.put("mail.smtp.port", "587");
+    props.put("mail.smtp.auth", "true");
+    props.put("mail.smtp.starttls.required", "true");
+
+    // Create a session with an authenticator
+    Session mailSession = Session.getInstance(props, new javax.mail.Authenticator() {
+        protected PasswordAuthentication getPasswordAuthentication() {
+            return new PasswordAuthentication(user, pass);
+        }
+    });
+
+    Message msg = new MimeMessage(mailSession);
+    msg.setFrom(new InternetAddress(user));
+    msg.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
+    msg.setSubject(subject);
+    msg.setText(message);
+
+    Transport.send(msg);
+}
+
+    public void handleSendOtp() {
         clearErrorBox(errorVailidateEmailBox);
         if (!validateEmailInput()) {
             return;
@@ -241,46 +322,17 @@ public class LoginController implements Initializable {
             Random rand = new Random();
             randomCode = rand.nextInt(900000) + 100000;
 
-
-            // Email configuration
-            String host = "smtp.gmail.com";
-            String user = "managementagentse@gmail.com";
-            String pass = "sqnn uwgv xoxh uhfv";
             String to = emailText.getText();
             String subject = "Resetting Code";
             String message = "Your reset code is " + randomCode;
 
-            Properties props = new Properties();
-            props.put("mail.smtp.starttls.enable", "true");
-            props.put("mail.smtp.host", host);
-            props.put("mail.smtp.port", "587");
-            props.put("mail.smtp.auth", "true");
-            props.put("mail.smtp.starttls.required", "true");
-
-            // Create a session with an authenticator
-            Session mailSession = Session.getInstance(props, new javax.mail.Authenticator() {
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(user, pass);
-                }
-            });
-
-            Message msg = new MimeMessage(mailSession);
-            msg.setFrom(new InternetAddress(user));
-            msg.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
-            msg.setSubject(subject);
-            msg.setText(message);
-
-            Transport.send(msg);
+            sendEmail(to, subject, message); // Use the refactored method for sending emails
 
             otpSentTime = System.currentTimeMillis() / 1000;
             currentScreenString.setValue("VERIFY_OTP_PANE");
 
         } catch (MessagingException e) {
             e.printStackTrace();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-
         }
     }
 
@@ -433,7 +485,7 @@ public class LoginController implements Initializable {
     }
 
 
-    private boolean validatePassword() {
+    public boolean validatePassword() {
         String password = enterPasswordText.getText();
         String confirmPassword = reEnterPasswordText.getText();
 
