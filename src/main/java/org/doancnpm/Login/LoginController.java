@@ -333,6 +333,7 @@ public void sendEmail(String to, String subject, String message) throws Messagin
 
         } catch (MessagingException e) {
             e.printStackTrace();
+
         }
     }
 
@@ -421,6 +422,8 @@ public void sendEmail(String to, String subject, String message) throws Messagin
         }
         if (!otp.equals(Integer.toString(randomCode))) {
             addErrorMessage(errorOtpBox, "Mã OTP không chính xác!");
+            System.out.println( ((Label) errorOtpBox.getChildren().get(0)).getText());
+
             return false;
         }
         return true;
@@ -488,7 +491,6 @@ public void sendEmail(String to, String subject, String message) throws Messagin
     public boolean validatePassword() {
         String password = enterPasswordText.getText();
         String confirmPassword = reEnterPasswordText.getText();
-
         if (password.isEmpty()) {
             addErrorMessage(errorPasswordBox, "Vui lòng nhập mật khẩu");
             return false;
