@@ -26,14 +26,22 @@ import java.util.regex.Pattern;
 
 public class TiepNhanDaiLyDialogController implements Initializable {
 
-    @FXML private SearchableComboBox<Quan> quanComboBox;
-    @FXML private SearchableComboBox<LoaiDaiLy> loaiDaiLyComboBox;
-    @FXML private TextField tenDaiLyTextField;
-    @FXML private TextField diaChiTextField;
-    @FXML private TextField dienThoaiTextField;
-    @FXML private TextField emailTextField;
-    @FXML private TextArea ghiChuTextArea;
-    @FXML private Label title;
+    @FXML
+    SearchableComboBox<Quan> quanComboBox;
+    @FXML
+    SearchableComboBox<LoaiDaiLy> loaiDaiLyComboBox;
+    @FXML
+    TextField tenDaiLyTextField;
+    @FXML
+    TextField diaChiTextField;
+    @FXML
+    TextField dienThoaiTextField;
+    @FXML
+    TextField emailTextField;
+    @FXML
+    TextArea ghiChuTextArea;
+    @FXML
+    Label title;
 
     DaiLy initialValue = null;
 
@@ -157,7 +165,7 @@ public class TiepNhanDaiLyDialogController implements Initializable {
         return "";
     }
 
-    private boolean isValidEmailFormat(String email) {
+    boolean isValidEmailFormat(String email) {
         String emailRegex = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$";
         Pattern pattern = Pattern.compile(emailRegex);
         Matcher matcher = pattern.matcher(email);
