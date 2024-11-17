@@ -157,6 +157,12 @@
             <version>5.5.0</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.1.214</version> <!-- Chọn phiên bản mới nhất -->
+        </dependency>
+
     </dependencies>
 
 

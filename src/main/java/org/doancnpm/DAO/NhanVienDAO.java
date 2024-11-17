@@ -193,8 +193,11 @@ public class NhanVienDAO implements Idao<NhanVien> {
 
         while (rs.next()) {
             NhanVien nhanVien = new NhanVien();
+
             String maNhanVien = rs.getString("MaNhanVien");
+
             int ID = rs.getInt("ID");
+          //  System.out.println(ID);
             String hoTen = rs.getString("HoTen");
             String gioiTinh = rs.getString("GioiTinh");
             Date ngaySinh = rs.getDate("NgaySinh");
