@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
-Main-Class: org.doancnpm.AppStart
+Main-Class: org.doancnpm.SuperMain
 

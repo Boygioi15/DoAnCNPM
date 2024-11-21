@@ -25,7 +25,7 @@ public class AppStart extends Application {
 
         DatabaseDriver.initializeDatabase(DatabaseDriver.getConnect());
 
-     System.out.println(  NhanVienDAO.getInstance().QueryAll());
+        System.out.println(NhanVienDAO.getInstance().QueryAll());
 
         stage.setTitle("Quản lý đại lý");
         stage.getIcons().add(new Image(getClass().getResource("/image/deal.png").toExternalForm()));

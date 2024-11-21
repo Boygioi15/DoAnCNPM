@@ -3,8 +3,7 @@ package org.doancnpm.Models;
 import java.sql.*;
 
 public class DatabaseDriver {
-    // URL cho cơ sở dữ liệu H2 (file-based hoặc in-memory)
-    private static final String DB_URL = "jdbc:h2:./QuanLyDaiLy;AUTO_SERVER=TRUE"; // Lưu file tại thư mục người dùng
+    private static final String DB_URL = "jdbc:h2:./QuanLyDaiLy;AUTO_SERVER=TRUE";
     private static final String USER_NAME = "sa"; // Tên người dùng mặc định
     private static final String PASSWORD = ""; // Mật khẩu mặc định
 
@@ -15,6 +14,8 @@ public class DatabaseDriver {
         try {
             if (dataBaseConnection == null) {
                 // Tạo kết nối đến H2
+                Class.forName("org.h2.Driver");
+
                 dataBaseConnection = DriverManager.getConnection(DB_URL, USER_NAME, PASSWORD);
                 System.out.println("Kết nối H2 thành công!");
 
