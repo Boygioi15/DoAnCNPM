@@ -119,7 +119,6 @@ public class DatabaseDriver {
                 System.out.println("Tạo bảng DONVITINH thành công!");
             }
 
-            // Kiểm tra và tạo bảng MATHANG nếu chưa có
             if (!isTableExist( "MATHANG")) {
                 String createMatHangSQL = """
                     CREATE TABLE MATHANG (
@@ -139,7 +138,6 @@ public class DatabaseDriver {
                 System.out.println("Tạo bảng MATHANG thành công!");
             }
 
-            // Kiểm tra và tạo bảng DAILY nếu chưa có
             if (!isTableExist("DAILY")) {
                 String createDaiLySQL = """
                     CREATE TABLE DAILY (
@@ -163,7 +161,6 @@ public class DatabaseDriver {
                 System.out.println("Tạo bảng DAILY thành công!");
             }
 
-            // Kiểm tra và tạo bảng NHANVIEN nếu chưa có
             if (!isTableExist( "NHANVIEN")) {
                 String createNhanVienSQL = """
                     CREATE TABLE NHANVIEN (
