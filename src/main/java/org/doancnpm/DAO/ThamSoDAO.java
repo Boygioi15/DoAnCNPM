@@ -47,11 +47,12 @@ public class ThamSoDAO {
     public void UpdateTyLeDonGiaXuat(double newTiLe) throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
         String sql = "Update ThamSo Set TyLeDonGiaXuat = ?";
-        MatHangDAO.getInstance().notifyChange();
         assert conn != null;
         PreparedStatement pstmt = conn.prepareStatement(sql);
         pstmt.setDouble(1,newTiLe);
         pstmt.executeUpdate();
+        MatHangDAO.getInstance().updateDonGiaXuat(newTiLe);
+        MatHangDAO.getInstance().notifyChange();
         pstmt.close();
     }
     public double GetTyLeDonGiaXuat() throws SQLException {
@@ -73,7 +74,7 @@ public class ThamSoDAO {
     public void UpdateChoPhepVuotNo(Boolean newChoPhepVuotNo) throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
         String sql = "Update ThamSo Set ChoPhepVuotNo = ?";
-DaiLyDAO.getInstance().notifyChange();
+        DaiLyDAO.getInstance().notifyChange();
         assert conn != null;
         PreparedStatement pstmt = conn.prepareStatement(sql);
         if(newChoPhepVuotNo){

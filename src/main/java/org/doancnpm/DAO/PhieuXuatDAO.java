@@ -64,6 +64,25 @@ public class PhieuXuatDAO implements Idao<PhieuXuat> {
         return rowsAffected;
     }
 
+    public int UpdatePrice(int ID, long insertedPrice) throws SQLException {
+        Connection conn = DatabaseDriver.getConnect();
+        String sql = "UPDATE PHIEUXUATHANG " +
+                "SET TongTien= TongTien +? " +
+                "WHERE ID = ?";
+
+        assert conn != null;
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setLong(1, insertedPrice);
+        pstmt.setInt(2, ID);
+        int rowsAffected = pstmt.executeUpdate();
+        if (rowsAffected > 0) {
+            notifyChange();
+        }
+        pstmt.close();
+        return rowsAffected;
+    }
+
+
     @Override
     public int Delete(int ID) throws SQLException {
         Connection conn = DatabaseDriver.getConnect();

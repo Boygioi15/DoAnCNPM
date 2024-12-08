@@ -8,10 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
-import org.doancnpm.DAO.CTPNDAO;
-import org.doancnpm.DAO.CTPXDAO;
-import org.doancnpm.DAO.PhieuNhapDAO;
-import org.doancnpm.DAO.PhieuXuatDAO;
+import org.doancnpm.DAO.*;
 import org.doancnpm.Models.ChiTietPhieuXuat;
 import org.doancnpm.Models.NhanVien;
 import org.doancnpm.Models.PhieuNhap;
@@ -65,13 +62,27 @@ public class LapPhieuXuatDialog extends Dialog<PhieuXuat> {
                         List<ChiTietPhieuXuat> ctpxs = c.getChiTietPhieuXuat();
                         try{
                             PhieuXuatDAO.getInstance().Insert(phieuXuat);
-                            //turn back to get ID
                             phieuXuat = PhieuXuatDAO.getInstance().QueryMostRecent();
 
                             for(ChiTietPhieuXuat ctpx: ctpxs){
                                 ctpx.setMaPhieuXuat(phieuXuat.getID());
                             }
-                            CTPXDAO.getInstance().InsertBlock(ctpxs);
+
+                                for (int i = 0; i < ctpxs.size(); i++) {
+                                    if(MatHangDAO.getInstance().QueryID(ctpxs.get(i).getMaMatHang()).getSoLuong() < ctpxs.get(i).getSoLuong()){
+                                        throw new SQLException("So luong mat hang " + MatHangDAO.getInstance().QueryID(ctpxs.get(i).getMaMatHang()).getTenMatHang() + "không du");
+                                    }
+                                }
+                                long noThem= 0;
+                                for (int i = 0; i < ctpxs.size(); i++) {
+                                    noThem+= ctpxs.get(i).getSoLuong() + ctpxs.get(i).getDonGiaXuat();
+                                }
+                                long noToiDa = LoaiDaiLyDAO.getInstance().QueryID(DaiLyDAO.getInstance().QueryID(phieuXuat.getMaDaiLy()).getMaLoaiDaiLy()).getSoNoToiDa();
+                            System.out.println("no them: " + noThem);
+                            if(noThem > noToiDa){
+                                throw new SQLException("Tiền nợ đại lý vướt quá " + noToiDa);
+                            }
+                            CTPXDAO.getInstance().InsertBlock(phieuXuat.getMaDaiLy(),phieuXuat.getID(),ctpxs);
                             PopDialog.popSuccessDialog("Thêm mới phiếu xuất thành công");
                             return;
                         }catch (SQLException e){

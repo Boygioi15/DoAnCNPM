@@ -68,7 +68,7 @@ public class LapPhieuNhapDialog extends Dialog<PhieuNhap> {
                             for(ChiTietPhieuNhap ctpn: ctpns){
                                 ctpn.setMaPhieuNhap(phieuNhap.getID());
                             }
-                            CTPNDAO.getInstance().InsertBlock(ctpns);
+                            CTPNDAO.getInstance().InsertBlock(phieuNhap.getID(),ctpns);
                             PopDialog.popSuccessDialog("Thêm mới phiếu nhập thành công");
                         }
                         catch (SQLException e){

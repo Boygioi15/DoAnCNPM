@@ -98,6 +98,7 @@ public class ChiTietPhieuXuatRow extends HBox {
             dvtTextField.setText(dvt.getTenDVT());
             slTextField.setText(Integer.toString(cptx.getSoLuong()));
             donGiaTextField.setText(MoneyFormatter.convertLongToString(matHang.getDonGiaXuat()));
+            System.out.println("matHang.getDonGiaXuat() " + matHang.getDonGiaXuat());
             thanhTienTextField.setText(Double.toString(cptx.getThanhTien()));
         } catch (SQLException _) {}
 

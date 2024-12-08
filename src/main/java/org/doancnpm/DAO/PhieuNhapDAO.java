@@ -193,4 +193,23 @@ public class PhieuNhapDAO implements Idao<PhieuNhap> {
     public void notifyChange() {
         phieuThuDtbChanged.set(!phieuThuDtbChanged.get());
     }
+
+    public int UpdatePrice(int ID, long insertedPrice) throws SQLException {
+        Connection conn = DatabaseDriver.getConnect();
+        String sql = "UPDATE PHIEUNHAPHANG " +
+                "SET TongTien= TongTien +? " +
+                "WHERE ID = ?";
+
+        assert conn != null;
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setLong(1, insertedPrice);
+        pstmt.setInt(2, ID);
+        int rowsAffected = pstmt.executeUpdate();
+        if (rowsAffected > 0) {
+            notifyChange();
+        }
+        pstmt.close();
+        return rowsAffected;
+    }
+
 }

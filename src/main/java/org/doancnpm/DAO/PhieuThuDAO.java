@@ -40,6 +40,7 @@ public class PhieuThuDAO implements Idao<PhieuThu> {
         pstmt.setString(5, phieuThu.getGhiChu());
         int rowsAffected = pstmt.executeUpdate();
         if (rowsAffected > 0) {
+            DaiLyDAO.getInstance().updateNoHienTai(phieuThu.getMaDaiLy(),-phieuThu.getSoTienThu());
             notifyChange();
             DaiLyDAO.getInstance().notifyChange();
         }

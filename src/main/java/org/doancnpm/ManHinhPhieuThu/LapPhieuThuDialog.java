@@ -7,7 +7,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
+import org.doancnpm.DAO.DaiLyDAO;
 import org.doancnpm.DAO.PhieuThuDAO;
+import org.doancnpm.Models.DaiLy;
 import org.doancnpm.Models.NhanVien;
 import org.doancnpm.Models.PhieuThu;
 import org.doancnpm.Ultilities.PopDialog;
@@ -77,7 +79,11 @@ public class LapPhieuThuDialog extends Dialog<PhieuThu> {
             PhieuThu pt = c.getPhieuThu();
             if(themhaysua){
                 try {
+                    if(DaiLyDAO.getInstance().QueryID(pt.getMaDaiLy()).getNoHienTai() < pt.getSoTienThu()){
+                        throw new SQLException("Số tiền thu vượt quá nợ đại lý");
+                    }
                     PhieuThuDAO.getInstance().Insert(pt);
+
                     PopDialog.popSuccessDialog("Thêm mới phiếu thu thành công");
                 } catch (SQLException e) {
                     PopDialog.popErrorDialog("Thêm mới phiếu thu thất bại", e.getMessage());

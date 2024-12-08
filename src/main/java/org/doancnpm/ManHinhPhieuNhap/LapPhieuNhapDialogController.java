@@ -147,12 +147,12 @@ public class LapPhieuNhapDialogController implements Initializable {
         if (phieuNhapGoc == null) {
             Date ngayTiepNhan = new Date(System.currentTimeMillis());
             PhieuNhap phieuNhap = new PhieuNhap();
-
             phieuNhap.setMaNhanVien(nvLapPhieu.getID());
             phieuNhap.setNhaCungCap(nccTextField.getText());
             phieuNhap.setNgayLapPhieu(ngayTiepNhan);
             phieuNhap.setGhiChu(ghiChuTextArea.getText());
             return phieuNhap;
+
         } else {
             phieuNhapGoc.setGhiChu(ghiChuTextArea.getText());
             return phieuNhapGoc;

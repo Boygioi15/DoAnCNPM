@@ -27,19 +27,25 @@ public class MatHangDAO implements Idao<MatHang> {
     @Override
     public int Insert(MatHang matHang) throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
-        String sql = "INSERT INTO MATHANG(MaDonViTinh,TenMatHang,DonGiaNhap,GhiChu) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO MATHANG(MaDonViTinh,TenMatHang,DonGiaNhap,DonGiaXuat,SoLuong,GhiChu) VALUES (?, ?, ?, ?,?,?)";
 
         assert conn != null;
         PreparedStatement pstmt = conn.prepareStatement(sql);
         pstmt.setInt(1, matHang.getMaDVT());
         pstmt.setString(2, matHang.getTenMatHang());
         pstmt.setDouble(3, matHang.getDonGiaNhap());
-        pstmt.setString(4, matHang.getGhiChu());
+        pstmt.setString(6, matHang.getGhiChu());
+        pstmt.setInt(5, 0);
+        pstmt.setDouble(4,matHang.getDonGiaNhap() * ThamSoDAO.getInstance().GetTyLeDonGiaXuat());
+
         int rowsAffected = pstmt.executeUpdate();
         if (rowsAffected > 0) {
             notifyChange();
         }
+
+
         pstmt.close();
+
         return rowsAffected;
     }
 
@@ -62,6 +68,45 @@ public class MatHangDAO implements Idao<MatHang> {
         if (rowsAffected > 0) {
             notifyChange();
         }
+        pstmt.close();
+        return rowsAffected;
+    }
+    public int updateDonGiaXuat(double tyleDonGiaXuat) throws SQLException {
+        Connection conn = DatabaseDriver.getConnect();
+        String sql = "UPDATE MATHANG SET DonGiaXuat = DonGiaNhap * ?";
+
+        assert conn != null;
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setDouble(1, tyleDonGiaXuat);
+
+        int rowsAffected = pstmt.executeUpdate();
+        if (rowsAffected > 0) {
+            notifyChange();
+            PhieuNhapDAO.getInstance().notifyChange();
+            PhieuXuatDAO.getInstance().notifyChange();
+        }
+        pstmt.close();
+        return rowsAffected;
+    }
+
+    public int updateSoluongMatHang(int id, int soluong) throws SQLException {
+        System.out.println("So luong: " + soluong);
+        Connection conn = DatabaseDriver.getConnect();
+        String sql = "UPDATE MATHANG SET SoLuong = SoLuong + ? WHERE ID = ?";
+
+        assert conn != null;
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setDouble(1, soluong);
+        pstmt.setDouble(2, id);
+
+        int rowsAffected = pstmt.executeUpdate();
+        if (rowsAffected > 0) {
+            notifyChange();
+            PhieuNhapDAO.getInstance().notifyChange();
+            PhieuXuatDAO.getInstance().notifyChange();
+            this.QueryID(id);
+        }
+
         pstmt.close();
         return rowsAffected;
     }
@@ -187,6 +232,16 @@ public class MatHangDAO implements Idao<MatHang> {
             matHang.setGhiChu(ghiChu);
             matHang.setSoLuong(sl);
             matHang.setDeleted(isDeleted != 0);
+
+            System.out.println("ID: " + matHang.getID());
+            System.out.println("Mã mặt hàng: " + matHang.getMaMatHang());
+            System.out.println("Mã đơn vị tính: " + matHang.getMaDVT());
+            System.out.println("Tên mặt hàng: " + matHang.getTenMatHang());
+            System.out.println("Đơn giá nhập: " + matHang.getDonGiaNhap());
+            System.out.println("Đơn giá xuất: " + matHang.getDonGiaXuat());
+            System.out.println("Ghi chú: " + matHang.getGhiChu());
+            System.out.println("Số lượng: " + matHang.getSoLuong());
+
         }
 
         rs.close();

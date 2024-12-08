@@ -1,5 +1,6 @@
 package org.doancnpm.Models;
 
+
 import java.sql.*;
 
 public class DatabaseDriver {
@@ -126,10 +127,10 @@ public class DatabaseDriver {
                         ID INT AUTO_INCREMENT PRIMARY KEY,
                         MaMatHang VARCHAR(10) GENERATED ALWAYS AS ('MH' || LPAD(ID, 4, '0')),
                         MaDonViTinh INT,
-                        DonGia DECIMAL(19,4) DEFAULT 0,
                         TenMatHang NVARCHAR(100),
                         SoLuong INT,
                         DonGiaNhap INT,
+                        DonGiaXuat INT,
                         isDeleted SMALLINT DEFAULT 0,
                         GhiChu NVARCHAR(1000),
                         FOREIGN KEY (MaDonViTinh) REFERENCES DONVITINH(ID)
@@ -204,8 +205,10 @@ public class DatabaseDriver {
                         ID INT AUTO_INCREMENT PRIMARY KEY,
                         MaPhieuNhap VARCHAR(10) GENERATED ALWAYS AS ('PN' || LPAD(ID, 6, '0')),
                         MaNhanVien INT,
+                        NhaCungCap VARCHAR(250), 
                         NgayLapPhieu DATE,
                         TongTien DECIMAL(19,4) DEFAULT 0,
+                        GhiCHu VARCHAR(250),
                         FOREIGN KEY (MaNhanVien) REFERENCES NHANVIEN(ID)
                     );
             """;
@@ -223,6 +226,7 @@ public class DatabaseDriver {
                         MaDaiLy INT,
                         NgayLapPhieu DATE,
                         TongTien DECIMAL(19,4) DEFAULT 0,
+                         GhiCHu VARCHAR(250),
                         FOREIGN KEY (MaNhanVien) REFERENCES NHANVIEN(ID),
                         FOREIGN KEY (MaDaiLy) REFERENCES DAILY(ID)
                     );
@@ -290,6 +294,7 @@ public class DatabaseDriver {
                         MaPhieuNhap INT,
                         MaMatHang INT,
                         SoLuong INT,
+                        DonGiaNhap DECIMAL(19,4),
                         ThanhTien DECIMAL(19,4),
                         GhiChu NVARCHAR(1000),
                         PRIMARY KEY (MaPhieuNhap, MaMatHang),
@@ -335,46 +340,44 @@ public class DatabaseDriver {
             }
 
             String insertSampleDataSQL = """
- 
+
     INSERT INTO CHUCVU (TenChucVu, GhiChu)
-    VALUES 
+    VALUES
         (N'Nhân viên', N'Nhân viên troll troll'),
-        (N'Quản lý', N'Quản lý có quyền thêm/ kick nv'),
-        (N'Admin', N'Admin có quyền thêm/ kick ql');
-    
+        (N'Quản lý', N'Quản lý có quyền thêm/ kick nv');
 
     INSERT INTO LOAIDAILY (SoNoToiDa, TenLoai, GhiChu)
-    VALUES 
+    VALUES
         (5000000, N'Loại 1', N'Loại 1 nợ tối đa 5tr'),
         (10000000, N'Loại 2', N'Loại 2 nợ tối đa 5tr');
-    
+
 
     INSERT INTO DONVITINH (TenDonViTinh, GhiChu)
-    VALUES 
+    VALUES
         (N'chiếc', N'bút, đồng hồ, ...'),
         (N'cái', N'xoong, chảo, ...'),
         (N'kí', N'kí táo, kí thịt, ...'),
         (N'hộp', N'hộp nước, hộp hộp, ....'),
         (N'bị', N'bị nhựa, ...'),
         (N'lít', N'lít nước, lít sữa, ...');
-    
+
 
     INSERT INTO NHANVIEN (HoTen, GioiTinh, NgaySinh, SDT, Email, MaChucVu, Luong, GhiChu)
-    VALUES 
+    VALUES
         (N'Nguyễn Văn 1', N'Nam', '2024-04-13', '0000000001', 'aaa@bbb.ccc', 1, 776164533, N''),
         (N'Nguyễn Văn 2', N'Nam', '2024-04-13', '0000000002', 'aaa@bbb.ccc', 2, 926876912, N''),
-        (N'Nguyễn Văn admin', N'Nam', '2024-04-13', '0000000002', 'aaa@bbb.ccc', 3, 926876912, N''),
+        (N'Nguyễn Văn admin', N'Nam', '2024-04-13', '0000000002', 'aaa@bbb.ccc', 2, 926876912, N''),
         (N'Nguyễn Văn 3', N'Nam', '2024-04-13', '0000000003', 'aaa@bbb.ccc', 1, 666998093, N'');
 
     INSERT INTO TAIKHOAN (UserName, Password, MaNhanVien)
     VALUES ('user', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', 1);
-    
+
     INSERT INTO TAIKHOAN (UserName, Password, MaNhanVien)
-    VALUES ('admin', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', 3);
-    
+    VALUES ('admin', '8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92', 2);
+
     INSERT INTO THAMSO (SoDaiLyToiDaMoiQuan, TyLeDonGiaXuat, ChoPhepVuotNo)
     VALUES (5, 1.02, 0);
-    
+
       INSERT INTO QUAN (TenQuan, GhiChu)
                                 VALUES ('Quan 1', 'Ghi chú cho quận 1'),
                                        ('Quan 2', 'Ghi chú cho quận 2'),
@@ -384,9 +387,14 @@ public class DatabaseDriver {
 
 
             statement.execute(insertSampleDataSQL);
+
+
+
             System.out.println("Thêm dữ liệu mẫu thành công!");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+
 }

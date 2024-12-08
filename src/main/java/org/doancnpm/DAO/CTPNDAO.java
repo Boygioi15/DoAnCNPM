@@ -23,31 +23,40 @@ public class CTPNDAO {
 
     private final BooleanProperty ctpnDtbChanged = new SimpleBooleanProperty(false);
 
-    public int InsertBlock(List<ChiTietPhieuNhap> chiTietPhieuNhaps) throws SQLException {
-        Connection conn = DatabaseDriver.getConnect();
-        String sql = "INSERT INTO ChiTietPhieuNhap(MaPhieuNhap, MaMatHang, SoLuong, DonGiaNhap) VALUES\n";
+    public int InsertBlock(int id, List<ChiTietPhieuNhap> chiTietPhieuNhaps) throws SQLException {
+        try {
+            Connection conn = DatabaseDriver.getConnect();
+            String sql = "INSERT INTO ChiTietPhieuNhap(MaPhieuNhap, MaMatHang, SoLuong, DonGiaNhap,ThanhTien) VALUES\n";
 
-        for (int i = 0; i < chiTietPhieuNhaps.size(); i++) {
-            sql = sql.concat(("(?,?,?,?),\n"));
-        }
-        sql = sql.substring(0, sql.length() - 2);
-        assert conn != null;
-        PreparedStatement pstmt = conn.prepareStatement(sql);
-        for (int i = 0; i < chiTietPhieuNhaps.size(); i++) {
-            pstmt.setInt(i * 4 + 1, chiTietPhieuNhaps.get(i).getMaPhieuNhap());
-            pstmt.setInt(i * 4 + 2, chiTietPhieuNhaps.get(i).getMaMatHang());
-            pstmt.setInt(i * 4 + 3, chiTietPhieuNhaps.get(i).getSoLuong());
-            pstmt.setLong(i * 4 + 4, chiTietPhieuNhaps.get(i).getDonGiaNhap());
-        }
+            for (int i = 0; i < chiTietPhieuNhaps.size(); i++) {
+                sql = sql.concat(("(?,?,?,?,?),\n"));
+            }
+            sql = sql.substring(0, sql.length() - 2);
+            assert conn != null;
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            for (int i = 0; i < chiTietPhieuNhaps.size(); i++) {
+                pstmt.setInt(i * 5 + 1, chiTietPhieuNhaps.get(i).getMaPhieuNhap());
+                pstmt.setInt(i * 5 + 2, chiTietPhieuNhaps.get(i).getMaMatHang());
+                pstmt.setInt(i * 5 + 3, chiTietPhieuNhaps.get(i).getSoLuong());
+                pstmt.setLong(i * 5 + 4, chiTietPhieuNhaps.get(i).getDonGiaNhap());
+                pstmt.setLong(i * 5 + 5, chiTietPhieuNhaps.get(i).getSoLuong() * chiTietPhieuNhaps.get(i).getDonGiaNhap());
+                //trigger
+                PhieuNhapDAO.getInstance().UpdatePrice(id,  (chiTietPhieuNhaps.get(i).getSoLuong() * chiTietPhieuNhaps.get(i).getDonGiaNhap()));
+                MatHangDAO.getInstance().updateSoluongMatHang(chiTietPhieuNhaps.get(i).getMaMatHang(),chiTietPhieuNhaps.get(i).getSoLuong());
+            }
 
-        int rowsAffected = pstmt.executeUpdate();
-        if (rowsAffected > 0) {
-            notifyChange();
-            MatHangDAO.getInstance().notifyChange();
-            PhieuNhapDAO.getInstance().notifyChange();
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                notifyChange();
+                MatHangDAO.getInstance().notifyChange();
+                PhieuNhapDAO.getInstance().notifyChange();
+            }
+            pstmt.close();
+            return rowsAffected;
+        } catch (Exception e){
+            System.out.println("Lỗi: "+e.getMessage());
         }
-        pstmt.close();
-        return rowsAffected;
+        return 1;
     }
 
     public List<ChiTietPhieuNhap> QueryByPhieuNhapID(Integer phieuNhapID) throws SQLException {

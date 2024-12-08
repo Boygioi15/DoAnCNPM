@@ -6,6 +6,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import org.doancnpm.Models.ChiTietPhieuXuat;
 import org.doancnpm.Models.DaiLy;
 import org.doancnpm.Models.DatabaseDriver;
+import org.doancnpm.Ultilities.PopDialog;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -23,22 +24,26 @@ public class CTPXDAO {
 
     private final BooleanProperty ctpxDtbChanged = new SimpleBooleanProperty(false);
 
-    public int InsertBlock(List<ChiTietPhieuXuat> chiTietPhieuXuats) throws SQLException {
+    public int InsertBlock(int dailyid,int id ,List<ChiTietPhieuXuat> chiTietPhieuXuats) throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
-        String sql = "INSERT INTO ChiTietPhieuXuat(MaPhieuXuat, MaMatHang, SoLuong,DonGiaXuat) VALUES\n";
+        String sql = "INSERT INTO ChiTietPhieuXuat(MaPhieuXuat, MaMatHang, SoLuong,DonGiaXuat,ThanhTien) VALUES\n";
 
         for (int i = 0; i < chiTietPhieuXuats.size(); i++) {
-            sql = sql.concat(("(?,?,?,?),\n"));
+            sql = sql.concat(("(?,?,?,?,?),\n"));
         }
         sql = sql.substring(0, sql.length() - 2);
         assert conn != null;
         PreparedStatement pstmt = conn.prepareStatement(sql);
-        for (int i = 0; i < chiTietPhieuXuats.size(); i++) {
-            pstmt.setInt(i * 4 + 1, chiTietPhieuXuats.get(i).getMaPhieuXuat());
-            pstmt.setInt(i * 4 + 2, chiTietPhieuXuats.get(i).getMaMatHang());
-            pstmt.setInt(i * 4 + 3, chiTietPhieuXuats.get(i).getSoLuong());
-            pstmt.setLong(i * 4 + 4, chiTietPhieuXuats.get(i).getDonGiaXuat());
 
+        for (int i = 0; i < chiTietPhieuXuats.size(); i++) {
+            pstmt.setInt(i * 5 + 1, chiTietPhieuXuats.get(i).getMaPhieuXuat());
+            pstmt.setInt(i * 5 + 2, chiTietPhieuXuats.get(i).getMaMatHang());
+            pstmt.setInt(i * 5 + 3, chiTietPhieuXuats.get(i).getSoLuong());
+            pstmt.setLong(i * 5 + 4, chiTietPhieuXuats.get(i).getDonGiaXuat());
+            pstmt.setLong(i * 5 + 5, chiTietPhieuXuats.get(i).getDonGiaXuat()* chiTietPhieuXuats.get(i).getSoLuong());
+            PhieuXuatDAO.getInstance().UpdatePrice(id,  (chiTietPhieuXuats.get(i).getSoLuong() * chiTietPhieuXuats.get(i).getDonGiaXuat()));
+            DaiLyDAO.getInstance().updateNoHienTai(dailyid,chiTietPhieuXuats.get(i).getSoLuong()* chiTietPhieuXuats.get(i).getDonGiaXuat());
+            MatHangDAO.getInstance().updateSoluongMatHang(chiTietPhieuXuats.get(i).getMaMatHang(),-chiTietPhieuXuats.get(i).getSoLuong());
         }
         int rowsAffected = pstmt.executeUpdate();
         if (rowsAffected > 0) {

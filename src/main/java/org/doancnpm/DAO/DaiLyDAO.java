@@ -26,9 +26,9 @@ public class DaiLyDAO implements Idao<DaiLy> {
     public int Insert(DaiLy daiLy) throws SQLException {
         Connection conn = DatabaseDriver.getConnect();
         String sql = "INSERT INTO DAILY " +
-                "(MaQuan, MaLoaiDaiLy, TenDaiLy, DienThoai,Email,DiaChi,NgayTiepNhan,GhiChu) " +
+                "(MaQuan, MaLoaiDaiLy, TenDaiLy, DienThoai,Email,DiaChi,NgayTiepNhan,NoHienTai,GhiChu) " +
                 "VALUES " +
-                "(?,?,?,?,?,?,?,?)";
+                "(?,?,?,?,?,?,?,?,?)";
 
         assert conn != null;
         PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -39,7 +39,8 @@ public class DaiLyDAO implements Idao<DaiLy> {
         pstmt.setString(5, daiLy.getEmail());
         pstmt.setString(6, daiLy.getDiaChi());
         pstmt.setDate(7, daiLy.getNgayTiepNhan());
-        pstmt.setString(8, daiLy.getGhiChu());
+        pstmt.setLong(8, daiLy.getNoHienTai());
+        pstmt.setString(9, daiLy.getGhiChu());
 
         int rowsAffected = pstmt.executeUpdate();
         if (rowsAffected > 0) {
@@ -77,6 +78,30 @@ public class DaiLyDAO implements Idao<DaiLy> {
         pstmt.close();
         return rowsAffected;
     }
+
+    public int updateNoHienTai(int id, long themNo) throws SQLException {
+        Connection conn = DatabaseDriver.getConnect();
+        String sql = "UPDATE DAILY " +
+                "SET  NoHienTai = NoHienTai + ?" +
+                "WHERE ID = ?";
+
+        assert conn != null;
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+
+        pstmt.setLong(1, themNo);
+        pstmt.setInt(2, id);
+        int rowsAffected = pstmt.executeUpdate();
+        if (rowsAffected > 0) {
+            this.QueryID(id);
+            notifyChange();
+            PhieuThuDAO.getInstance().notifyChange();
+            PhieuXuatDAO.getInstance().notifyChange();
+        }
+        pstmt.close();
+        return rowsAffected;
+    }
+
+
 
     @Override
     public int Delete(int id) throws SQLException {
@@ -149,7 +174,6 @@ public class DaiLyDAO implements Idao<DaiLy> {
             daiLy.setMaDaiLy(maDL);
             daiLy.setMaQuan(maQuan);
             daiLy.setMaLoaiDaiLy(maLoaiDL);
-
             daiLy.setTenDaiLy(tenDaiLy);
             daiLy.setDiaChi(diaChi);
             daiLy.setEmail(email);
@@ -157,6 +181,17 @@ public class DaiLyDAO implements Idao<DaiLy> {
             daiLy.setNgayTiepNhan(ngayTiepNhan);
             daiLy.setNoHienTai(noHienTai);
             daiLy.setGhiChu(ghiChu);
+
+            System.out.println("Mã loại đại lý: " + maLoaiDL);
+            System.out.println("Tên đại lý: " + tenDaiLy);
+            System.out.println("Số điện thoại: " + SDT);
+            System.out.println("Email: " + email);
+            System.out.println("Địa chỉ: " + diaChi);
+            System.out.println("Ngày tiếp nhận: " + ngayTiepNhan);
+            System.out.println("Nợ hiện tại: " + noHienTai);
+            System.out.println("Ghi chú: " + ghiChu);
+            System.out.println("Đã xóa: " + (isDeleted != 0 ? "Có" : "Không"));
+
 
             daiLy.setDeleted(isDeleted != 0);
         }

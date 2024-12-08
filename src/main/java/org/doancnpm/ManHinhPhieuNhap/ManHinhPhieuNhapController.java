@@ -273,6 +273,7 @@ public class ManHinhPhieuNhapController implements Initializable {
 
         TableColumn<PhieuNhap, String> tongTienCol = new TableColumn<>("Tổng tiền");
         tongTienCol.setCellValueFactory(data->{
+            System.out.println(data.getValue().getTongTien());
             return new SimpleStringProperty(MoneyFormatter.convertLongToString(data.getValue().getTongTien()));
         });
 

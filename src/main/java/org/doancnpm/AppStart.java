@@ -7,10 +7,8 @@ import javafx.scene.control.PopupControl;
 import javafx.scene.image.Image;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import org.doancnpm.DAO.NhanVienDAO;
-import org.doancnpm.ManHinhBaoCao.ManHinhBaoCaoController;
-import org.doancnpm.ManHinhDieuKhien.ManHinhDieuKhienController;
 import org.doancnpm.Models.DatabaseDriver;
+
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -23,9 +21,8 @@ public class AppStart extends Application {
         NavController loginManager = new NavController(scene,stage);
         loginManager.showLoginScreen();
 
-        DatabaseDriver.initializeDatabase(DatabaseDriver.getConnect());
-
-        System.out.println(NhanVienDAO.getInstance().QueryAll());
+       DatabaseDriver.initializeDatabase(DatabaseDriver.getConnect());
+       // System.out.println(NhanVienDAO.getInstance().QueryAll());
 
         stage.setTitle("Quản lý đại lý");
         stage.getIcons().add(new Image(getClass().getResource("/image/deal.png").toExternalForm()));
