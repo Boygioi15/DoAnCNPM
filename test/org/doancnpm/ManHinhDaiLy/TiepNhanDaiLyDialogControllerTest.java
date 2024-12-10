@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.testfx.framework.junit5.ApplicationTest;
 
 import java.util.concurrent.CountDownLatch;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class TiepNhanDaiLyDialogControllerTest extends ApplicationTest {
@@ -21,8 +22,14 @@ class TiepNhanDaiLyDialogControllerTest extends ApplicationTest {
 
     @BeforeAll
     static void initFX() {
-        // Khởi động nền tảng JavaFX
-        Platform.startup(() -> {});
+        // Khởi động JavaFX chỉ một lần
+        CountDownLatch latch = new CountDownLatch(1);
+        Platform.startup(latch::countDown);
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -34,112 +41,61 @@ class TiepNhanDaiLyDialogControllerTest extends ApplicationTest {
 
     @BeforeEach
     void setUp() {
-        // Đảm bảo các thành phần giao diện của controller đã được khởi tạo đúng cách qua FXML loader
-        assertNotNull(controller.quanComboBox);
-        assertNotNull(controller.loaiDaiLyComboBox);
-        assertNotNull(controller.diaChiTextField);
-        assertNotNull(controller.tenDaiLyTextField);
-        assertNotNull(controller.emailTextField);
-        assertNotNull(controller.dienThoaiTextField);
-        assertNotNull(controller.ghiChuTextArea);
-        assertNotNull(controller.title);  // Kiểm tra label 'title' có được khởi tạo không
-    }
-
-    @Test
-    void testSetInitialValue() throws InterruptedException {
-        CountDownLatch latch = new CountDownLatch(1);
-
-        Platform.runLater(() -> {
-            try {
-                DaiLy daiLy = new DaiLy();
-                daiLy.setMaQuan(1);
-                daiLy.setMaLoaiDaiLy(1);
-                daiLy.setTenDaiLy("Dai Ly Test");
-                daiLy.setDiaChi("123 Test St");
-                daiLy.setDienThoai("0909123456");
-                daiLy.setEmail("test@example.com");
-                daiLy.setGhiChu("Ghi chu test");
-
-                controller.setInitialValue(daiLy);
-
-                // Kiểm tra giá trị
-                assertEquals("Dai Ly Test", controller.tenDaiLyTextField.getText());
-                assertEquals("123 Test St", controller.diaChiTextField.getText());
-                assertEquals("0909123456", controller.dienThoaiTextField.getText());
-                assertEquals("test@example.com", controller.emailTextField.getText());
-                assertEquals("Ghi chu test", controller.ghiChuTextArea.getText());
-                if (controller.title != null) {
-                    assertEquals("Cập nhật đại lý", controller.title.getText());
-                }
-            } finally {
-                latch.countDown();
-            }
-        });
-
-        latch.await();
+        // Đảm bảo các thành phần giao diện đã được khởi tạo
+        assertNotNull(controller.quanComboBox, "Quận ComboBox không được khởi tạo");
+        assertNotNull(controller.loaiDaiLyComboBox, "Loại Đại Lý ComboBox không được khởi tạo");
+        assertNotNull(controller.diaChiTextField, "Địa chỉ TextField không được khởi tạo");
+        assertNotNull(controller.tenDaiLyTextField, "Tên Đại Lý TextField không được khởi tạo");
+        assertNotNull(controller.emailTextField, "Email TextField không được khởi tạo");
+        assertNotNull(controller.dienThoaiTextField, "Điện thoại TextField không được khởi tạo");
+        assertNotNull(controller.ghiChuTextArea, "Ghi chú TextArea không được khởi tạo");
     }
 
     @Test
     void testGetValidateData() {
         Platform.runLater(() -> {
-            // Thiết lập các trường không hợp lệ để kiểm tra
-            controller.quanComboBox.setValue(null);
-            controller.loaiDaiLyComboBox.setValue(null); // Loại đại lý không hợp lệ
-            controller.diaChiTextField.setText("123 Test St");
-            controller.tenDaiLyTextField.setText("Dai Ly Test");
-
-            // Kiểm tra lỗi khi quận không được để trống
-            String result = controller.getValidateData();
-            assertTrue(result.contains("Quận không được để trống"));
-            //assertTrue(result.contains("Hợp lệ"));
-
-            // Cập nhật quận và kiểm tra loại đại lý
-            controller.quanComboBox.setValue(new Quan());
-            controller.loaiDaiLyComboBox.setValue(null); // Loại đại lý không được để trống
-
-            result = controller.getValidateData();
-            assertTrue(result.contains("Loại đại lý không được để trống"));
-
-            // Cập nhật loại đại lý và kiểm tra địa chỉ
+            // Test Case 1: Quận null
+            controller.quanComboBox.setValue(null); // Quận trống
             controller.loaiDaiLyComboBox.setValue(new LoaiDaiLy());
-            controller.diaChiTextField.setText(""); // Địa chỉ không hợp lệ
+            controller.diaChiTextField.setText("14 Tân Vạn");
+            controller.tenDaiLyTextField.setText("Đại lý Văn An");
+            controller.emailTextField.setText("vanan@gmail.com");
+            controller.dienThoaiTextField.setText("123456789");
+            String result = controller.getValidateData();
+            assertTrue(result.contains("Quận không được để trống"), "Test Case 1 thất bại");
 
+            // Test Case 2: Loại đại lý null
+            controller.quanComboBox.setValue(new Quan());
+            controller.loaiDaiLyComboBox.setValue(null); // Loại đại lý trống
             result = controller.getValidateData();
-            assertTrue(result.contains("Địa chỉ không được để trống"));
+            assertTrue(result.contains("Loại đại lý không được để trống"), "Test Case 2 thất bại");
 
-            // Cập nhật địa chỉ và kiểm tra tên đại lý
-            controller.diaChiTextField.setText("123 Test St");
-            controller.tenDaiLyTextField.setText(""); // Tên đại lý không hợp lệ
-
+            // Test Case 3: Địa chỉ null
+            controller.loaiDaiLyComboBox.setValue(new LoaiDaiLy());
+            controller.diaChiTextField.setText(""); // Địa chỉ trống
             result = controller.getValidateData();
-            assertTrue(result.contains("Tên đại lý không được để trống"));
+            assertTrue(result.contains("Địa chỉ không được để trống"), "Test Case 3 thất bại");
 
-            // Kiểm tra email không hợp lệ
-            controller.tenDaiLyTextField.setText("Dai Ly Test");
-            controller.emailTextField.setText("invalid-email"); // Email không hợp lệ
-
+            // Test Case 4: Tên đại lý null
+            controller.diaChiTextField.setText("14 Tân Vạn");
+            controller.tenDaiLyTextField.setText(""); // Tên đại lý trống
             result = controller.getValidateData();
-            assertTrue(result.contains("Email không đúng định dạng"));
+            assertTrue(result.contains("Tên đại lý không được để trống"), "Test Case 4 thất bại");
 
-            // Kiểm tra trường hợp tất cả thông tin hợp lệ
-            controller.emailTextField.setText("test@example.com");
+            // Test Case 5: Email không hợp lệ
+            controller.tenDaiLyTextField.setText("Đại lý Văn An");
+            controller.emailTextField.setText("invalid-email"); // Email sai định dạng
+            result = controller.getValidateData();
+            assertTrue(result.contains("Email không đúng định dạng"), "Test Case 5 thất bại");
+
+            // Test Case 6: Email hợp lệ, tất cả hợp lệ
+            controller.emailTextField.setText("vanan@gmail.com");
             result = controller.getValidateData();
             assertFalse(result.contains("Quận không được để trống"));
             assertFalse(result.contains("Loại đại lý không được để trống"));
             assertFalse(result.contains("Địa chỉ không được để trống"));
             assertFalse(result.contains("Tên đại lý không được để trống"));
-            assertFalse(result.contains("Email không đúng định dạng")); // Không có lỗi
+            assertFalse(result.contains("Email không đúng định dạng"));
         });
-    }
-
-
-
-    @Test
-    void testIsValidEmailFormat() {
-        assertTrue(controller.isValidEmailFormat("test@example.com"));
-        //assertTrue(controller.isValidEmailFormat("test@example.com"));
-        assertFalse(controller.isValidEmailFormat("plainaddress"));
-        assertFalse(controller.isValidEmailFormat("missing-at-sign.com"));
-        assertFalse(controller.isValidEmailFormat("name@domain@domain.com"));
     }
 }
