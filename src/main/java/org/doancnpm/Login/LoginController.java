@@ -284,7 +284,7 @@ public class LoginController implements Initializable {
         }
     }
 
-    private boolean validateEmailInput() {
+    public boolean validateEmailInput() {
         String email = emailText.getText();
 
 
@@ -364,6 +364,7 @@ public class LoginController implements Initializable {
         }
         long currentTime = System.currentTimeMillis() / 1000;
         if (currentTime - otpSentTime >= OTP_VALIDITY_SECONDS) {
+            System.out.println("currentTime - otpSentTime" + ( currentTime - otpSentTime));
             addErrorMessage(errorOtpBox, "Mã OTP không chính xác!");
             return false;
         }
@@ -433,7 +434,7 @@ public class LoginController implements Initializable {
     }
 
 
-    private boolean validatePassword() {
+    public boolean validatePassword() {
         String password = enterPasswordText.getText();
         String confirmPassword = reEnterPasswordText.getText();
 

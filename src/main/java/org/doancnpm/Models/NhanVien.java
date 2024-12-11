@@ -24,6 +24,18 @@ public class NhanVien {
         return isDeleted;
     }
 
+    public NhanVien(Integer maChucVu, Boolean isDeleted, Long luong, String email, Date ngaySinh, String hoTen, String gioiTinh, String SDT, String ghiChu) {
+        this.maChucVu = maChucVu;
+        this.isDeleted = isDeleted;
+        this.luong = luong;
+        this.email = email;
+        this.ngaySinh = ngaySinh;
+        this.hoTen = hoTen;
+        this.gioiTinh = gioiTinh;
+        this.SDT = SDT;
+        this.ghiChu = ghiChu;
+    }
+
     public void setDeleted(Boolean deleted) {
         isDeleted = deleted;
     }
