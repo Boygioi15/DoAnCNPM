@@ -22,10 +22,10 @@ import java.util.ResourceBundle;
 
 public class ThemMoiMatHangDialogController implements Initializable {
 
-    @FXML private TextField tenMHTextField;
-    @FXML private SearchableComboBox<DonViTinh> dvtComboBox;
-    @FXML private TextField donGiaNhapTextField;
-    @FXML private TextArea ghiChuTextArea;
+    @FXML  TextField tenMHTextField;
+    @FXML  SearchableComboBox<DonViTinh> dvtComboBox;
+    @FXML  TextField donGiaNhapTextField;
+    @FXML  TextArea ghiChuTextArea;
     @FXML
     Label title;
     MatHang initialValue;

@@ -4,7 +4,6 @@ import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
-import org.doancnpm.Models.DaiLy;
 import org.doancnpm.Models.LoaiDaiLy;
 import org.doancnpm.Models.Quan;
 import org.junit.jupiter.api.BeforeAll;
@@ -16,7 +15,7 @@ import java.util.concurrent.CountDownLatch;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class TiepNhanDaiLyDialogControllerTest extends ApplicationTest {
+class Agent_Insert_Validate_Test extends ApplicationTest {
 
     private TiepNhanDaiLyDialogController controller;
 

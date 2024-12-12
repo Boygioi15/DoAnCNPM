@@ -23,6 +23,19 @@ public class DaiLy {
 
     public DaiLy() {
     }
+
+    public DaiLy(Integer maQuan, Integer maLoaiDaiLy, String tenDaiLy, String dienThoai, String email, String diaChi, Date ngayTiepNhan, Long noHienTai, String ghiChu) {
+        this.maQuan = maQuan;
+        this.maLoaiDaiLy = maLoaiDaiLy;
+        this.tenDaiLy = tenDaiLy;
+        this.dienThoai = dienThoai;
+        this.email = email;
+        this.diaChi = diaChi;
+        this.ngayTiepNhan = ngayTiepNhan;
+        this.noHienTai = noHienTai;
+        this.ghiChu = ghiChu;
+    }
+
     public int getID() {
         return ID;
     }

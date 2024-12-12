@@ -25,11 +25,11 @@ import org.doancnpm.Ultilities.PopDialog;
 
 public class ChiTietPhieuNhapRow extends HBox {
     @FXML
-    SearchableComboBox<MatHang> mhComboBox;
+    public SearchableComboBox<MatHang> mhComboBox;
     @FXML
-    TextField dvtTextField;
+    public TextField dvtTextField;
     @FXML
-    TextField slTextField;
+    public  TextField slTextField;
     @FXML
     TextField donGiaTextField;
     @FXML

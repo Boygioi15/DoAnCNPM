@@ -31,13 +31,13 @@ import java.util.regex.Pattern;
 
 public class TiepNhanNhanVienDialogController implements Initializable {
 
-    @FXML private SearchableComboBox<ChucVu> chucVuComboBox;
-    @FXML private SearchableComboBox<String> gioiTinhComboBox;
+    @FXML  SearchableComboBox<ChucVu> chucVuComboBox;
+    @FXML  SearchableComboBox<String> gioiTinhComboBox;
     @FXML private TextField hoTenTextField;
     @FXML private DatePicker ngaySinhDatePicker;
     @FXML private TextField sdtTextField;
-    @FXML private TextField emailTextField;
-    @FXML private TextField luongTextField;
+    @FXML  TextField emailTextField;
+    @FXML  TextField luongTextField;
     @FXML private TextArea ghiChuTextArea;
     @FXML
     Label title;

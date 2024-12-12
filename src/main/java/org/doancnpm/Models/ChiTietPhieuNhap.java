@@ -7,6 +7,16 @@ public class ChiTietPhieuNhap {
     Long thanhTien;
     Long donGiaNhap;
 
+    public ChiTietPhieuNhap(Integer maPhieuNhap, Integer maMatHang, Integer soLuong, Long donGiaNhap) {
+        this.maPhieuNhap = maPhieuNhap;
+        this.maMatHang = maMatHang;
+        this.soLuong = soLuong;
+        this.donGiaNhap = donGiaNhap;
+    }
+
+    public ChiTietPhieuNhap() {
+    }
+
     public Long getDonGiaNhap() {
         return donGiaNhap;
     }

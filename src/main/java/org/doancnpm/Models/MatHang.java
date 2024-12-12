@@ -16,6 +16,15 @@ public class MatHang {
     private String ghiChu;
     private Boolean isDeleted;
 
+    public MatHang() {
+    }
+
+    public MatHang(String maMatHang, String tenMatHang, Long donGiaNhap) {
+        this.maMatHang = maMatHang;
+        this.tenMatHang = tenMatHang;
+        this.donGiaNhap = donGiaNhap;
+    }
+
     public Boolean getDeleted() {
         return isDeleted;
     }

@@ -25,10 +25,10 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 public class ChiTietPhieuXuatRow extends HBox {
-    @FXML SearchableComboBox<MatHang> mhComboBox;
-    @FXML TextField dvtTextField;
-    @FXML TextField slTextField;
-    @FXML TextField donGiaTextField;
+    @FXML public SearchableComboBox<MatHang> mhComboBox;
+    @FXML public TextField dvtTextField;
+    @FXML public TextField slTextField;
+    @FXML public TextField donGiaTextField;
     @FXML public TextField thanhTienTextField;
 
     @FXML Button xoaBtn;

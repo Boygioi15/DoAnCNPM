@@ -39,7 +39,7 @@ import java.util.ResourceBundle;
 public class LapPhieuXuatDialogController implements Initializable {
     @FXML private TextField ngayLapPhieuTextField;
     @FXML private TextField nhanVienTextField;
-    @FXML private SearchableComboBox<DaiLy> dlComboBox;
+    @FXML SearchableComboBox<DaiLy> dlComboBox;
     @FXML Text tongTienText;
     @FXML
     Label title;

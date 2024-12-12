@@ -8,6 +8,15 @@ import java.sql.Date;
 public class PhieuNhap {
     private BooleanProperty selected = new SimpleBooleanProperty(false);
 
+    public PhieuNhap(String nhaCungCap, Integer maNhanVien, Date ngayLapPhieu) {
+        this.nhaCungCap = nhaCungCap;
+        this.maNhanVien = maNhanVien;
+        this.ngayLapPhieu = ngayLapPhieu;
+    }
+
+    public PhieuNhap() {
+    }
+
     public Integer getID() {
         return ID;
     }
