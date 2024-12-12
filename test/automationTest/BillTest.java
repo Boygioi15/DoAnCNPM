@@ -39,7 +39,7 @@ class BillTest extends ApplicationTest {
         robot.type(KeyCode.DOWN);
         robot.type(KeyCode.ENTER);
 
-        robot.clickOn("#soTienThuTextField").write("100000"); //100k
+        robot.clickOn("#soTienThuTextField").write("1"); //1k
         robot.clickOn("#ghiChuTextArea").write("Noting");
 
         Thread.sleep(300);
@@ -47,31 +47,31 @@ class BillTest extends ApplicationTest {
         robot.clickOn("#saveButton");
     }
 
-//    @Test
-//    void Add_new_bill_false(FxRobot robot) throws InterruptedException, SQLException {
-//        robot.clickOn("#user").write("admin");
-//        robot.clickOn("#password").write("123456");
-//        robot.clickOn("#loginButton");
-//
-//        robot.clickOn("#openPhieuThuButton");
-//
-//        robot.clickOn("#openAddNewComboBox");
-//        robot.clickOn("#addDirectButton");
-//        Thread.sleep(300);
-//
-//        // fill textfield
-//        robot.clickOn("#dlComboBox");
-//        Thread.sleep(300);
-//        robot.type(KeyCode.DOWN);
-//        robot.type(KeyCode.ENTER);
-//
-//        robot.clickOn("#soTienThuTextField").write("1000000"); //1 trieu
-//        robot.clickOn("#ghiChuTextArea").write("Noting");
-//
-//        Thread.sleep(300);
-//
-//        robot.clickOn("#saveButton");
-//    }
+    @Test
+    void Add_new_bill_false(FxRobot robot) throws InterruptedException, SQLException {
+        robot.clickOn("#user").write("admin");
+        robot.clickOn("#password").write("123456");
+        robot.clickOn("#loginButton");
+
+        robot.clickOn("#openPhieuThuButton");
+
+        robot.clickOn("#openAddNewComboBox");
+        robot.clickOn("#addDirectButton");
+        Thread.sleep(300);
+
+        // fill textfield
+        robot.clickOn("#dlComboBox");
+        Thread.sleep(300);
+        robot.type(KeyCode.DOWN);
+        robot.type(KeyCode.ENTER);
+
+        robot.clickOn("#soTienThuTextField").write("1000000000"); //1 ti
+        robot.clickOn("#ghiChuTextArea").write("Noting");
+
+        Thread.sleep(300);
+
+        robot.clickOn("#saveButton");
+    }
 
 
 

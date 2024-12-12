@@ -39,7 +39,7 @@ class AgentTest extends ApplicationTest {
 
     @Test
     void addNewAgentSuccess(FxRobot robot) throws InterruptedException, SQLException {
-
+        DaiLyDAO.getInstance().deleteByEmail("BinhDuong@gmail.com");
         // Đăng nhập
         robot.clickOn("#user").write("admin");
         robot.clickOn("#password").write("123456");
@@ -69,13 +69,13 @@ class AgentTest extends ApplicationTest {
         robot.type(KeyCode.ENTER);
         // Lưu dữ liệu
         robot.clickOn("#saveButton");
-//
-//        DialogPane dialogPane = robot.lookup("#successDialog").queryAs(DialogPane.class);
-//        assertNotNull(dialogPane);
-//
-//        Thread.sleep(1000);
-//        assertEquals("Thêm mới đại lý thành công", dialogPane.getHeaderText());
-//        robot.clickOn("#okButton");
+
+        DialogPane dialogPane = robot.lookup("#successDialog").queryAs(DialogPane.class);
+        assertNotNull(dialogPane);
+
+        Thread.sleep(1000);
+        assertEquals("Thêm mới đại lý thành công", dialogPane.getHeaderText());
+        robot.clickOn("#okButton");
     }
 
 //    @Test
