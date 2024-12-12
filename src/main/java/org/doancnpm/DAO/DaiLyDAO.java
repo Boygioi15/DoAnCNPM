@@ -9,6 +9,7 @@ import org.doancnpm.Models.DonViTinh;
 import org.doancnpm.Ultilities.CheckExist;
 
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class DaiLyDAO implements Idao<DaiLy> {
@@ -293,5 +294,58 @@ public class DaiLyDAO implements Idao<DaiLy> {
     public void notifyChange() {
         dailyDtbChanged.set(!dailyDtbChanged.get());
     }
+
+    public int deleteByEmail(String email) throws SQLException {
+        Connection conn = DatabaseDriver.getConnect();
+        String sql = "DELETE FROM DAILY WHERE Email = ?";
+
+        assert conn != null;
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setString(1, email);
+
+        int rowsAffected = pstmt.executeUpdate();
+        if (rowsAffected > 0) {
+            notifyChange();
+        }
+        pstmt.close();
+        return rowsAffected;
+    }
+
+
+    public int InsertWithNoHienTai(int nohienTai) throws SQLException {
+        Connection conn = DatabaseDriver.getConnect();
+        String sql = "INSERT INTO DAILY " +
+                "(MaQuan, MaLoaiDaiLy, TenDaiLy, DienThoai, Email, DiaChi, NgayTiepNhan, NoHienTai, GhiChu) " +
+                "VALUES " +
+                "(?,?,?,?,?,?,?,?,?)";
+
+        assert conn != null;
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+
+        pstmt.setInt(1, 1);
+        pstmt.setInt(2, 1);
+        pstmt.setString(3, "Test phieu thu");
+        pstmt.setString(4, "0848282828");
+        pstmt.setString(5, "hoan@gmail.com");
+        pstmt.setString(6, "binh duong");
+
+        // Chuyển đổi định dạng ngày "dd/MM/yyyy" thành "yyyy-MM-dd"
+        String dateString = "14/02/2024";
+        String[] dateParts = dateString.split("/"); // Tách ngày, tháng, năm
+        String formattedDate = dateParts[2] + "-" + dateParts[1] + "-" + dateParts[0]; // Đổi sang định dạng yyyy-MM-dd
+
+        pstmt.setDate(7, Date.valueOf(formattedDate)); // Sử dụng Date.valueOf() với chuỗi đã chuyển đổi
+
+        pstmt.setInt(8, nohienTai);
+        pstmt.setString(9, "Nothing");
+
+        int rowsAffected = pstmt.executeUpdate();
+        if (rowsAffected > 0) {
+            notifyChange();
+        }
+        pstmt.close();
+        return rowsAffected;
+    }
+
 }
 
