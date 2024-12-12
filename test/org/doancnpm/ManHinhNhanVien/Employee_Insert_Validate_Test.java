@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.stage.Stage;
 import org.doancnpm.Models.ChucVu;
+import org.doancnpm.SetUp;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,19 +20,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class Employee_Insert_Validate_Test extends ApplicationTest {
 
     TiepNhanNhanVienDialogController controller;
-
     @BeforeAll
     static void initFX() {
-        // Khởi động JavaFX một lần
-        CountDownLatch latch = new CountDownLatch(1);
-        Platform.startup(latch::countDown);
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        SetUp.initFX();
     }
-
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Main/ManHinhNhanVien/TiepNhanNhanVien2.fxml"));

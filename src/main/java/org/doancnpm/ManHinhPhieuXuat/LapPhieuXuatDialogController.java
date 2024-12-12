@@ -101,6 +101,8 @@ public class LapPhieuXuatDialogController implements Initializable {
     public void themCTPX(){
         ChiTietPhieuXuatRow temp = new ChiTietPhieuXuatRow(ctpxContainer);
         ctpxContainer.getChildren().add(ctpxContainer.getChildren().size()-1,temp);
+        temp.mhComboBox.setId("mhComboBox" + ctpxContainer.getChildren().size());
+        temp.slTextField.setId("slTextField" + ctpxContainer.getChildren().size());
         temp.SetOnXoa(event -> {
             if(ctpxContainer.getChildren().size()<=2){
                 event.consume();

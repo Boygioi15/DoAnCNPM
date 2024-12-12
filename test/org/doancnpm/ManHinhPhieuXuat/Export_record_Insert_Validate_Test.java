@@ -8,10 +8,14 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.doancnpm.Models.DaiLy;
 import org.doancnpm.Models.MatHang;
+import org.doancnpm.SetUp;
 import org.doancnpm.Ultilities.ChiTietPhieu.ChiTietPhieuXuatRow;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testfx.framework.junit5.ApplicationTest;
+
+import java.util.concurrent.CountDownLatch;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,7 +23,10 @@ class Export_record_Insert_Validate_Test extends ApplicationTest {
 
     private ChiTietPhieuXuatRow chiTietPhieuXuatRow;
     private LapPhieuXuatDialogController controller;
-
+    @BeforeAll
+    static void initFX() {
+        SetUp.initFX();
+    }
     @Override
     public void start(Stage stage) throws Exception {
         // Gọi FXMLLoader để load giao diện FXML của LapPhieuXuatDialogController

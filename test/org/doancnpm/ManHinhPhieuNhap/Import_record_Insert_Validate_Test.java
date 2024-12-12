@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.doancnpm.SetUp;
 import org.doancnpm.Ultilities.ChiTietPhieu.ChiTietPhieuNhapRow;
 import org.doancnpm.Models.MatHang;
 import org.junit.jupiter.api.BeforeAll;
@@ -21,17 +22,9 @@ class Import_record_Insert_Validate_Test extends ApplicationTest {
 
     private ChiTietPhieuNhapRow chiTietPhieuNhapRow;
     private LapPhieuNhapDialogController controller;
-
     @BeforeAll
     static void initFX() {
-        // Khởi động JavaFX chỉ một lần
-        CountDownLatch latch = new CountDownLatch(1);
-        Platform.startup(latch::countDown);
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        SetUp.initFX();
     }
 
     @Override
