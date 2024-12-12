@@ -29,7 +29,7 @@
         <Label styleClass="title-text" text="Danh sách đại lý" />
         <HBox alignment="CENTER_LEFT" spacing="10.0">
             <children>
-                <MenuButton mnemonicParsing="false" styleClass="add-button" text="Thêm mới">
+                <MenuButton fx:id="openAddNewComboBox" mnemonicParsing="false" styleClass="add-button" text="Thêm mới">
                     <items>
                         <MenuItem fx:id="addDirectButton" mnemonicParsing="false" text="Thêm trực tiếp" />
                         <MenuItem fx:id="addExcelButton" mnemonicParsing="false" text="Thêm từ file Excel" />

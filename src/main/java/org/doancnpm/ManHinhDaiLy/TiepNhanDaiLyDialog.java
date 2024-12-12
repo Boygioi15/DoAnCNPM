@@ -51,7 +51,6 @@ public class TiepNhanDaiLyDialog extends Dialog<DaiLy>  {
         }
         ButtonType cancelButtonType = new ButtonType("Thoát", ButtonBar.ButtonData.CANCEL_CLOSE);
 
-
         this.getDialogPane().setContent(fxmlLoader.load());
 
         TiepNhanDaiLyDialogController c = fxmlLoader.getController();
@@ -65,8 +64,13 @@ public class TiepNhanDaiLyDialog extends Dialog<DaiLy>  {
 
 
         //them vao cuoi cung
-        final Button btnOk = (Button)this.getDialogPane().lookupButton(saveButtonType);
-        btnOk.addEventFilter(ActionEvent.ACTION, ob -> {
+
+        Button saveButton = (Button) this.getDialogPane().lookupButton(saveButtonType);
+        if (saveButton != null) {
+            saveButton.setId("saveButton");
+        }
+
+        saveButton.addEventFilter(ActionEvent.ACTION, ob -> {
             String error = c.getValidateData();
             if(!error.isEmpty()){
                 PopDialog.popErrorDialog("Thêm mới đại lý thất bại",error);
