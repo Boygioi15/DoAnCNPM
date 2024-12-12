@@ -30,7 +30,6 @@ public class TaiKhoanDAO {
         PreparedStatement pstmt = conn.prepareStatement(sql);
         pstmt.setString(1, taiKhoan.getUserName());
         pstmt.setString(2, taiKhoan.getPassword());
-
         pstmt.setInt(3, taiKhoan.getMaNhanVien());
 
         int rowsAffected = pstmt.executeUpdate();

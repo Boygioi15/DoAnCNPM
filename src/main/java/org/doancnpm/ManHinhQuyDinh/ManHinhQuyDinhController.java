@@ -785,7 +785,7 @@ public class ManHinhQuyDinhController implements Initializable {
         }
     }
 
-    private void capNhatDLToiDa() {
+    public void capNhatDLToiDa() {
         try {
             int sl = Integer.parseInt(slDLToiDaTextField.getText());
             if (sl <= 0) {
@@ -1334,7 +1334,7 @@ public class ManHinhQuyDinhController implements Initializable {
     }
 
 
-    private void capNhatTyLeNhapXuat() {
+    public void capNhatTyLeNhapXuat() {
         try {
             double tl = Double.parseDouble(tyleTextField.getText());
             if (tl <= 0) {
