@@ -66,8 +66,12 @@ public class LapPhieuThuDialog extends Dialog<PhieuThu> {
 
         //this.getDialogPane().lookupButton(saveButtonType).disableProperty().bind(c.validProperty().not());
 
-        final Button btnOk = (Button) this.getDialogPane().lookupButton(saveButtonType);
-        btnOk.addEventFilter(ActionEvent.ACTION, ob -> {
+        Button saveButton = (Button) this.getDialogPane().lookupButton(saveButtonType);
+        if (saveButton != null) {
+            saveButton.setId("saveButton");
+        }
+
+        saveButton.addEventFilter(ActionEvent.ACTION, ob -> {
             String error = c.getValidData();
             if(!error.isEmpty()){
                 PopDialog.popErrorDialog("Thêm mới phiếu thu thất bại", error);

@@ -80,11 +80,12 @@ public class ManHinhBaoCaoController implements Initializable {
 
         PhieuXuatDAO.getInstance().AddDatabaseListener(observable -> {
             initLineChart(CbYear.getValue());
-            initAccordion(thangComboBox.getValue(), CbYear.getValue());
+            //initAccordion(thangComboBox.getValue(), CbYear.getValue());
         });
+
         PhieuThuDAO.getInstance().AddDatabaseListener(observable -> {
             initLineChart(CbYear.getValue());
-            initAccordion(thangComboBox.getValue(), CbYear.getValue());
+           // initAccordion(thangComboBox.getValue(), CbYear.getValue());
         });
     }
 
