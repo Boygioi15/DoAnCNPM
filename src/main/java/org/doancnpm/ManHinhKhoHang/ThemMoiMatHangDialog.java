@@ -78,6 +78,7 @@ public class ThemMoiMatHangDialog extends Dialog<MatHang>  {
 
 
         final Button btnOk = (Button) this.getDialogPane().lookupButton(saveButtonType);
+        btnOk.setId("saveButton");
         btnOk.addEventFilter(ActionEvent.ACTION, ob -> {
             String error = c.getValidData();
             if(!error.isEmpty()){

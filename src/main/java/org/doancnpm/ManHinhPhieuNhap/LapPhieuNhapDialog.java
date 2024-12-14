@@ -51,6 +51,7 @@ public class LapPhieuNhapDialog extends Dialog<PhieuNhap> {
         this.getDialogPane().getButtonTypes().addAll(saveButtonType, cancelButtonType);
 
         final Button btnOk = (Button)this.getDialogPane().lookupButton(saveButtonType);
+        btnOk.setId("saveButton");
         btnOk.addEventFilter(ActionEvent.ACTION,
                 event -> {
                     if(themHaySua){

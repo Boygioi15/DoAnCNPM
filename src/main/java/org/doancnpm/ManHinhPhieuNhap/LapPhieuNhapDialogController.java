@@ -76,6 +76,8 @@ public class LapPhieuNhapDialogController implements Initializable {
     public void themCTPN() {
         ChiTietPhieuNhapRow temp = new ChiTietPhieuNhapRow(ctpnContainer);
         ctpnContainer.getChildren().add(ctpnContainer.getChildren().size() - 1, temp);
+        temp.mhComboBox.setId("mhComboBox" + ctpnContainer.getChildren().size());
+        temp.slTextField.setId("slTextField" + ctpnContainer.getChildren().size());
         temp.SetOnXoa(event -> {
             if (ctpnContainer.getChildren().size() <= 2) {
                 event.consume();
@@ -100,7 +102,7 @@ public class LapPhieuNhapDialogController implements Initializable {
 
     public void setInitialValue(PhieuNhap phieuNhap, NhanVien nvLoggedIn) {
         if (phieuNhap == null) {
-            nhanVienTextField.setText(nvLoggedIn.getHoTen());
+            nhanVienTextField.setText(ctpnContainer.getChildren().getFirst().getId());
             this.nvLapPhieu = nvLoggedIn;
 
             Date ngayTiepNhan = new Date(System.currentTimeMillis());
