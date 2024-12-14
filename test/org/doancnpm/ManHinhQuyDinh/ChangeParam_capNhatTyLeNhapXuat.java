@@ -12,8 +12,6 @@ import org.doancnpm.Ultilities.PopDialog;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import org.testfx.framework.junit5.ApplicationTest;
 
 import java.io.ByteArrayOutputStream;
@@ -24,7 +22,6 @@ import java.sql.SQLException;
 import java.util.concurrent.CountDownLatch;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 class ChangeParam_capNhatTyLeNhapXuat extends ApplicationTest {
     private ManHinhQuyDinhController controller;

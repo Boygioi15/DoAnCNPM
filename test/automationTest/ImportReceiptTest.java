@@ -1,6 +1,5 @@
 package automationTest;
 
-import javafx.scene.control.Alert;
 import javafx.scene.control.DialogPane;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
@@ -9,13 +8,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationTest;
-import org.testfx.util.WaitForAsyncUtils;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(org.testfx.framework.junit5.ApplicationExtension.class)
-class ImportReceipTest extends ApplicationTest {
+class ImportReceiptTest extends ApplicationTest {
 
     @Override
     public void start(Stage stage) throws Exception {
