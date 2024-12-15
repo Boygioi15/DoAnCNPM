@@ -75,7 +75,7 @@
             <Label styleClass="body-text-header" text="Số tiền thu:" />
             <Label styleClass="body-text-header" text="Ghi chú:" GridPane.rowIndex="1" />
             <TextField fx:id="soTienThuTextField" styleClass="body-text" GridPane.columnIndex="1" />
-            <TextArea fx:id="ghiChuTextArea" prefHeight="100.0" styleClass="body-text" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextArea fx:id="ghiChuTextArea_add" prefHeight="100.0" styleClass="body-text" GridPane.columnIndex="1" GridPane.rowIndex="1" />
          </children>
       </GridPane>
    </children>

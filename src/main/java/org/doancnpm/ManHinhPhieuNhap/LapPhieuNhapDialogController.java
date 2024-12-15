@@ -35,7 +35,7 @@ import java.util.ResourceBundle;
 public class LapPhieuNhapDialogController implements Initializable {
     @FXML  TextField ngayLapPhieuTextField;
     @FXML  TextField nhanVienTextField;
-    @FXML  TextField nccTextField;
+    @FXML  TextField nccTextField_add;
     @FXML Text tongTienText;
     @FXML
     Label title;
@@ -121,13 +121,13 @@ public class LapPhieuNhapDialogController implements Initializable {
         } catch (SQLException _) {
         }
 
-        nccTextField.setText(phieuNhap.getNhaCungCap());
+        nccTextField_add.setText(phieuNhap.getNhaCungCap());
         ghiChuTextArea.setText(phieuNhap.getGhiChu());
 
         ctpnContainer.setDisable(true);
         ngayLapPhieuTextField.setDisable(true);
         nhanVienTextField.setDisable(true);
-        nccTextField.setDisable(true);
+        nccTextField_add.setDisable(true);
         loadCTPNs();
 
     }
@@ -151,7 +151,7 @@ public class LapPhieuNhapDialogController implements Initializable {
             PhieuNhap phieuNhap = new PhieuNhap();
 
             phieuNhap.setMaNhanVien(nvLapPhieu.getID());
-            phieuNhap.setNhaCungCap(nccTextField.getText());
+            phieuNhap.setNhaCungCap(nccTextField_add.getText());
             phieuNhap.setNgayLapPhieu(ngayTiepNhan);
             phieuNhap.setGhiChu(ghiChuTextArea.getText());
             return phieuNhap;
@@ -173,7 +173,7 @@ public class LapPhieuNhapDialogController implements Initializable {
 
     public String GetValid() {
         String validRows = "";
-        if(nccTextField.getText().isEmpty()){
+        if(nccTextField_add.getText().isEmpty()){
             validRows = "Nhà cung cấp không được để trống ";
         }
         for(int i = 0; i< ctpnContainer.getChildren().size(); i++){

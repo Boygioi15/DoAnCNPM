@@ -11,7 +11,6 @@ import java.io.IOException;
 import org.doancnpm.ManHinhBaoCao.ManHinhBaoCaoController;
 import org.doancnpm.ManHinhDieuKhien.ManHinhDieuKhienController;
 
-
 public class AppStart extends Application {
     private static Stage primaryStage;
 
@@ -27,6 +26,10 @@ public class AppStart extends Application {
         stage.getIcons().add(new Image(getClass().getResource("/image/deal.png").toExternalForm()));
         stage.setScene(scene);
         stage.show();
+    }
+    public void startTest(Stage stage) throws IOException {
+        Mode.TestMode = true;
+        start(stage);
     }
 
     public static Stage getPrimaryStage() {

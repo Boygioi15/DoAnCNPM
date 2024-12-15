@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.stage.Stage;
 import org.doancnpm.DAO.NhanVienDAO;
 import org.doancnpm.Models.NhanVien;
+import org.doancnpm.SetUp;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,13 +28,7 @@ class SendOTP_ValidateEmail extends ApplicationTest {
     Connection connection;
     @BeforeAll
     static void initFX() {
-        CountDownLatch latch = new CountDownLatch(1);
-        Platform.startup(latch::countDown);
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        SetUp.initFX();
     }
 
     @Override

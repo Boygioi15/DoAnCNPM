@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.doancnpm.DAO.ThamSoDAO;
+import org.doancnpm.SetUp;
 import org.doancnpm.Ultilities.PopDialog;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,13 +30,7 @@ class ChangeParam_capNhatTyLeNhapXuat extends ApplicationTest {
 
     @BeforeAll
     static void initFX() {
-        CountDownLatch latch = new CountDownLatch(1);
-        Platform.startup(latch::countDown);
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        SetUp.initFX();
     }
 
     @Override

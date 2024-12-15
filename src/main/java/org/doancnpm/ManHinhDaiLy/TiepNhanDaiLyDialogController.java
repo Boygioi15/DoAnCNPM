@@ -27,11 +27,11 @@ import java.util.regex.Pattern;
 public class TiepNhanDaiLyDialogController implements Initializable {
 
     @FXML
-    SearchableComboBox<Quan> quanComboBox;
+    SearchableComboBox<Quan> quanComboBox_add;
     @FXML
-    SearchableComboBox<LoaiDaiLy> loaiDaiLyComboBox;
+    SearchableComboBox<LoaiDaiLy> loaiDaiLyComboBox_add;
     @FXML
-    TextField tenDaiLyTextField;
+    TextField tenDaiLyTextField_add;
     @FXML
     TextField diaChiTextField;
     @FXML
@@ -39,7 +39,7 @@ public class TiepNhanDaiLyDialogController implements Initializable {
     @FXML
     TextField emailTextField;
     @FXML
-    TextArea ghiChuTextArea;
+    TextArea ghiChuTextArea_add;
     @FXML
     Label title;
 
@@ -57,18 +57,18 @@ public class TiepNhanDaiLyDialogController implements Initializable {
         initialValue = daiLy;
         try {
             Quan queriedQuan = QuanDAO.getInstance().QueryID(daiLy.getMaQuan());
-            quanComboBox.setValue(queriedQuan);
+            quanComboBox_add.setValue(queriedQuan);
 
             LoaiDaiLy queriedLoaiDaiLy = LoaiDaiLyDAO.getInstance().QueryID(daiLy.getMaLoaiDaiLy());
-            loaiDaiLyComboBox.setValue(queriedLoaiDaiLy);
+            loaiDaiLyComboBox_add.setValue(queriedLoaiDaiLy);
         } catch (SQLException _) {
         }
 
-        tenDaiLyTextField.setText(daiLy.getTenDaiLy());
+        tenDaiLyTextField_add.setText(daiLy.getTenDaiLy());
         diaChiTextField.setText(daiLy.getDiaChi());
         dienThoaiTextField.setText(daiLy.getDienThoai());
         emailTextField.setText(daiLy.getEmail());
-        ghiChuTextArea.setText(daiLy.getGhiChu());
+        ghiChuTextArea_add.setText(daiLy.getGhiChu());
         title.setText("Cập nhật đại lý");
     }
 
@@ -103,12 +103,12 @@ public class TiepNhanDaiLyDialogController implements Initializable {
             };
 
             // Đặt StringConverter cho ComboBox
-            quanComboBox.setConverter(quanStringConverter);
-            loaiDaiLyComboBox.setConverter(loaiDaiLyStringConverter);
+            quanComboBox_add.setConverter(quanStringConverter);
+            loaiDaiLyComboBox_add.setConverter(loaiDaiLyStringConverter);
 
             // Đặt DataSource cho ComboBox
-            quanComboBox.setItems(quans);
-            loaiDaiLyComboBox.setItems(loaiDaiLys);
+            quanComboBox_add.setItems(quans);
+            loaiDaiLyComboBox_add.setItems(loaiDaiLys);
         } catch (SQLException e) {
             PopDialog.popErrorDialog("Lấy dữ liệu các quận/ loại đại lý thất bại", e.toString());
         }
@@ -119,43 +119,43 @@ public class TiepNhanDaiLyDialogController implements Initializable {
             Date ngayTiepNhan = new Date(System.currentTimeMillis());
             DaiLy daiLy = new DaiLy();
 
-            daiLy.setMaQuan(quanComboBox.getValue().getId());
+            daiLy.setMaQuan(quanComboBox_add.getValue().getId());
 
 
-            daiLy.setMaLoaiDaiLy(loaiDaiLyComboBox.getValue().getId());
+            daiLy.setMaLoaiDaiLy(loaiDaiLyComboBox_add.getValue().getId());
 
-            daiLy.setTenDaiLy(tenDaiLyTextField.getText());
+            daiLy.setTenDaiLy(tenDaiLyTextField_add.getText());
             daiLy.setDiaChi(diaChiTextField.getText());
             daiLy.setEmail(emailTextField.getText());
             daiLy.setDienThoai(dienThoaiTextField.getText());
             daiLy.setNgayTiepNhan(ngayTiepNhan);
-            daiLy.setGhiChu(ghiChuTextArea.getText());
+            daiLy.setGhiChu(ghiChuTextArea_add.getText());
             return daiLy;
 
         } else {
-            initialValue.setMaQuan(quanComboBox.getValue().getId());
-            initialValue.setMaLoaiDaiLy(loaiDaiLyComboBox.getValue().getId());
+            initialValue.setMaQuan(quanComboBox_add.getValue().getId());
+            initialValue.setMaLoaiDaiLy(loaiDaiLyComboBox_add.getValue().getId());
 
-            initialValue.setTenDaiLy(tenDaiLyTextField.getText());
+            initialValue.setTenDaiLy(tenDaiLyTextField_add.getText());
             initialValue.setDiaChi(diaChiTextField.getText());
             initialValue.setEmail(emailTextField.getText());
             initialValue.setDienThoai(dienThoaiTextField.getText());
-            initialValue.setGhiChu(ghiChuTextArea.getText());
+            initialValue.setGhiChu(ghiChuTextArea_add.getText());
             return initialValue;
         }
     }
 
     public String getValidateData() {
-        if (quanComboBox.getValue() == null) {
+        if (quanComboBox_add.getValue() == null) {
             return "Quận không được để trống";
         }
-        if (loaiDaiLyComboBox.getValue() == null) {
+        if (loaiDaiLyComboBox_add.getValue() == null) {
             return "Loại đại lý không được để trống";
         }
         if (diaChiTextField.getText().isEmpty()) {
             return "Địa chỉ không được để trống";
         }
-        if (tenDaiLyTextField.getText().isEmpty()) {
+        if (tenDaiLyTextField_add.getText().isEmpty()) {
             return "Tên đại lý không được để trống";
         }
         if (!isValidEmailFormat(emailTextField.getText().trim())) {

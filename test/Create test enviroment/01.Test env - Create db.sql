@@ -1,0 +1,164 @@
+CREATE DATABASE QUANLYDAILY_TEST
+use master
+DROP DATABASE QUANLYDAILY_TEST
+USE QUANLYDAILY_TEST
+
+---cac bang loai---2 so
+CREATE TABLE THAMSO(
+	SoDaiLyToiDaMoiQuan INT not null default 20,
+	TyLeDonGiaXuat float not null default 1.02,
+	ChoPhepVuotNo INT not null default 0,
+)
+Insert Into THAMSO VALUES (10,1.02,0)
+CREATE TABLE QUAN(
+	ID INT IDENTITY(1,1) NOT NULL PRIMARY KEY CLUSTERED,
+	MaQuan AS 'QN' + RIGHT('000' + CAST(ID AS VARCHAR(3)), 3) PERSISTED,
+		
+	TenQuan nvarchar(100),
+	GhiChu nvarchar(1000)
+)
+CREATE TABLE LOAIDAILY(
+	ID INT IDENTITY(1,1) NOT NULL PRIMARY KEY CLUSTERED,
+	MaLoai AS 'LDL' + RIGHT('000' + CAST(ID AS VARCHAR(3)), 3) PERSISTED,
+
+	SoNoToiDa money, 
+
+	TenLoai nvarchar(100),
+	GhiChu nvarchar(1000),
+)
+CREATE TABLE CHUCVU
+(
+	ID INT IDENTITY(1,1) NOT NULL PRIMARY KEY CLUSTERED,
+	MaChucVu AS 'CV' + RIGHT('00' + CAST(ID AS VARCHAR(2)), 2) PERSISTED,
+
+	TenChucVu nvarchar(100),
+	GhiChu nvarchar(1000)
+)
+CREATE TABLE DONVITINH
+(
+	ID INT IDENTITY(1,1) NOT NULL PRIMARY KEY CLUSTERED,
+	MaDonViTinh AS 'DVT' + RIGHT('000' + CAST(ID AS VARCHAR(3)), 3) PERSISTED,
+
+	TenDonViTinh nvarchar(100),
+	GhiChu nvarchar(1000)
+)
+
+---cac bang doi tuong---4 so
+CREATE TABLE MATHANG(
+	ID INT IDENTITY(1,1) NOT NULL PRIMARY KEY CLUSTERED,
+	MaMatHang AS 'MH' + RIGHT('0000' + CAST(ID AS VARCHAR(4)), 4) PERSISTED,
+
+	MaDonViTinh INT NOT NULL FOREIGN KEY REFERENCES DONVITINH(ID),
+
+	DonGiaNhap money NOT NULL default 0 , 
+	DonGiaXuat money default 0,
+     
+    SoLuong int default 0,
+	TenMatHang nvarchar(100) NOT NULL,
+
+	GhiChu nvarchar(1000),
+
+	isDeleted BIT NOT NULL DEFAULT 0
+)
+
+CREATE TABLE DAILY(
+	ID INT IDENTITY(1,1) NOT NULL PRIMARY KEY CLUSTERED,
+	MaDaiLy AS 'DL' + RIGHT('0000' + CAST(ID AS VARCHAR(4)), 4) PERSISTED,
+
+	MaQuan INT NOT NULL FOREIGN KEY REFERENCES QUAN(ID),
+	MaLoaiDaiLy INT NOT NULL FOREIGN KEY REFERENCES LOAIDAILY(ID),
+
+	TenDaiLy nvarchar(100) NOT NULL,
+	DienThoai char(10) NOT NULL,
+	Email nvarchar(100) NOT NULL,
+
+	DiaChi nvarchar(100),	
+	NgayTiepNhan smallDateTime NOT NULL,
+	NoHienTai money default 0,
+	GhiChu nvarchar(1000),
+
+	isDeleted BIT NOT NULL DEFAULT 0
+)
+CREATE TABLE NHANVIEN
+(
+	ID INT IDENTITY(1,1) NOT NULL PRIMARY KEY CLUSTERED,
+	MaNhanVien AS 'NV' + RIGHT('0000' + CAST(ID AS VARCHAR(4)), 4) PERSISTED,
+
+	HoTen nvarchar(max) NOT NULL,
+	GioiTinh nvarchar(max)NOT NULL,
+	NgaySinh smalldatetime,
+	SDT	 varchar (11)  NOT NULL,
+	Email    varchar(100)  NOT NULL,
+	MaChucVu INT NOT NULL FOREIGN KEY REFERENCES CHUCVU(ID),
+	Luong	money NOT NULL,
+	GhiChu nvarchar(1000),
+
+	isDeleted BIT NOT NULL DEFAULT 0
+)
+CREATE TABLE TAIKHOAN
+(
+        UserName varchar(100)  NOT NULL unique,
+        Password varchar(max)  NOT NULL,
+        MaNhanVien INT NOT NULL UNIQUE FOREIGN KEY REFERENCES NHANVIEN(ID),
+)
+
+---cac phieu--- 6 so
+CREATE TABLE PHIEUNHAPHANG(
+	ID INT IDENTITY(1,1) NOT NULL PRIMARY KEY CLUSTERED,
+	MaPhieuNhap AS 'PN' + RIGHT('000000' + CAST(ID AS VARCHAR(6)), 6) PERSISTED,
+
+	MaNhanVien INT NOT NULL FOREIGN KEY REFERENCES NHANVIEN(ID),
+    NhaCungCap nvarchar(100),
+		
+	NgayLapPhieu smalldatetime NOT NULL,
+	TongTien money default 0,
+
+	GhiChu nvarchar(1000)
+)
+CREATE TABLE PHIEUXUATHANG(
+	ID INT IDENTITY(1,1) NOT NULL PRIMARY KEY CLUSTERED,
+	MaPhieuXuat AS 'PX' + RIGHT('000000' + CAST(ID AS VARCHAR(6)), 6) PERSISTED,
+
+	MaNhanVien INT NOT NULL FOREIGN KEY REFERENCES NHANVIEN(ID),
+	MaDaiLy INT NOT NULL FOREIGN KEY REFERENCES DAILY(ID),
+
+	NgayLapPhieu smalldatetime NOT NULL,
+	TongTien money default 0,
+
+	GhiChu nvarchar(1000)
+)
+CREATE TABLE PHIEUTHUTIEN(
+	ID INT IDENTITY(1,1) NOT NULL PRIMARY KEY CLUSTERED,
+	MaPhieuThu AS 'PT' + RIGHT('000000' + CAST(ID AS VARCHAR(6)), 6) PERSISTED,
+
+	MaDaiLy INT NOT NULL FOREIGN KEY REFERENCES DAILY(ID),
+	MaNhanVien INT NOT NULL FOREIGN KEY REFERENCES NHANVIEN(ID),
+
+	NgayLapPhieu smalldatetime  NOT NULL,
+   
+	SoTienThu money  NOT NULL,
+	GhiChu nvarchar(1000)
+)
+---cac chi tiet phieu---
+CREATE TABLE CHITIETPHIEUNHAP
+(
+	MaPhieuNhap INT not null FOREIGN KEY REFERENCES PHIEUNHAPHANG(ID),  
+	MaMatHang INT not null FOREIGN KEY REFERENCES MATHANG(ID),
+
+    SoLuong INT NOT NULL,
+	ThanhTien money default 0,
+
+	DonGiaNhap money,
+	Primary Key(MaPhieuNhap, MaMatHang)
+)
+CREATE TABLE CHITIETPHIEUXUAT
+(
+    MaPhieuXuat INT not null FOREIGN KEY REFERENCES PHIEUXUATHANG(ID),  
+    MaMatHang INT not null FOREIGN KEY REFERENCES MATHANG(ID),
+
+	SoLuong INT NOT NULL,
+	ThanhTien money default 0,
+
+	DonGiaXuat money,
+	Primary Key(MaPhieuXuat, MaMatHang)
+)

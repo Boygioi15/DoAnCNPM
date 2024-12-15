@@ -36,12 +36,12 @@
                 <Label styleClass="body-text-header" text="Tên mặt hàng:" />
                 <Label styleClass="body-text-header" text="Đơn vị tính:" GridPane.rowIndex="1" />
                 <Label styleClass="body-text-header" text="Đơn giá nhập:" GridPane.rowIndex="2" />
-                <SearchableComboBox fx:id="dvtComboBox" promptText="-Chọn đơn vị tính-" styleClass="combobox" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                <TextField fx:id="donGiaNhapTextField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                <SearchableComboBox fx:id="dvtComboBox_add" promptText="-Chọn đơn vị tính-" styleClass="combobox" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <TextField fx:id="donGiaNhapTextField_add" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                 <Label styleClass="body-text-header" text="Ghi chú:" GridPane.rowIndex="3" />
             <VBox GridPane.columnIndex="1">
                <children>
-                  <TextField fx:id="tenMHTextField" />
+                  <TextField fx:id="tenMHTextField_add" />
                </children>
             </VBox>
             <TextArea fx:id="ghiChuTextArea" prefHeight="60.0" prefRowCount="5" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />

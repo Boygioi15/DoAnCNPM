@@ -30,7 +30,7 @@ public class LapPhieuThuDialogController implements Initializable {
     @FXML private TextField ngayLapPhieuTextField;
     @FXML private TextField nhanVienTextField;
     @FXML private SearchableComboBox<DaiLy> dlComboBox;
-    @FXML private TextArea ghiChuTextArea;
+    @FXML private TextArea ghiChuTextArea_add;
     @FXML private TextField soTienThuTextField;
     @FXML
     Label title;
@@ -88,7 +88,7 @@ public class LapPhieuThuDialogController implements Initializable {
             dlComboBox.setValue(dl);
         }catch (SQLException _){}
 
-        ghiChuTextArea.setText(phieuThu.getGhiChu());
+        ghiChuTextArea_add.setText(phieuThu.getGhiChu());
         soTienThuTextField.setText(Long.toString(phieuThu.getSoTienThu()));
 
         ngayLapPhieuTextField.setDisable(true);
@@ -102,14 +102,14 @@ public class LapPhieuThuDialogController implements Initializable {
             PhieuThu phieuThu = new PhieuThu();
             phieuThu.setMaNhanVien(nvLapPhieu.getID());
             phieuThu.setMaDaiLy(dlComboBox.getValue().getID());
-            phieuThu.setGhiChu(ghiChuTextArea.getText());
+            phieuThu.setGhiChu(ghiChuTextArea_add.getText());
             phieuThu.setSoTienThu(getLongValueFromTextField(soTienThuTextField));
             phieuThu.setNgayLap(ngayTiepNhan);
-            phieuThu.setGhiChu(ghiChuTextArea.getText());
+            phieuThu.setGhiChu(ghiChuTextArea_add.getText());
             return phieuThu;
         }
         else{
-            phieuThuGoc.setGhiChu(ghiChuTextArea.getText());
+            phieuThuGoc.setGhiChu(ghiChuTextArea_add.getText());
            return phieuThuGoc;
         }
 

@@ -10,7 +10,6 @@ public class SetUp {
 
     public static void initFX() {
         if (!isFXInitialized) {
-            // Khởi động JavaFX chỉ một lần
             CountDownLatch latch = new CountDownLatch(1);
             Platform.startup(latch::countDown);
             try {

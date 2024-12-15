@@ -18,7 +18,7 @@ class AppStartTest extends ApplicationTest {
     public void start(Stage stage) throws Exception {
         // Manually create an instance of your application
         AppStart appStart = new AppStart();
-        appStart.start(stage); // Start the application with the test's stage
+        appStart.startTest(stage); // Start the application with the test's stage
     }
 //    @Test
 //    void testLogin_Admin(FxRobot robot) throws InterruptedException {

@@ -30,15 +30,15 @@
         </rowConstraints>
          <children>
             <Label styleClass="body-text-header" text="Quận:" />
-            <SearchableComboBox fx:id="quanComboBox" prefWidth="120.0" promptText="-Chọn quận-" styleClass="combobox" GridPane.rowIndex="1" />
+            <SearchableComboBox fx:id="quanComboBox_add" prefWidth="120.0" promptText="-Chọn quận-" styleClass="combobox" GridPane.rowIndex="1" />
             <Label styleClass="body-text-header" text="Loại đại lý: " GridPane.columnIndex="1" />
-            <SearchableComboBox fx:id="loaiDaiLyComboBox" prefWidth="120.0" promptText="-Chọn loại-" styleClass="combobox" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <SearchableComboBox fx:id="loaiDaiLyComboBox_add" prefWidth="120.0" promptText="-Chọn loại-" styleClass="combobox" GridPane.columnIndex="1" GridPane.rowIndex="1" />
          </children>
       </GridPane>
       <VBox fillWidth="false" spacing="5.0">
          <children>
             <Label styleClass="body-text-header" text="Tên đại lý:" />
-            <TextField fx:id="tenDaiLyTextField" maxWidth="200.0" prefWidth="200.0" styleClass="body-text" />
+            <TextField fx:id="tenDaiLyTextField_add" maxWidth="200.0" prefWidth="200.0" styleClass="body-text" />
          </children>
       </VBox>
       <GridPane hgap="20.0" vgap="5.0">
@@ -63,7 +63,7 @@
       <VBox spacing="5.0">
          <children>
             <Label styleClass="body-text-header" text="Ghi chú:" />
-            <TextArea fx:id="ghiChuTextArea" prefHeight="80.0" prefRowCount="5" styleClass="text-area" />
+            <TextArea fx:id="ghiChuTextArea_add" prefHeight="80.0" prefRowCount="5" styleClass="text-area" />
          </children>
       </VBox>
    </children>

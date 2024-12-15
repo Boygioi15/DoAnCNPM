@@ -215,6 +215,7 @@ public class LoginController implements Initializable {
 
     private void addErrorMessage(VBox errorBox, String message) {
         Label errorLabel = new Label(message);
+        errorLabel.setId("error-label");
         errorLabel.setStyle("-fx-text-fill: red;");
         errorBox.getChildren().add(errorLabel);
     }

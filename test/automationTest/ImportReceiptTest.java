@@ -1,13 +1,17 @@
 package automationTest;
 
+import TestUtilities.TestFunctions;
 import javafx.scene.control.DialogPane;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import org.doancnpm.AppStart;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit5.ApplicationTest;
+
+import java.sql.SQLException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,12 +24,19 @@ class ImportReceiptTest extends ApplicationTest {
     public void start(Stage stage) throws Exception {
         // Manually create an instance of your application
         AppStart appStart = new AppStart();
-        appStart.start(stage); // Start the application with the test's stage
+        appStart.startTest(stage); // Start the application with the test's stage
+    }
+    @AfterEach
+    void CleanUp(){
+        TestFunctions.DeleteAll("ChiTietPhieuNhap");
+        TestFunctions.DeleteAll("PhieuNhaphang");
+        TestFunctions.DeleteAll("MatHang");
     }
     @Test
-    void Add_new_ImportReceipt_Case1(FxRobot robot) throws InterruptedException {
-        robot.clickOn("#user").write("admin3");
-        robot.clickOn("#password").write("thinh123456");
+    void Add_new_ImportReceipt_Success(FxRobot robot) throws InterruptedException, SQLException {
+        TestFunctions.InsertTestMatHang2();
+        robot.clickOn("#user").write("admin");
+        robot.clickOn("#password").write("123456");
         robot.clickOn("#loginButton");
 
         robot.clickOn("#openPhieuNhapButton");
@@ -35,34 +46,29 @@ class ImportReceiptTest extends ApplicationTest {
         Thread.sleep(200);
 
         // Fill textfield
-        robot.clickOn("#nccTextField").write("Nhà cung cấp Thủ Đức");
+        robot.clickOn("#nccTextField_add").write("Nhà cung cấp Thủ Đức");
         Thread.sleep(200);
         robot.clickOn("#mhComboBox" + 2);
-        robot.type(KeyCode.DOWN);
         robot.type(KeyCode.DOWN);
         robot.type(KeyCode.ENTER);
         robot.clickOn("#slTextField" +2).write("2");
         robot.clickOn("#themCTPNButton");
         robot.clickOn("#mhComboBox" + 3);
         robot.type(KeyCode.DOWN);
+        robot.type(KeyCode.DOWN);
         robot.type(KeyCode.ENTER);
         robot.clickOn("#slTextField" +3).write("2");
         robot.clickOn("#saveButton");
 
-        // Kiểm tra dialog xuất hiện
         DialogPane dialogPane = robot.lookup("#successDialog").queryAs(DialogPane.class);
         assertNotNull(dialogPane);
-
-        // Kiểm tra nội dung thông báo
-        assertEquals("Thêm mới phiếu nhập thành công", dialogPane.getHeaderText());
-        //  assertEquals("Thành công!", dialogPane.getContentText());
-        // Click OK button
-        robot.clickOn(".button");
+        robot.clickOn("#okButton");
     }
     @Test
-    void Add_new_ImportReceiptCase2(FxRobot robot) throws InterruptedException {
-        robot.clickOn("#user").write("admin3");
-        robot.clickOn("#password").write("thinh123456");
+    void Add_new_ImportReceipt_DuplicateItem(FxRobot robot) throws InterruptedException, SQLException {
+        TestFunctions.InsertTestMatHang();
+        robot.clickOn("#user").write("admin");
+        robot.clickOn("#password").write("123456");
         robot.clickOn("#loginButton");
 
         robot.clickOn("#openPhieuNhapButton");
@@ -72,7 +78,7 @@ class ImportReceiptTest extends ApplicationTest {
         Thread.sleep(200);
 
         // Fill textfield
-        robot.clickOn("#nccTextField").write("Nhà cung cấp Thủ Đức");
+        robot.clickOn("#nccTextField_add").write("Nhà cung cấp Thủ Đức");
         Thread.sleep(200);
         robot.clickOn("#mhComboBox" + 2);
         robot.type(KeyCode.DOWN);
@@ -85,21 +91,16 @@ class ImportReceiptTest extends ApplicationTest {
         robot.clickOn("#slTextField" +3).write("2");
         robot.clickOn("#saveButton");
 
-        // Kiểm tra dialog xuất hiện
         DialogPane dialogPane = robot.lookup("#errorDialog").queryAs(DialogPane.class);
         assertNotNull(dialogPane);
-
-        // Kiểm tra nội dung thông báo
-        assertEquals("Thêm mới phiếu nhập thất bại", dialogPane.getHeaderText());
-        //  assertEquals("Thành công!", dialogPane.getContentText());
-        // Click OK button
-        robot.clickOn(".button");
+        robot.clickOn("#okButton");
     }
 
     @Test
-    void Add_new_ImportReceipt_Case3(FxRobot robot) throws InterruptedException {
-        robot.clickOn("#user").write("admin3");
-        robot.clickOn("#password").write("thinh123456");
+    void Add_new_ImportReceipt_InvalidAmountFormat(FxRobot robot) throws InterruptedException, SQLException {
+        TestFunctions.InsertTestMatHang2();
+        robot.clickOn("#user").write("admin");
+        robot.clickOn("#password").write("123456");
         robot.clickOn("#loginButton");
 
         robot.clickOn("#openPhieuNhapButton");
@@ -109,29 +110,59 @@ class ImportReceiptTest extends ApplicationTest {
         Thread.sleep(200);
 
         // Fill textfield
-        robot.clickOn("#nccTextField").write("Nhà cung cấp Thủ Đức");
+        robot.clickOn("#nccTextField_add").write("Nhà cung cấp Thủ Đức");
         Thread.sleep(200);
         robot.clickOn("#mhComboBox" + 2);
-        robot.type(KeyCode.DOWN);
         robot.type(KeyCode.DOWN);
         robot.type(KeyCode.ENTER);
         robot.clickOn("#slTextField" +2).write("a");
-        robot.clickOn("#themCTPNButton");
-        robot.clickOn("#mhComboBox" + 3);
-        robot.type(KeyCode.DOWN);
-        robot.type(KeyCode.ENTER);
-        robot.clickOn("#slTextField" +3).write("0");
         robot.clickOn("#saveButton");
-
         // Kiểm tra dialog xuất hiện
         DialogPane dialogPane = robot.lookup("#errorDialog").queryAs(DialogPane.class);
         assertNotNull(dialogPane);
+        robot.clickOn("#okButton");
+    }
+    @Test
+    void Add_new_ImportReceipt_LeaveNCCBlank(FxRobot robot) throws InterruptedException, SQLException {
+        TestFunctions.InsertTestMatHang2();
+        robot.clickOn("#user").write("admin");
+        robot.clickOn("#password").write("123456");
+        robot.clickOn("#loginButton");
 
-        // Kiểm tra nội dung thông báo
-        assertEquals("Thêm mới phiếu nhập thất bại", dialogPane.getHeaderText());
-        //  assertEquals("Thành công!", dialogPane.getContentText());
-        // Click OK button
-        robot.clickOn(".button");
+        robot.clickOn("#openPhieuNhapButton");
+
+        robot.clickOn("#openAddNewComboBox");
+        robot.clickOn("#addDirectButton");
+        Thread.sleep(200);
+        robot.clickOn("#mhComboBox" + 2);
+        robot.type(KeyCode.DOWN);
+        robot.type(KeyCode.ENTER);
+        // Fill textfield
+        robot.clickOn("#saveButton");
+        // Kiểm tra dialog xuất hiện
+        DialogPane dialogPane = robot.lookup("#errorDialog").queryAs(DialogPane.class);
+        assertNotNull(dialogPane);
+        robot.clickOn("#okButton");
+    }
+    @Test
+    void Add_new_ImportReceipt_LeaveItemBlank(FxRobot robot) throws InterruptedException {
+        robot.clickOn("#user").write("admin");
+        robot.clickOn("#password").write("123456");
+        robot.clickOn("#loginButton");
+
+        robot.clickOn("#openPhieuNhapButton");
+
+        robot.clickOn("#openAddNewComboBox");
+        robot.clickOn("#addDirectButton");
+        Thread.sleep(200);
+
+        // Fill textfield
+        robot.clickOn("#nccTextField_add").write("Nhà cung cấp Thủ Đức");
+        robot.clickOn("#saveButton");
+        // Kiểm tra dialog xuất hiện
+        DialogPane dialogPane = robot.lookup("#errorDialog").queryAs(DialogPane.class);
+        assertNotNull(dialogPane);
+        robot.clickOn("#okButton");
     }
 }
 

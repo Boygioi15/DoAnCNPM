@@ -48,7 +48,7 @@ class Import_record_Insert_Validate_Test extends ApplicationTest {
 
     @BeforeEach
     void setUp() {
-        assertNotNull(controller.nccTextField, "TextField không được khởi tạo");
+        assertNotNull(controller.nccTextField_add, "TextField không được khởi tạo");
         assertNotNull(chiTietPhieuNhapRow.mhComboBox, "Mặt hàng ComboBox không được khởi tạo");
         assertNotNull(chiTietPhieuNhapRow.slTextField, "Số lượng TextField không được khởi tạo");
         assertNotNull(chiTietPhieuNhapRow.dvtTextField, "Đơn vị tính TextField không được khởi tạo");
@@ -71,7 +71,7 @@ class Import_record_Insert_Validate_Test extends ApplicationTest {
 
     private void UTCID01() {
         // Test Case 1: Nhà cung cấp trống
-        controller.nccTextField.setText("");
+        controller.nccTextField_add.setText("");
         chiTietPhieuNhapRow.mhComboBox.setValue(null); // Mặt hàng trống
         chiTietPhieuNhapRow.slTextField.setText("5");
 
@@ -85,7 +85,7 @@ class Import_record_Insert_Validate_Test extends ApplicationTest {
 
     private void UTCID02() {
         // Test Case 2: Mặt hàng trống
-        controller.nccTextField.setText("Nhà cung cấp Thủ Đức");
+        controller.nccTextField_add.setText("Nhà cung cấp Thủ Đức");
         chiTietPhieuNhapRow.mhComboBox.setValue(null); // Mặt hàng trống
         chiTietPhieuNhapRow.slTextField.setText("5");
 
@@ -99,7 +99,7 @@ class Import_record_Insert_Validate_Test extends ApplicationTest {
 
     private void UTCID03() {
         // Test Case 3: Số lượng trống
-        controller.nccTextField.setText("Nhà cung cấp Thủ Đức");
+        controller.nccTextField_add.setText("Nhà cung cấp Thủ Đức");
         MatHang matHang1 = new MatHang("MH001", "Sữa Milo", 7000L);
         matHang1.setMaDVT(1); // Thiết lập MaDVT cho MatHang
         chiTietPhieuNhapRow.mhComboBox.setValue(matHang1);
@@ -116,7 +116,7 @@ class Import_record_Insert_Validate_Test extends ApplicationTest {
 
     private void UTCID04() {
         // Test Case 4: Định dạng số lượng sai
-        controller.nccTextField.setText("Nhà cung cấp Thủ Đức");
+        controller.nccTextField_add.setText("Nhà cung cấp Thủ Đức");
         MatHang matHang2 = new MatHang("MH002", "Bánh Oreo", 5000L);
         matHang2.setMaDVT(2); // Thiết lập MaDVT cho MatHang
         chiTietPhieuNhapRow.mhComboBox.setValue(matHang2);
@@ -132,7 +132,7 @@ class Import_record_Insert_Validate_Test extends ApplicationTest {
 
     private void UTCID05() {
         // Test Case 5: Tất cả hợp lệ
-        controller.nccTextField.setText("Nhà cung cấp Thủ Đức");
+        controller.nccTextField_add.setText("Nhà cung cấp Thủ Đức");
         MatHang matHang3 = new MatHang("MH003", "Nước ngọt", 10000L);
         matHang3.setMaDVT(3); // Thiết lập MaDVT cho MatHang
         chiTietPhieuNhapRow.mhComboBox.setValue(matHang3);

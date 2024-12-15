@@ -22,9 +22,9 @@ import java.util.ResourceBundle;
 
 public class ThemMoiMatHangDialogController implements Initializable {
 
-    @FXML  TextField tenMHTextField;
-    @FXML  SearchableComboBox<DonViTinh> dvtComboBox;
-    @FXML  TextField donGiaNhapTextField;
+    @FXML  TextField tenMHTextField_add;
+    @FXML  SearchableComboBox<DonViTinh> dvtComboBox_add;
+    @FXML  TextField donGiaNhapTextField_add;
     @FXML  TextArea ghiChuTextArea;
     @FXML
     Label title;
@@ -32,13 +32,13 @@ public class ThemMoiMatHangDialogController implements Initializable {
 
 
     public String getValidData() {
-        if (tenMHTextField.getText().isEmpty()) {
+        if (tenMHTextField_add.getText().isEmpty()) {
             return "Tên mặt hàng không được để trống";
         }
-        if (dvtComboBox.getValue() == null) {
+        if (dvtComboBox_add.getValue() == null) {
             return "Đơn vị tính không được để trống";
         }
-        if (donGiaNhapTextField.getText().isEmpty()) {
+        if (donGiaNhapTextField_add.getText().isEmpty()) {
             return "Đơn giá nhập không được để trống";
         }
             return "";
@@ -46,7 +46,7 @@ public class ThemMoiMatHangDialogController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         displayDataInCb();
-        MoneyFormatter.MoneyFormatTextField(donGiaNhapTextField);
+        MoneyFormatter.MoneyFormatTextField(donGiaNhapTextField_add);
     }
 
     public void setInitialValue(MatHang matHang){
@@ -57,12 +57,12 @@ public class ThemMoiMatHangDialogController implements Initializable {
         initialValue = matHang;
         try {
             DonViTinh donViTinh = DonViTinhDAO.getInstance().QueryID(matHang.getMaDVT());
-            dvtComboBox.setValue(donViTinh);
+            dvtComboBox_add.setValue(donViTinh);
         } catch (SQLException e) {
             PopDialog.popErrorDialog("Không thể lấy dữ liệu đơn vị tính");
         }
-        tenMHTextField.setText(matHang.getTenMatHang());
-        donGiaNhapTextField.setText(MoneyFormatter.convertLongToString(matHang.getDonGiaNhap()));
+        tenMHTextField_add.setText(matHang.getTenMatHang());
+        donGiaNhapTextField_add.setText(MoneyFormatter.convertLongToString(matHang.getDonGiaNhap()));
         ghiChuTextArea.setText(matHang.getGhiChu());
     }
     //validator
@@ -87,10 +87,10 @@ public class ThemMoiMatHangDialogController implements Initializable {
             };
 
             // Đặt StringConverter cho ComboBox
-            dvtComboBox.setConverter(quanStringConverter);
+            dvtComboBox_add.setConverter(quanStringConverter);
 
             // Đặt DataSource cho ComboBox
-            dvtComboBox.setItems(donViTinhs);
+            dvtComboBox_add.setItems(donViTinhs);
         }
         catch (SQLException e) {
             PopDialog.popErrorDialog("Lấy dữ liệu các quận/ loại đại lý thất bại",e.toString());
@@ -103,9 +103,9 @@ public class ThemMoiMatHangDialogController implements Initializable {
             matHang.setID(initialValue.getID());
             matHang.setMaMatHang(initialValue.getMaMatHang());
         }
-        matHang.setTenMatHang(tenMHTextField.getText());
-        matHang.setDonGiaNhap(MoneyFormatter.getLongValueFromTextField(donGiaNhapTextField));
-        matHang.setMaDVT(dvtComboBox.getValue().getId());
+        matHang.setTenMatHang(tenMHTextField_add.getText());
+        matHang.setDonGiaNhap(MoneyFormatter.getLongValueFromTextField(donGiaNhapTextField_add));
+        matHang.setMaDVT(dvtComboBox_add.getValue().getId());
         matHang.setGhiChu( ghiChuTextArea.getText());
         return matHang;
     }
