@@ -19,6 +19,7 @@ Main functionalities:
  - Employee management & Role division
  - System configuration for admin
  - UI: Reponsiveness.
+ - Unit test with JUnit and automation test with TestFX
    
 ## Tech stack
  - Development: Java with JavaFX framework.
